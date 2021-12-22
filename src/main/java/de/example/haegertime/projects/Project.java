@@ -12,10 +12,13 @@ import javax.persistence.Table;
 public class Project {
     @Id
     private Long id;
+    private String title;
 
-    public Project(Long id){
+    public Project(){} //Empty Constructor needed for hibernate
+
+    public Project(Long id, String title){
         this.id = id;
-
+        this.title = title;
     }
     //TODO: implement attributes (getter/setter/equals will be handled by annotation)
 }
