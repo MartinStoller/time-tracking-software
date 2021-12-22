@@ -1,0 +1,10 @@
+Customers/Projects:
+
+In meinen Augen macht es wenig Sinn Customers einzeln abzuspeichern, da die ja zwangsweise an ein Projekt geknüpft sein
+müssen. Ich habe daher nur eine Projekt DB mit einer Customer/Auftraggeber Spalte.
+________________________________________________________________________________________________________________________
+Irreversible Finalisierung von Working hours:
+
+Keine Rolle hat laut Angabe die Macht finalisierte Workinghours wieder zu ändern. Das wäre natürlich fatal, wenn mal
+jemandem ein Fehler unterläuft. Daher habe ich diese Funktion den bookkeepern zusätzlich gegeben.
+_______________________________________________________________________________________________________________________
