@@ -7,4 +7,8 @@ Irreversible Finalisierung von Working hours:
 
 Keine Rolle hat laut Angabe die Macht finalisierte Workinghours wieder zu ändern. Das wäre natürlich fatal, wenn mal
 jemandem ein Fehler unterläuft. Daher habe ich diese Funktion den bookkeepern zusätzlich gegeben.
-_______________________________________________________________________________________________________________________
+________________________________________________________________________________________________________________________
+Admin functionality:
+According to the task Admins have only a hand full of special rights, but cant access the functionalities of other users.
+This doesnt make sense, so in this version admins also have all the rights of the other roles.
+________________________________________________________________________________________________________________________

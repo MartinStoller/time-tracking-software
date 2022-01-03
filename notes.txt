@@ -7,4 +7,10 @@ ________________________________________________________________________________
 Abstract Classes and methods
     Abstract class: is a restricted class that cannot be used to create objects (to access it, it must be inherited from another class).
     Abstract method: can only be used in an abstract class, and it does not have a body. The body is provided by the subclass (inherited from).
+    // CAREFUL: Dont set things to private, because then childclasses can´t access it - set to protected instead
+_______________________________________________________________________________________________________________________
+What is an Interface?
+An interface in the Java programming language is an abstract type that is used to specify a behavior that classes must
+implement. They are similar to protocols. ... A class that implements an interface must implement all of the non-default
+methods described in the interface, or be an abstract class.
 _______________________________________________________________________________________________________________________

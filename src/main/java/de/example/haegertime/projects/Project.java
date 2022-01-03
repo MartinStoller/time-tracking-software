@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -25,17 +24,15 @@ public class Project {
             generator = "project_sequence"
     )
     private Long id;
-    @NotNull @NotBlank
+    @NotBlank
     private String title;
-    @NotNull
     private LocalDate start;
     @Nullable
     private LocalDate end;
-    @NotNull @NotBlank
+    @NotBlank
     private String customer;
-    @NotNull @NotBlank
+    @NotBlank
     private String billingAddress;
-
 
     public Project(){} //Empty Constructor needed for hibernate
 
@@ -46,5 +43,4 @@ public class Project {
         this.customer = customer;
         this.billingAddress = billingAddress;
     }
-    //TODO: implement attributes (getter/setter/equals will be handled by annotation)
 }

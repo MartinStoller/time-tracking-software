@@ -1,0 +1,21 @@
+package de.example.haegertime.users;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+@Configuration
+public class UserConfig {
+    @Bean
+    CommandLineRunner clrUsers(UserRepository userRepository){
+        return  args -> {
+            User usr1 = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
+            User usr2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
+            User usr3 = new User("Nick", "Petersen", "alarm1", "nickelberry@gmail.com", Role.ADMIN);
+            User usr4 = new User("Albert", "Gartenzwerg", "alarm1", "gartenzwergl@gmail.com", Role.ADMIN);
+        userRepository.saveAll(List.of(usr1, usr2, usr3, usr4));
+        };
+    }
+}

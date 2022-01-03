@@ -11,7 +11,7 @@ import java.util.List;
 @Configuration
 public class ProjectsConfig {
     @Bean
-    CommandLineRunner clr_projects(ProjectRepository repository) {
+    CommandLineRunner clrProjects(ProjectRepository repository) {
         return args -> {
             Project proj1 = new Project("Homepage Maintenance BMW", LocalDate.of(1995, Month.JULY, 22), LocalDate.of(2021, Month.AUGUST, 2), "BMW AG", "80375 München, BlaBlaStraße 4");
             Project proj2 = new Project("WebAppXY Extension SAP", LocalDate.of(1992, Month.JULY, 13), null, "VW", "84034 Landshut, Franz-Marc-Str. 18");
