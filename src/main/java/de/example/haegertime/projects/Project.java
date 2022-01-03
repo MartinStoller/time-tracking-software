@@ -1,7 +1,6 @@
 package de.example.haegertime.projects;
 
 import lombok.Data;
-import org.apache.tomcat.jni.Local;
 import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
 
@@ -9,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Data
 @Entity // This tells Hibernate to make a table out of this class
