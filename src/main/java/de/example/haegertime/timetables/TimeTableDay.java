@@ -31,13 +31,27 @@ public class TimeTableDay {
     private Time startTime;
     @Nullable
     private Time endTime;
+    @Nullable
     private float breakLength;
     private float expectedHours;
     private float actualHours;
-    private boolean sickDay;
-    private boolean holiday;
+    @Nullable
+    private AbsenceStatus absenceStatus;
     private Long projectId; //We need some sort of validation that project does exist in project DB
 
+    public TimeTableDay(){}
 
+    public TimeTableDay(Long employeeId, LocalDate date, Time startTime, Time endTime, float breakLength,
+                        float expectedHours, float actualHours, AbsenceStatus absenceStatus, Long projectId){
+        this.employeeId = employeeId;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.breakLength = breakLength;
+        this.expectedHours = expectedHours;
+        this.actualHours = actualHours;
+        this.absenceStatus = absenceStatus;
+        this.projectId = projectId;
+    }
 
 }
