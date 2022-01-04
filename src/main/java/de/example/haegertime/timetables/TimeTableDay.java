@@ -13,6 +13,8 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "timetable")
 @Validated
+//TODO: If end or starttime is null the other must be null as well (+breaklength = null +expected and actual hours must be zero) and absence status must not be null
+//TODO: If absence staus is not null, all teh duration parameters must be null/zero
 public class TimeTableDay {
     @Id
     @SequenceGenerator(
