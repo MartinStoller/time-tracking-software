@@ -5,8 +5,9 @@ import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
-import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -28,20 +29,21 @@ public class TimeTableDay {
     //also, we´ll need some sort of validation if that employeeID does exist(maybe this is already taken care of when we declare it as foreign key)
     private LocalDate date;
     @Nullable
-    private Time startTime;
+    private LocalTime startTime;
     @Nullable
-    private Time endTime;
+    private LocalTime endTime;
     @Nullable
-    private float breakLength;
-    private float expectedHours;
-    private float actualHours;
+    private Duration breakLength; //TODO: find suitable Datatype for durations
+    private float expectedHours;//TODO: find suitable Datatype for durations
+    private float actualHours;//TODO: find suitable Datatype for durations
     @Nullable
     private AbsenceStatus absenceStatus;
-    private Long projectId; //We need some sort of validation that project does exist in project DB
+    private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
+    private boolean finalized;
 
     public TimeTableDay(){}
 
-    public TimeTableDay(Long employeeId, LocalDate date, Time startTime, Time endTime, float breakLength,
+    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, Duration breakLength,
                         float expectedHours, float actualHours, AbsenceStatus absenceStatus, Long projectId){
         this.employeeId = employeeId;
         this.date = date;
@@ -52,6 +54,7 @@ public class TimeTableDay {
         this.actualHours = actualHours;
         this.absenceStatus = absenceStatus;
         this.projectId = projectId;
+        this.finalized = false;
     }
 
 }
