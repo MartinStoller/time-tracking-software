@@ -13,6 +13,7 @@ import java.util.List;
 
 @Configuration
 public class TimeTableConfig {
+    /*
     @Bean
     CommandLineRunner clrTimeTable(TimeTableRepository repository){
         return args -> {
@@ -51,4 +52,6 @@ public class TimeTableConfig {
         //TODO: SIck days still have normal working hours for correct billing
 
     }
+    */
+
 }
