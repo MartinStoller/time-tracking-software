@@ -2,6 +2,7 @@ package de.example.haegertime.timetables;
 
 import lombok.Data;
 import org.sonatype.inject.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
@@ -16,6 +17,8 @@ import java.time.LocalTime;
 //TODO: If end or starttime is null the other must be null as well (+breaklength = null +expected and actual hours must be zero) and absence status must not be null
 //TODO: If absence staus is not null, all teh duration parameters must be null/zero
 public class TimeTableDay {
+    @Transient
+    DatesAndDurationsCalculator ddCalc = new DatesAndDurationsCalculator();
     @Id
     @SequenceGenerator(
             name="user_sequence",
@@ -35,28 +38,38 @@ public class TimeTableDay {
     @Nullable
     private LocalTime endTime;
     @Nullable
-    private Duration breakLength; //TODO: find suitable Datatype for durations
-    private float expectedHours;//TODO: find suitable Datatype for durations
-    private float actualHours;//TODO: find suitable Datatype for durations
+    private String breakLength; //TODO: breaklength cannot be negative or over 24h
+    private String expectedHours;//TODO: expectedHours cannot be negative or over 24h
+    private String actualHours;//TODO: actualHours cannot be negative or over 24h
     @Nullable
     private AbsenceStatus absenceStatus;
     private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
     private boolean finalized;
 
+
     public TimeTableDay(){}
 
     public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, Duration breakLength,
-                        float expectedHours, float actualHours, AbsenceStatus absenceStatus, Long projectId){
+                        Duration expectedHours, AbsenceStatus absenceStatus, Long projectId){
         this.employeeId = employeeId;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.breakLength = breakLength;
-        this.expectedHours = expectedHours;
-        this.actualHours = actualHours;
+        this.breakLength = ddCalc.convertDurationToString(breakLength);
+        this.expectedHours = ddCalc.convertDurationToString(expectedHours);
         this.absenceStatus = absenceStatus;
         this.projectId = projectId;
         this.finalized = false;
+        this.actualHours = calculateActualHours(this.startTime, this.endTime, this.breakLength);
+    }
+
+    public String calculateActualHours(LocalTime startTime, LocalTime endTime, String breakLength) {
+        if (this.startTime == null) { //if sick or on holiday, the expected hours are achieved
+            this.actualHours = expectedHours;
+            return actualHours;
+        } else { //otherwise calculate from start-,end- and breaktime
+            return ddCalc.substractDurationStrings(ddCalc.getDurationBetweenLocalTimes(this.endTime, this.startTime), this.breakLength);
+        }
     }
 
 }
