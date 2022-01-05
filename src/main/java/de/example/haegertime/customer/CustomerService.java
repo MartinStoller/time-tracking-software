@@ -105,11 +105,17 @@ public class CustomerService {
         Customer updateCustomer = customerRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank")
         );
-        List<Project> projectList = updateCustomer.getProjectListe();
-        projectList.add(project);
-        updateCustomer.setProjectListe(projectList);
-        customerRepository.save(updateCustomer);
-        return updateCustomer;
+        Optional<Project> projectOptional = projectRepository.findProjectByName(project.getTitle());
+        if(!projectOptional.isPresent()) {
+            List<Project> projectList = updateCustomer.getProjectListe();
+            projectList.add(project);
+            updateCustomer.setProjectListe(projectList);
+            customerRepository.save(updateCustomer);
+            return updateCustomer;
+        } else {
+            throw new ItemExistsException("Das Projekt mit Title"+project.getTitle()+
+                    " ist breits in der DB");
+        }
     }
 
     /**
