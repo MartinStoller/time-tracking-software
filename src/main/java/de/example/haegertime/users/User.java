@@ -45,7 +45,6 @@ public class User {
         this.email = email;
         this.role = role;
         this.frozen = false;
-        //TODO: add sick_day and holiday counter availableHolidaysOverall
     }
 
     public void logIn(String emailInput, String passwordInput){
