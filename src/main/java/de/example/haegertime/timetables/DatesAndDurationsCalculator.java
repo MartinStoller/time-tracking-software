@@ -8,28 +8,26 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 
 public class DatesAndDurationsCalculator {
-    private PeriodFormatter durationFormatter;
-    private DateTimeFormatter localTimeFormatter;
+    private PeriodFormatter durationFormatter = new PeriodFormatterBuilder()
+            .printZeroAlways().minimumPrintedDigits(2)
+            .appendHours().appendSuffix(":").appendMinutes().toFormatter();
+    private DateTimeFormatter localTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    public DatesAndDurationsCalculator() {
-        this.durationFormatter = new PeriodFormatterBuilder()
-                .printZeroAlways().minimumPrintedDigits(2)
-                .appendHours().appendSuffix(":").appendMinutes().toFormatter();
-        this.localTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-    }
-
-    public String substractDurationStrings(String dur1, String dur2) {
+    public static String substractDurationStrings(String dur1, String dur2) {
         /**
          * Takes 2 Strings, which must be in the HH:MM Format as input and delivers the Difference of Input1-Input2.
          * Needed to calculate the actual working hours by substracting the break duration
          */
-        Period period1 = this.durationFormatter.parsePeriod(dur1);
-        Period period2 = this.durationFormatter.parsePeriod(dur2);
+        PeriodFormatter durationFormatter = new PeriodFormatterBuilder()
+                .printZeroAlways().minimumPrintedDigits(2)
+                .appendHours().appendSuffix(":").appendMinutes().toFormatter();
+        Period period1 = durationFormatter.parsePeriod(dur1);
+        Period period2 = durationFormatter.parsePeriod(dur2);
         Period difference = period1.minus(period2).normalizedStandard();
-        return this.durationFormatter.print(difference);
+        return durationFormatter.print(difference);
     }
 
-    public String getDurationBetweenLocalTimes(java.time.LocalTime lt1, java.time.LocalTime lt2) {
+    public static String getDurationBetweenLocalTimes(java.time.LocalTime lt1, java.time.LocalTime lt2) {
         /**
          * Takes 2 LocalTimes (HH:MM),delivers the Duration in between.
          * Needed to calculate the duration between starting and ending the workday.
@@ -52,7 +50,7 @@ public class DatesAndDurationsCalculator {
         }
     }
 
-    public String convertDurationToString(Duration dur1) {
+    public static String convertDurationToString(Duration dur1) {
         return dur1.toHoursPart() + ":" + dur1.toMinutesPart();
     }
 }

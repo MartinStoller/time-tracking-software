@@ -17,8 +17,7 @@ import java.time.LocalTime;
 //TODO: If end or starttime is null the other must be null as well (+breaklength = null +expected and actual hours must be zero) and absence status must not be null
 //TODO: If absence staus is not null, all teh duration parameters must be null/zero
 public class TimeTableDay {
-    @Transient
-    DatesAndDurationsCalculator ddCalc = new DatesAndDurationsCalculator();
+
     @Id
     @SequenceGenerator(
             name="user_sequence",
@@ -55,8 +54,8 @@ public class TimeTableDay {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.breakLength = ddCalc.convertDurationToString(breakLength);
-        this.expectedHours = ddCalc.convertDurationToString(expectedHours);
+        this.breakLength = DatesAndDurationsCalculator.convertDurationToString(breakLength);
+        this.expectedHours = DatesAndDurationsCalculator.convertDurationToString(expectedHours);
         this.absenceStatus = absenceStatus;
         this.projectId = projectId;
         this.finalized = false;
@@ -68,7 +67,8 @@ public class TimeTableDay {
             this.actualHours = expectedHours;
             return actualHours;
         } else { //otherwise calculate from start-,end- and breaktime
-            return ddCalc.substractDurationStrings(ddCalc.getDurationBetweenLocalTimes(this.endTime, this.startTime), this.breakLength);
+            String timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            return DatesAndDurationsCalculator.substractDurationStrings(timeAtWork, this.breakLength);
         }
     }
 
