@@ -17,7 +17,10 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-
+    /**
+     * Auflisten aller Projekte in der DB
+     * @return Liste von Projekten
+     */
     public List<Project> getAllProjects(){
         return projectRepository.findAll();
     }
@@ -30,7 +33,13 @@ public class ProjectService {
         return projectRepository.getById(id);
     }
 
-
+    /**
+     * Aktualisieren das Projekt, es geht hier um ein PatchMapping,
+     * also das Projekt wird teil aktualisiert.
+     * @param id Project-ID Nummer
+     * @param fields Die Teile, die man ändern will
+     * @return das aktualisierte Projekt
+     */
     public Project updateProject(long id, Map<Object, Object> fields) {
         Optional<Project> projectOptional = projectRepository.findById(id);
         if(!projectOptional.isPresent()) {
