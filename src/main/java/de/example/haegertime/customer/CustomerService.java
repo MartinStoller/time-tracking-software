@@ -1,7 +1,10 @@
 package de.example.haegertime.customer;
 
+import de.example.haegertime.advice.ItemExistsException;
 import de.example.haegertime.advice.ItemNotFoundException;
+import de.example.haegertime.advice.ListEmptyException;
 import de.example.haegertime.projects.Project;
+import de.example.haegertime.projects.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +17,13 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+    private final ProjectRepository projectRepository;
+
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository
+            , ProjectRepository projectRepository) {
         this.customerRepository = customerRepository;
+        this.projectRepository = projectRepository;
     }
 
     /**
@@ -25,13 +32,25 @@ public class CustomerService {
      * @return der erzeugte Kunde
      */
     public Customer createCustomer(Customer customer) {
-        //TODO die Methode darf nur von BookKeeper durchgeführt, die Mitarbeiter soll keinen Zugriff auf diese Methode
+        // TODO die Methode darf nur von BookKeeper durchgeführt, die Mitarbeiter soll keinen Zugriff auf diese Methode
         // TODO Checken ob der Customer-Name und Projekt-Title schon vorhanden in der Datenbank sind
+        Optional<Customer> optionalCustomer = customerRepository.findCustomerByName(customer.getName());
+        if(optionalCustomer.isPresent()) {
+            throw new ItemExistsException("Der Name existiert bereits in der DB");
+        }
         if(!customer.getProjectListe().isEmpty()) {
+            for (Project project : customer.getProjectListe()) {
+                String projectTitle = project.getTitle();
+                Optional<Project> projectOptional = projectRepository.findProjectByName(projectTitle);
+                if(projectOptional.isPresent()) {
+                    throw new ItemExistsException("Das Projekt mit dem Name "+projectTitle+
+                            " existiert bereits in der DB");
+                }
+            }
             customerRepository.save(customer);
             return customer;
         } else {
-            throw new IllegalArgumentException();
+            throw new ListEmptyException("Die Projekt-Liste ist leer");
         }
     }
 

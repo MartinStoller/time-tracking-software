@@ -16,4 +16,18 @@ public class HaegerTimeAdvice {
         return new ResponseEntity<>(apiException, notfound);
     }
 
+    @ExceptionHandler(value={ItemExistsException.class})
+    public ResponseEntity<Object> handleItemExistsException(ItemExistsException e) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        APIException apiException = new APIException(e.getMessage(), badRequest);
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value={ListEmptyException.class})
+    public ResponseEntity<Object> handleListEmptyException(ListEmptyException e) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        APIException apiException = new APIException(e.getMessage(), badRequest);
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
 }
