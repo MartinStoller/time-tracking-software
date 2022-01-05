@@ -27,7 +27,7 @@ public class TimeTableDay {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    private Long id;  //not sure yet if we really need an Id, but probably cant hurt to have a unique identifier for each line
+    private Long workdayId;  //not sure yet if we really need an Id, but probably cant hurt to have a unique identifier for each line
     private Long employeeId;  // this will be the foreign key. TODO: MYSQL needs to know that this is a foreign key -> check how to declear that
     //also, we´ll need some sort of validation if that employeeID does exist(maybe this is already taken care of when we declare it as foreign key)
     private LocalDate date;
@@ -35,7 +35,6 @@ public class TimeTableDay {
     private LocalTime startTime;
     @Nullable
     private LocalTime endTime;
-    @Nullable
     private String breakLength; //TODO: breaklength cannot be negative or over 24h
     private String expectedHours;//TODO: expectedHours cannot be negative or over 24h
     private String actualHours;//TODO: actualHours cannot be negative or over 24h
