@@ -36,20 +36,6 @@ public class DatesAndDurationsCalculator {
         return duration.toHoursPart() + ":" + duration.toMinutesPart();
     }
 
-    public java.time.LocalTime convertStringToLocalTime(String time1) {
-        /**
-         * Takes a Time in HH:MM format and returns it as java.time.LocalTime (don't confuse with joda.LocalTime!)
-         */
-        try {
-            java.time.LocalTime localTime = java.time.LocalTime.parse(time1, this.localTimeFormatter);
-            return localTime;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Input could not be converted to LocalTime. Input has to be a String of HH:MM Format!");
-            return null;
-        }
-    }
-
     public static String convertDurationToString(Duration dur1) {
         return dur1.toHoursPart() + ":" + dur1.toMinutesPart();
     }

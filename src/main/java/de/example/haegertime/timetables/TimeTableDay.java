@@ -2,7 +2,6 @@ package de.example.haegertime.timetables;
 
 import lombok.Data;
 import org.sonatype.inject.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
