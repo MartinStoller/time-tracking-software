@@ -37,13 +37,13 @@ public class TimeTableConfig {
                     null, Duration.parse("PT0H0M"), Duration.parse("PT0H0M"), null, 2L);
             TimeTableDay ttd8 = new TimeTableDay(
                     5L, LocalDate.of(2022, Month.JANUARY, 3), null,
-                    null, Duration.parse("PT0H0M"), Duration.parse("PT0H0M"), AbsenceStatus.SICK, 2L);
+                    null, Duration.parse("PT0H0M"), Duration.parse("PT7H00M"), AbsenceStatus.SICK, 2L);
             TimeTableDay ttd9 = new TimeTableDay(
                     5L, LocalDate.of(2022, Month.JANUARY, 4), null,
-                    null, Duration.parse("PT0H0M"), Duration.parse("PT0H0M"), AbsenceStatus.HOLIDAY, 2L);
+                    null, Duration.parse("PT0H0M"), Duration.parse("PT8H00M"), AbsenceStatus.HOLIDAY, 2L);
             TimeTableDay ttd10 = new TimeTableDay(
                     5L, LocalDate.of(2022, Month.JANUARY, 5), null,
-                    null, Duration.parse("PT0H0M"), Duration.parse("PT0H0M"), AbsenceStatus.HOLIDAY, 2L);
+                    null, Duration.parse("PT0H0M"), Duration.parse("PT8H00M"), AbsenceStatus.HOLIDAY, 2L);
         repository.saveAll(List.of(ttd1, ttd2, ttd3, ttd4, ttd5, ttd6, ttd7, ttd8, ttd9, ttd10));
         };
     }

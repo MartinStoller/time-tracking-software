@@ -32,7 +32,7 @@ public class DatesAndDurationsCalculator {
          * Takes 2 LocalTimes (HH:MM),delivers the Duration in between.
          * Needed to calculate the duration between starting and ending the workday.
          */
-        Duration duration = Duration.between(lt1, lt2);
+        Duration duration = Duration.between(lt2, lt1);
         return duration.toHoursPart() + ":" + duration.toMinutesPart();
     }
 
