@@ -31,13 +31,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> findByIdUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.findByIdUser(id));
     }
 
     //Ausgabe User anhand eines Keywords
-    @GetMapping("/{keyword}")
+    @GetMapping("/search/{keyword}")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
         return this.userService.findByKeywordUser(keyword);
     }
