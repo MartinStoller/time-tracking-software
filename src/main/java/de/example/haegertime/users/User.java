@@ -20,9 +20,12 @@ public class User {
             sequenceName = "user_sequence",
             allocationSize = 1
     )
+
+
+
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+           generator = "user_sequence"
     )
     private Long id;
     @NotBlank
