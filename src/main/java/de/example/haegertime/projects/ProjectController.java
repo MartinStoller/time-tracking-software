@@ -21,7 +21,7 @@ public class ProjectController {
     }
 
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<Project> updateProject(@PathVariable long id, @RequestBody Map<Object, Object> fields) {
         Project project = projectService.updateProject(id, fields);
         return ResponseEntity.ok(project);

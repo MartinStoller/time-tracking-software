@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -50,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/customer/delete/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/customer").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/projects").hasAnyAuthority("EMPLOYEE","ADMIN","BOOKKEEPER")
-                .antMatchers(HttpMethod.GET,"/api/projects/{id}").hasAnyAuthority("BOOKKEEPER","ADMIN","EMPLOYEE")
-                .antMatchers(HttpMethod.PATCH, "/api/projects/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
+                .antMatchers("/api/projects/{id}").hasAnyAuthority("BOOKKEEPER","ADMIN","EMPLOYEE")
+                .antMatchers(HttpMethod.PATCH, "/api/projects/update/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/user/all").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers(HttpMethod.POST, "/api/user/create").hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated()

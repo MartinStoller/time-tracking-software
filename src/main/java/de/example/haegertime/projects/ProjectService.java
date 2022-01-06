@@ -30,7 +30,7 @@ public class ProjectService {
             throw new ItemNotFoundException("Das Projekt mit der Id "+id+
                     " existiert nicht.");
         }
-        return projectRepository.getById(id);
+        return projectRepository.findById(id).get();
     }
 
     /**
