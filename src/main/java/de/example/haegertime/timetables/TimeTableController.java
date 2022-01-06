@@ -1,9 +1,8 @@
 package de.example.haegertime.timetables;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.management.InstanceNotFoundException;
 import java.util.List;
 
 @RestController
@@ -16,4 +15,14 @@ public class TimeTableController {
 
     @GetMapping
     public List<TimeTableDay> getEntireTimetable(){return ttService.getEntireTimetable();}
+
+    @GetMapping("/{id}")
+    public TimeTableDay getTimetableDay(@PathVariable("id") Long id) throws InstanceNotFoundException {
+        return ttService.getTimetableDay(id);
+    }
+
+    @PutMapping("/assignDay/{dayId}/toEmployee/{employeeId}")
+    public void assignDayToEmployee(@PathVariable Long dayId, @PathVariable Long employeeId) throws InstanceNotFoundException {
+        ttService.assignDayToEmployee(dayId, employeeId);
+    }
 }

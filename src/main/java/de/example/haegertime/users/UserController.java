@@ -1,9 +1,11 @@
 package de.example.haegertime.users;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.management.InstanceNotFoundException;
 import java.util.List;
 
 @RestController
@@ -18,6 +20,11 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers(){return userService.getAllUsers();}
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") Long id) throws InstanceNotFoundException {
+        return userService.getUser(id);
+    }
 
     }
 
