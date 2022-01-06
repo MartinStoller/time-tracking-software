@@ -10,6 +10,7 @@ import java.util.List;
 
 @Configuration
 public class ProjectsConfig {
+    /*
     @Bean
     CommandLineRunner clrProjects(ProjectRepository repository) {
         return args -> {
@@ -23,4 +24,6 @@ public class ProjectsConfig {
             repository.saveAll(List.of(proj1, proj2, proj3, proj4, proj5, proj6, proj7));
         };
     }
+    */
+
 }
