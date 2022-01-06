@@ -33,7 +33,6 @@ public class CustomerService {
      */
     public Customer createCustomer(Customer customer) {
         // TODO die Methode darf nur von BookKeeper durchgeführt, die Mitarbeiter soll keinen Zugriff auf diese Methode
-        // TODO Checken ob der Customer-Name und Projekt-Title schon vorhanden in der Datenbank sind
         Optional<Customer> optionalCustomer = customerRepository.findCustomerByName(customer.getName());
         if(optionalCustomer.isPresent()) {
             throw new ItemExistsException("Der Name existiert bereits in der DB");
