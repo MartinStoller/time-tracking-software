@@ -27,7 +27,7 @@ public class TimeTableDay {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    private Long workdayId;  //not sure yet if we really need an Id, but probably cant hurt to have a unique identifier for each line
+    private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
     private Long employeeId;  // this will be the foreign key. TODO: MYSQL needs to know that this is a foreign key -> check how to declear that
     //also, we´ll need some sort of validation if that employeeID does exist(maybe this is already taken care of when we declare it as foreign key)
     private LocalDate date;
@@ -35,19 +35,18 @@ public class TimeTableDay {
     private LocalTime startTime;
     @Nullable
     private LocalTime endTime;
-    private String breakLength; //TODO: breaklength cannot be negative or over 24h
-    private String expectedHours;//TODO: expectedHours cannot be negative or over 24h
-    private String actualHours;//TODO: actualHours cannot be negative or over 24h
+    private float breakLength; //TODO: breaklength cannot be negative or over 24h
+    private float expectedHours;//TODO: expectedHours cannot be negative or over 24h
+    private float actualHours;//TODO: actualHours cannot be negative or over 24h
     @Nullable
     private AbsenceStatus absenceStatus;
     private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
     private boolean finalized;
 
-
     public TimeTableDay(){}
 
-    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, Duration breakLength,
-                        Duration expectedHours, AbsenceStatus absenceStatus, Long projectId){
+    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, float breakLength,
+                        float expectedHours, AbsenceStatus absenceStatus, Long projectId){
         this.employeeId = employeeId;
         this.date = date;
         this.startTime = startTime;
