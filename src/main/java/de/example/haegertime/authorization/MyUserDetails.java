@@ -55,4 +55,16 @@ public class MyUserDetails implements UserDetails {
     public boolean isEnabled() {
         return user.isFrozen();
     }
+
+    public void setUserPassword(String password) {
+        this.user.setPassword(password);
+    }
+
+    public void setUserFirst(String first) {
+        this.user.setFirst(first);
+    }
+
+    public void setUserLast(String last) {
+        this.user.setLast(last);
+    }
 }

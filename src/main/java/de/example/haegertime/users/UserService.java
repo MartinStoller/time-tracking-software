@@ -2,6 +2,8 @@ package de.example.haegertime.users;
 
 import de.example.haegertime.advice.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import de.example.haegertime.users.User;
 
@@ -54,6 +56,22 @@ public class UserService {
         }
     }
 
+    public User getUserByUserName(String username) {
+        return userRepository.getUserByUserEmail(username);
+    }
+
+
+    public User updateUserDetails(User user, User loggedUser) {
+        User updateUser = userRepository.getUserByUserEmail(loggedUser.getEmail());
+        updateUser.setPassword(user.getPassword());
+        updateUser.setFirst(user.getFirst());
+        updateUser.setLast(user.getLast());
+        updateUser.setEmail(loggedUser.getEmail()); //email darf nicht selbst ändern
+        updateUser.setRole(loggedUser.getRole());   //role darf nicht selbst ändern
+        updateUser.setId(loggedUser.getId());
+        userRepository.save(updateUser);
+        return updateUser;
+    }
 }
 
 

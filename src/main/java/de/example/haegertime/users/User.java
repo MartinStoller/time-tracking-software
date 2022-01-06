@@ -47,12 +47,5 @@ public class User {
         this.frozen = true;
     }
 
-    public void logIn(String emailInput, String passwordInput){
-        /**
-         * Takes input data and checks if email-password combo exists.
-         * if not, display error message/ throw exception
-         * otherwise perform login (Use spring security feature for that, but also discuss in trainee meeting first)
-         */
-        //TODO: Check where and how to implement this function (repository/controller etc)
-    }
+
 }
