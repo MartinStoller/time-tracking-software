@@ -35,9 +35,9 @@ public class TimeTableDay {
     private LocalTime startTime;
     @Nullable
     private LocalTime endTime;
-    private float breakLength; //TODO: breaklength cannot be negative or over 24h
-    private float expectedHours;//TODO: expectedHours cannot be negative or over 24h
-    private float actualHours;//TODO: actualHours cannot be negative or over 24h
+    private double breakLength; //TODO: breaklength cannot be negative or over 24h
+    private double expectedHours;//TODO: expectedHours cannot be negative or over 24h
+    private double actualHours;//TODO: actualHours cannot be negative or over 24h
     @Nullable
     private AbsenceStatus absenceStatus;
     private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
@@ -45,27 +45,30 @@ public class TimeTableDay {
 
     public TimeTableDay(){}
 
-    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, float breakLength,
-                        float expectedHours, AbsenceStatus absenceStatus, Long projectId){
+    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, double breakLength,
+                        double expectedHours, AbsenceStatus absenceStatus, Long projectId){
         this.employeeId = employeeId;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.breakLength = DatesAndDurationsCalculator.convertDurationToString(breakLength);
-        this.expectedHours = DatesAndDurationsCalculator.convertDurationToString(expectedHours);
+        this.breakLength = breakLength;
+        this.expectedHours = expectedHours;
         this.absenceStatus = absenceStatus;
         this.projectId = projectId;
         this.finalized = false;
-        this.actualHours = calculateActualHours(this.startTime, this.endTime, this.breakLength);
+        this.actualHours = calculateActualHours();
     }
 
-    public String calculateActualHours(LocalTime startTime, LocalTime endTime, String breakLength) {
-        if (this.startTime == null) { //if sick or on holiday, the expected hours are achieved
+    public double calculateActualHours() {
+        if (this.startTime == null || this.absenceStatus != null) { //if sick or on holiday, the expected hours are achieved
             this.actualHours = expectedHours;
             return actualHours;
         } else { //otherwise calculate from start-,end- and breaktime
-            String timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
-            return DatesAndDurationsCalculator.substractDurationStrings(timeAtWork, this.breakLength);
+            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            //convert Duration to float hours:
+            Long minutes = timeAtWork.toMinutes();
+            double actualHours = minutes/60.0 - this.breakLength;
+            return actualHours;
         }
     }
 
