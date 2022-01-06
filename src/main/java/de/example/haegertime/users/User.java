@@ -20,9 +20,6 @@ public class User {
             sequenceName = "user_sequence",
             allocationSize = 1
     )
-
-
-
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
            generator = "user_sequence"
@@ -47,7 +44,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.role = role;
-        this.frozen = false;
+        this.frozen = true;
     }
 
     public void logIn(String emailInput, String passwordInput){

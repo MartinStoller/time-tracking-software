@@ -1,12 +1,13 @@
 package de.example.haegertime.users;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="api/user")
+@RequestMapping("api/user/")
 public class UserController {
 
     private final UserService userService;
@@ -44,11 +45,12 @@ public class UserController {
 
 
     //todo only Admin
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 
 }
 
