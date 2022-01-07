@@ -69,17 +69,40 @@ public class UserService {
         updateUser.setEmail(loggedUser.getEmail()); //email darf nicht selbst ändern
         updateUser.setRole(loggedUser.getRole());   //role darf nicht selbst ändern
         updateUser.setId(loggedUser.getId());
+        updateUser.setFrozen(loggedUser.isFrozen());
         userRepository.save(updateUser);
         return updateUser;
     }
 
-    //unvollständig
+
     public User updateUserName(Long id, String newUserName) {
         User updateUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("")
+                () -> new ItemNotFoundException("Der Benutzer mit Id "+id+"" +
+                        " ist nicht in der DB")
         );
+        updateUser.setEmail(newUserName);
         userRepository.save(updateUser);
         return updateUser;
+    }
+
+
+    public void deactivUser(Long id) {
+        User deactivUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                        " ist nicht in der DB")
+        );
+        deactivUser.setFrozen(false);
+        userRepository.save(deactivUser);
+    }
+
+
+    public void reactivUser(Long id) {
+        User reactivUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                        " ist nicht in der DB")
+        );
+        reactivUser.setFrozen(false);
+        userRepository.save(reactivUser);
     }
 }
 

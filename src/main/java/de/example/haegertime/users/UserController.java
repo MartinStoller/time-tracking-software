@@ -80,9 +80,37 @@ public class UserController {
     }
 
 
+    /**
+     * Username eines Nutzers ändern (ADMIN)
+     * @param id    Nutzer ID
+     * @param newUserName neue E-Mail-Adresse
+     * @return  aktualisierter Nutzer
+     */
     @PutMapping("/update/username/{id}")
-    public ResponseEntity<User> updateUserName(Long id, String newUserName) {
+    public ResponseEntity<User> updateUserName(Long id,@RequestParam("email") String newUserName) {
         return ResponseEntity.ok(userService.updateUserName(id, newUserName));
+    }
+
+    /**
+     * Deaktivieren einen Benutzer
+     * @param id Benutzer ID
+     * @return
+     */
+    @PutMapping("/deactiv/{id}")
+    public ResponseEntity<Void> deactivUser(@PathVariable Long id) {
+        userService.deactivUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Reaktivieren einen Benutzer
+     * @param id Benutzer ID
+     * @return
+     */
+    @PutMapping("/reactiv/{id}")
+    public ResponseEntity<Void> reactivUser(@PathVariable Long id) {
+        userService.reactivUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

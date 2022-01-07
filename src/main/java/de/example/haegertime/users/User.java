@@ -34,7 +34,7 @@ public class User {
     @Email
     private String email;
     private Role role;
-    private boolean frozen;
+    private boolean frozen; //frozen = true -> activ, frozen = false -> deactiv :)
 
     public User(){}
 

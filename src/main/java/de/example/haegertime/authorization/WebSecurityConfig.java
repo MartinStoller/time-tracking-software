@@ -55,6 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/myacc").hasAnyAuthority("ADMIN","EMPLOYEE","BOOKKEEPER")
                 .antMatchers("/api/user/myacc/update").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/api/user/delete/{id}").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/user/reactiv/{id}").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/user/deactiv/{id}").hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
