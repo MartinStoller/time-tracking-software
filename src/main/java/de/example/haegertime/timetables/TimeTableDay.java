@@ -1,5 +1,6 @@
 package de.example.haegertime.timetables;
 
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
 import lombok.Data;
 import org.sonatype.inject.Nullable;
@@ -8,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,6 +38,7 @@ public class TimeTableDay {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="employee_id", referencedColumnName = "id")
     private User employee;
+    @NotNull
     private LocalDate date;
     @Nullable
     private LocalTime startTime;
@@ -53,14 +56,18 @@ public class TimeTableDay {
     private double holidayHours;
     @Min(value = 0) @Max(value = 24)
     private double sickHours;
-    private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id", referencedColumnName = "id")
+    private Project project;
+
     private boolean finalized;
 
     public TimeTableDay() {
     }
 
-    public TimeTableDay(LocalDate date, LocalTime startTime, LocalTime endTime, double breakLength,
-                        double expectedHours, AbsenceStatus absenceStatus, Long projectId) {
+    public TimeTableDay(LocalDate date, User employee, LocalTime startTime, LocalTime endTime, double breakLength,
+                        double expectedHours, AbsenceStatus absenceStatus, Project project) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -68,7 +75,7 @@ public class TimeTableDay {
         this.breakLength = breakLength;
         this.expectedHours = expectedHours;
         this.absenceStatus = absenceStatus;
-        this.projectId = projectId;
+        this.project = project;
         this.finalized = false;
         this.actualHours = calculateActualHours();
 
