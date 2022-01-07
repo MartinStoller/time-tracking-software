@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import de.example.haegertime.users.User;
 
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
