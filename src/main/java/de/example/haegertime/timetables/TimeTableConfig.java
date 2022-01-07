@@ -11,7 +11,6 @@ import java.util.List;
 
 @Configuration
 public class TimeTableConfig {
-
     @Bean
     CommandLineRunner clrTimeTable(TimeTableRepository repository){
         return args -> {

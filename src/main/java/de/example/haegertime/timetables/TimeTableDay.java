@@ -133,4 +133,8 @@ public class TimeTableDay {
     public void assignUser(User employee) {
         this.employee = employee;
     }
+
+    public void assignProject(Project project) {
+        this.project = project;
+    }
 }

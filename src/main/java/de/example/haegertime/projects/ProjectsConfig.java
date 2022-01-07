@@ -10,7 +10,6 @@ import java.util.List;
 
 @Configuration
 public class ProjectsConfig {
-
     @Bean
     CommandLineRunner clrProjects(ProjectRepository repository) {
         return args -> {
