@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,13 +35,13 @@ public class User {
     @OneToMany(mappedBy = "employee")
     private Set<TimeTableDay> timetableDays = new HashSet<>();
 
-    @NotBlank
+    @NotBlank @NotNull
     private String first;
-    @NotBlank
+    @NotBlank @NotNull
     private String last;
     @NotBlank @Size(min=5, message = "Password is too short! It requires at least 5 characters.") @Size(max = 30, message = "Password is too long!")
     private  String password;
-    @Email
+    @Column(unique = true) @Email
     private String email;
     private Role role;
     private boolean frozen;

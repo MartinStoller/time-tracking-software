@@ -18,3 +18,6 @@ May to one, one to many, many to many
 https://www.youtube.com/watch?v=f5bdUjEIbrg
 propertie file muss auf "updatee" sein hierfür.
 _______________________________________________________________________________________________________________________
+Conditional Validations
+https://stackoverflow.com/questions/54638255/spring-boot-validation-one-from-two-not-null   (both answers!)
+_______________________________________________________________________________________________________________________

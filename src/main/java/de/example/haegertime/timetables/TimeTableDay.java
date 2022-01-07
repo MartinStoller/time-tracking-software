@@ -7,6 +7,7 @@ import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -19,8 +20,6 @@ import java.util.Set;
 @Entity
 @Table(name = "timetable")
 @Validated
-//TODO: If end or starttime is null the other must be null as well (+breaklength = null +expected and actual hours must be zero) and absence status must not be null
-//TODO: If absence staus is not null, all teh duration parameters must be null/zero
 public class TimeTableDay {
 
     @Id
@@ -62,6 +61,16 @@ public class TimeTableDay {
     private Project project;
 
     private boolean finalized;
+
+    @AssertTrue(message = "If startTime is null, so must be endTime")
+    private boolean isInputValid(){ //this is a validation method and its name is supposed to start with "is..." or the program will not recognize it!
+        if(this.startTime == null){
+            return this.endTime == null && this.breakLength == 0;
+        }
+        else{
+            return this.endTime != null;
+        }
+    }
 
     public TimeTableDay() {
     }
