@@ -6,9 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
-
 import java.util.List;
 
 @RestController
@@ -111,6 +109,11 @@ public class UserController {
     public ResponseEntity<Void> reactivUser(@PathVariable Long id) {
         userService.reactivUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/updaterole/{id}")
+    public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
+        return ResponseEntity.ok(userService.updateRoleUser(id, role));
     }
 }
 

@@ -1,5 +1,6 @@
 package de.example.haegertime.users;
 
+import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -104,6 +105,20 @@ public class UserService {
         );
         reactivUser.setFrozen(false);
         userRepository.save(reactivUser);
+    }
+
+    public User updateRoleUser(Long id, String role) {
+        User updateRoleUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+" ist nicht in der DB")
+        );
+        if(role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER") ) {
+            updateRoleUser.setRole(Role.valueOf(role));
+            userRepository.save(updateRoleUser);
+            return updateRoleUser;
+        } else {
+            throw new InvalidRoleException("Die eingegebene Role ist ungültig");
+        }
+
     }
 }
 
