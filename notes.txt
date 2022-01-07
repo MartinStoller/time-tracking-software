@@ -14,3 +14,7 @@ An interface in the Java programming language is an abstract type that is used t
 implement. They are similar to protocols. ... A class that implements an interface must implement all of the non-default
 methods described in the interface, or be an abstract class.
 _______________________________________________________________________________________________________________________
+May to one, one to many, many to many
+https://www.youtube.com/watch?v=f5bdUjEIbrg
+propertie file muss auf "updatee" sein hierfür.
+_______________________________________________________________________________________________________________________

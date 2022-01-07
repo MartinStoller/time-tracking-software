@@ -1,13 +1,19 @@
 package de.example.haegertime.timetables;
 
+import de.example.haegertime.projects.Project;
+import de.example.haegertime.users.User;
 import lombok.Data;
 import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,7 +25,7 @@ public class TimeTableDay {
 
     @Id
     @SequenceGenerator(
-            name="user_sequence",
+            name = "user_sequence",
             sequenceName = "user_sequence",
             allocationSize = 1
     )
@@ -27,47 +33,104 @@ public class TimeTableDay {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    private Long workdayId;  //not sure yet if we really need an Id, but probably cant hurt to have a unique identifier for each line
-    private Long employeeId;  // this will be the foreign key. TODO: MYSQL needs to know that this is a foreign key -> check how to declear that
-    //also, we´ll need some sort of validation if that employeeID does exist(maybe this is already taken care of when we declare it as foreign key)
+    private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="employee_id", referencedColumnName = "id")
+    private User employee;
+    @NotNull
     private LocalDate date;
     @Nullable
     private LocalTime startTime;
     @Nullable
     private LocalTime endTime;
-    private String breakLength; //TODO: breaklength cannot be negative or over 24h
-    private String expectedHours;//TODO: expectedHours cannot be negative or over 24h
-    private String actualHours;//TODO: actualHours cannot be negative or over 24h
+    @Min(value = 0) @Max(value = 24)
+    private double breakLength;
+    @Min(value = 0) @Max(value = 24)
+    private double expectedHours;
+    @Min(value = 0) @Max(value = 24)
+    private double actualHours;
     @Nullable
     private AbsenceStatus absenceStatus;
-    private Long projectId; //We need some sort of validation that project does exist in project DB (Foreign key?)
+    @Min(value = 0) @Max(value = 24)
+    private double holidayHours;
+    @Min(value = 0) @Max(value = 24)
+    private double sickHours;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id", referencedColumnName = "id")
+    private Project project;
+
     private boolean finalized;
 
+    public TimeTableDay() {
+    }
 
-    public TimeTableDay(){}
-
-    public TimeTableDay(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime, Duration breakLength,
-                        Duration expectedHours, AbsenceStatus absenceStatus, Long projectId){
-        this.employeeId = employeeId;
+    public TimeTableDay(LocalDate date, User employee, LocalTime startTime, LocalTime endTime, double breakLength,
+                        double expectedHours, AbsenceStatus absenceStatus, Project project) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.breakLength = DatesAndDurationsCalculator.convertDurationToString(breakLength);
-        this.expectedHours = DatesAndDurationsCalculator.convertDurationToString(expectedHours);
+
+        this.breakLength = breakLength;
+        this.expectedHours = expectedHours;
         this.absenceStatus = absenceStatus;
-        this.projectId = projectId;
+        this.project = project;
         this.finalized = false;
-        this.actualHours = calculateActualHours(this.startTime, this.endTime, this.breakLength);
+        this.actualHours = calculateActualHours();
+
+        if(this.absenceStatus == null){
+            this.sickHours = 0;
+            this.holidayHours = 0;
+        }
+        else{
+            calculateMissingHours(); // calculates sickness and holiday hours
+        }
+
     }
 
-    public String calculateActualHours(LocalTime startTime, LocalTime endTime, String breakLength) {
-        if (this.startTime == null) { //if sick or on holiday, the expected hours are achieved
-            this.actualHours = expectedHours;
+    public double calculateActualHours() {
+        if (this.absenceStatus != null) { //if sick or on holiday, the expected hours are achieved
+            double actualHours = expectedHours;
             return actualHours;
-        } else { //otherwise calculate from start-,end- and breaktime
-            String timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
-            return DatesAndDurationsCalculator.substractDurationStrings(timeAtWork, this.breakLength);
+        }
+        else if(this.absenceStatus == null && this.startTime == null){ //this covers weekends/public holidays
+            return 0;
+        }
+        else { //otherwise calculate from start-,end- and breaktime
+            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            //convert Duration to float hours:
+            Long minutes = timeAtWork.toMinutes();
+            double actualHours = minutes / 60.0 - this.breakLength;
+            return actualHours;
         }
     }
 
+    public void calculateMissingHours() {
+        if (this.startTime == null && this.absenceStatus == AbsenceStatus.HOLIDAY){ // if employee never started to work
+            this.holidayHours = this.expectedHours;
+        }
+        else if (this.startTime == null && this.absenceStatus == AbsenceStatus.SICK){ // if employee never started to work
+            this.sickHours = this.expectedHours;
+        }
+        //All remaining cases: if employee did start with work...
+        else if (this.absenceStatus == AbsenceStatus.HOLIDAY) {
+            this.sickHours = 0;
+            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            Long minutes = timeAtWork.toMinutes();
+            double workedHours = minutes / 60.0 - this.breakLength;
+            this.holidayHours = this.expectedHours - workedHours;
+        }
+        else if(this.absenceStatus == AbsenceStatus.SICK){
+            this.holidayHours = 0;
+            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            Long minutes = timeAtWork.toMinutes();
+            double workedHours = minutes / 60.0 - this.breakLength;
+            this.sickHours = this.expectedHours - workedHours;
+    }
+    }
+
+    public void assignUser(User employee) {
+        this.employee = employee;
+    }
 }

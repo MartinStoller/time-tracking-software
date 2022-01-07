@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
+
 import java.util.List;
 
 @RestController
@@ -22,7 +23,6 @@ public class UserController {
 
     @GetMapping("/all")
     public List<User> getAllUsers(){return userService.getAllUsers();}
-
 
     //todo only Admin
     @PostMapping("/create")
