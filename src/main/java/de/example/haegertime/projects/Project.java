@@ -35,10 +35,7 @@ public class Project {
     private LocalDate start;
     @Nullable
     private LocalDate end;
-    @NotBlank
-    private String customer;
-    @NotBlank
-    private String billingAddress;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "project")
@@ -46,11 +43,9 @@ public class Project {
 
     public Project(){} //Empty Constructor needed for hibernate
 
-    public Project(String title, LocalDate start, LocalDate end, String customer, String billingAddress){
+    public Project(String title, LocalDate start, LocalDate end){
         this.title = title;
         this.start = start;
         this.end = end;
-        this.customer = customer;
-        this.billingAddress = billingAddress;
     }
 }

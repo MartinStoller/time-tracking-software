@@ -11,6 +11,7 @@ import java.util.List;
 
 @Configuration
 public class TimeTableConfig {
+
 /*    @Bean
     CommandLineRunner clrTimeTable(TimeTableRepository repository){
         return args -> {
@@ -45,5 +46,6 @@ public class TimeTableConfig {
                     null, 0, 6, AbsenceStatus.HOLIDAY, null);
         repository.saveAll(List.of(ttd1, ttd2, ttd3, ttd4, ttd5, ttd6, ttd7, ttd8, ttd9, ttd10));
         };
-    }*/
+    }
+    */
 }
