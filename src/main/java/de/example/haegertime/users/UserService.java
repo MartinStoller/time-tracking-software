@@ -72,6 +72,15 @@ public class UserService {
         userRepository.save(updateUser);
         return updateUser;
     }
+
+    //unvollständig
+    public User updateUserName(Long id, String newUserName) {
+        User updateUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("")
+        );
+        userRepository.save(updateUser);
+        return updateUser;
+    }
 }
 
 

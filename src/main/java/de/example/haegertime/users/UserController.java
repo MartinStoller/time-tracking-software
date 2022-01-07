@@ -78,6 +78,12 @@ public class UserController {
         User logged = userService.getUserByUserName(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
+
+
+    @PutMapping("/update/username/{id}")
+    public ResponseEntity<User> updateUserName(Long id, String newUserName) {
+        return ResponseEntity.ok(userService.updateUserName(id, newUserName));
+    }
 }
 
 
