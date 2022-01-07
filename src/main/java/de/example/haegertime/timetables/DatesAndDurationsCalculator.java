@@ -27,13 +27,12 @@ public class DatesAndDurationsCalculator {
         return durationFormatter.print(difference);
     }
 
-    public static String getDurationBetweenLocalTimes(java.time.LocalTime lt1, java.time.LocalTime lt2) {
+    public static Duration getDurationBetweenLocalTimes(java.time.LocalTime lt1, java.time.LocalTime lt2) {
         /**
          * Takes 2 LocalTimes (HH:MM),delivers the Duration in between.
          * Needed to calculate the duration between starting and ending the workday.
          */
-        Duration duration = Duration.between(lt2, lt1);
-        return duration.toHoursPart() + ":" + duration.toMinutesPart();
+        return Duration.between(lt2, lt1);
     }
 
     public static String convertDurationToString(Duration dur1) {

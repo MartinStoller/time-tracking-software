@@ -10,7 +10,7 @@ import java.util.List;
 
 @Configuration
 public class ProjectsConfig {
-    @Bean
+/*    @Bean
     CommandLineRunner clrProjects(ProjectRepository repository) {
         return args -> {
             Project proj1 = new Project("Homepage Maintenance BMW", LocalDate.of(1995, Month.JULY, 22), LocalDate.of(2021, Month.AUGUST, 2), "BMW AG", "80375 München, BlaBlaStraße 4");
@@ -22,5 +22,5 @@ public class ProjectsConfig {
             Project proj7 = new Project("Bohrmaschinenautomatisierungsprojekt XY", LocalDate.of(1992, Month.JULY, 13), null, "Hilti", "Österreich, 20533 Bludenz, Am Ösieck 122");
             repository.saveAll(List.of(proj1, proj2, proj3, proj4, proj5, proj6, proj7));
         };
-    }
+    }*/
 }

@@ -18,9 +18,13 @@ import java.time.format.DateTimeFormatter;
 
 public class Test {
     public static void main(String[] args) throws ParseException {
-        TimeTableDay ttd1 = new TimeTableDay(
-                1L, LocalDate.of(2022, Month.JANUARY, 1), null,
-                null, Duration.parse("PT0H0M"), Duration.parse("PT0H0M"), null, 1L);
-        System.out.println(ttd1.toString());
+        Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(LocalTime.of(7,30), LocalTime.of(10,15));
+        System.out.println(timeAtWork);
+        Long minutes = timeAtWork.toMinutes();
+        System.out.println(minutes);
+        double actualHours = minutes/60.0;
+        System.out.println(actualHours);
+
+
     }
 }

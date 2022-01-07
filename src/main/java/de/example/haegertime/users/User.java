@@ -1,5 +1,7 @@
 package de.example.haegertime.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.example.haegertime.timetables.TimeTableDay;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -8,6 +10,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -25,6 +29,11 @@ public class User {
             generator = "user_sequence"
     )
     private Long id;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private Set<TimeTableDay> timetableDays = new HashSet<>();
+
     @NotBlank
     private String first;
     @NotBlank
@@ -56,4 +65,5 @@ public class User {
          */
         //TODO: Check where and how to implement this function (repository/controller etc)
     }
+
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Configuration
 public class UserConfig {
-    @Bean
+/*    @Bean
     CommandLineRunner clrUsers(UserRepository userRepository){
         return  args -> {
             User usr1 = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
@@ -20,5 +20,5 @@ public class UserConfig {
             User usr7 = new User("Waldo", "Holzkopf", "redbull!", "holzkopf@gmx.net", Role.EMPLOYEE);
             userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7));
         };
-    }
+    }*/
 }
