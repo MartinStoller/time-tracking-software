@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
 
 @Data
 @Entity
@@ -24,13 +23,13 @@ public class TimeTableDay {
 
     @Id
     @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
+            name = "timetable_sequence",
+            sequenceName = "timetable_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+            generator = "timetable_sequence"
     )
     private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
 

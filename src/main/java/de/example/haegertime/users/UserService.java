@@ -1,25 +1,19 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.advice.ItemNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import de.example.haegertime.email.EmailService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import de.example.haegertime.users.User;
-
-import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor //takes care of constructor
 public class UserService {
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -31,6 +25,8 @@ public class UserService {
         if (userById.isPresent()) {
             throw new IllegalArgumentException();
         }
+        emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
+                emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
         userRepository.save(user);
     }
 
@@ -51,6 +47,7 @@ public class UserService {
     //todo change to only Admin
     public void deleteUser(long id) {
         if (userRepository.findById(id).isPresent()) {
+
             userRepository.deleteById(id);
         } else {
             throw new ItemNotFoundException("Dieser User ist nicht in der Datenbank");
