@@ -3,6 +3,7 @@ package de.example.haegertime.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,6 +21,7 @@ import java.util.Set;
 @Entity
 @Table(name="users")
 @Validated
+@AllArgsConstructor
 public class User {
     @Id
     @SequenceGenerator(
@@ -59,4 +61,5 @@ public class User {
         this.role = role;
         this.frozen = true;
     }
+
 }

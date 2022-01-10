@@ -42,4 +42,8 @@ public class TimeTableService {
     }
 
 
+    public List<List<Double>> totalHoursAllEmployeeOnAProject(Long projectId) {
+        return ttRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+    }
+
 }

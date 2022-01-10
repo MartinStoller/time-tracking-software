@@ -35,4 +35,10 @@ public class TimeTableController {
         return ttService.actualHourShow(id);
     }
 
+
+    @GetMapping("/hours/employees/{id}")
+    public List<List<Double>> totalHoursEmployeeShow(@PathVariable("id") Long projectId) {
+        return ttService.totalHoursAllEmployeeOnAProject(projectId);
+    }
+
 }

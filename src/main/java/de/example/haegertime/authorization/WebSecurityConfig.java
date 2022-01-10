@@ -41,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/api/user").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
-                .antMatchers(HttpMethod.POST,"/customer/create").hasAnyAuthority("ADMIN","BOOKKEEPER")
+                .antMatchers(HttpMethod.POST,"/api/customer/create").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/customer/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/customer/update").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/customer/addproject/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
@@ -59,6 +59,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/deactiv/{id}").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/user/updaterole/{id}").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/timetable/actualhours/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
+                .antMatchers("/api/user/registertimetable").hasAnyAuthority("EMPLOYEE")
+                .antMatchers("/api/invoice/export/excel").hasAnyAuthority("BOOKKEEPER")
+                .antMatchers("/api/timetable/hours/employees/{id}").hasAnyAuthority("BOOKKEEPER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()

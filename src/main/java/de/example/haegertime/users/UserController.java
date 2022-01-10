@@ -1,6 +1,7 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.authorization.MyUserDetails;
+import de.example.haegertime.timetables.TimeTableDay;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -114,6 +115,12 @@ public class UserController {
     @PutMapping("/updaterole/{id}")
     public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
         return ResponseEntity.ok(userService.updateRoleUser(id, role));
+    }
+
+    @PutMapping("/registertimetable")
+    public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
+        String username = principal.getName();
+        return userService.registerNewTimeTable(timeTableDay, username);
     }
 }
 
