@@ -1,5 +1,6 @@
 package de.example.haegertime.timetables;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
 import lombok.Data;
@@ -34,10 +35,11 @@ public class TimeTableDay {
             generator = "user_sequence"
     )
     private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
-
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="employee_id", referencedColumnName = "id")
     private User employee;
+
     @NotNull
     private LocalDate date;
     @Nullable
@@ -57,17 +59,17 @@ public class TimeTableDay {
     @Min(value = 0) @Max(value = 24)
     private double sickHours;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_id", referencedColumnName = "id")
-    private Project project;
+    //@ManyToOne(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "project_id", referencedColumnName = "id")
+    private Long projectId;
 
     private boolean finalized;
 
     public TimeTableDay() {
     }
 
-    public TimeTableDay(LocalDate date, User employee, LocalTime startTime, LocalTime endTime, double breakLength,
-                        double expectedHours, AbsenceStatus absenceStatus, Project project) {
+    public TimeTableDay(LocalDate date, LocalTime startTime, LocalTime endTime, double breakLength,
+                        double expectedHours, AbsenceStatus absenceStatus, Long projectId) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -75,7 +77,7 @@ public class TimeTableDay {
         this.breakLength = breakLength;
         this.expectedHours = expectedHours;
         this.absenceStatus = absenceStatus;
-        this.project = project;
+        this.projectId = projectId;
         this.finalized = false;
         this.actualHours = calculateActualHours();
 
@@ -127,10 +129,10 @@ public class TimeTableDay {
             Long minutes = timeAtWork.toMinutes();
             double workedHours = minutes / 60.0 - this.breakLength;
             this.sickHours = this.expectedHours - workedHours;
-    }
+        }
     }
 
-    public void assignUser(User employee) {
-        this.employee = employee;
-    }
+
+
+
 }

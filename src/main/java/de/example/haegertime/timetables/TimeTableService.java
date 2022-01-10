@@ -1,23 +1,25 @@
 package de.example.haegertime.timetables;
 
-import de.example.haegertime.users.User;
-import de.example.haegertime.users.UserRepository;
-import de.example.haegertime.users.UserService;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class TimeTableService {
 
     private final TimeTableRepository ttRepository;
-    private final UserRepository userRepository;
 
-    public TimeTableService(TimeTableRepository ttr, UserRepository usr) {
+    @Autowired
+    public TimeTableService(TimeTableRepository ttr) {
         this.ttRepository = ttr;
-        this.userRepository = usr;
+
     }
 
     public List<TimeTableDay> getEntireTimetable(){return ttRepository.findAll();}
@@ -26,11 +28,18 @@ public class TimeTableService {
         TimeTableDay ttd = ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
         return ttd;
     }
-
+    /*
     public TimeTableDay assignDayToEmployee(Long dayId, Long employeeId) throws InstanceNotFoundException {
         TimeTableDay day = ttRepository.findById(dayId).get();
         User user = userRepository.findById(employeeId).get();
         day.assignUser(user);
         return ttRepository.save(day);
     }
+    */
+
+    public List<TimeTableDay> actualHourShow(Long id) {
+        return ttRepository.getTimeTableDayByEmployeeId(id);
+    }
+
+
 }

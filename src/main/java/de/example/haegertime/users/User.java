@@ -1,6 +1,7 @@
 package de.example.haegertime.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
@@ -10,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.sql.Time;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -31,8 +34,9 @@ public class User {
     private Long id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee")
-    private Set<TimeTableDay> timetableDays = new HashSet<>();
+    @OneToMany(targetEntity = TimeTableDay.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="employee_id", referencedColumnName = "id")
+    List<TimeTableDay> timeTableDayList;
 
     @NotBlank
     private String first;

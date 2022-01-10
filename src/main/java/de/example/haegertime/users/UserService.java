@@ -2,13 +2,9 @@ package de.example.haegertime.users;
 
 import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
+import de.example.haegertime.timetables.TimeTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import de.example.haegertime.users.User;
-
-import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +12,14 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final TimeTableRepository timeTableRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TimeTableRepository timeTableRepository) {
         this.userRepository = userRepository;
+        this.timeTableRepository = timeTableRepository;
     }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -118,8 +117,9 @@ public class UserService {
         } else {
             throw new InvalidRoleException("Die eingegebene Role ist ungültig");
         }
-
     }
+
+
 }
 
 
