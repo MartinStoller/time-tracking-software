@@ -8,7 +8,7 @@ import java.util.List;
 
 @Configuration
 public class UserConfig {
-
+    /*
     @Bean
     CommandLineRunner clrUsers(UserRepository userRepository){
         return  args -> {
@@ -22,4 +22,6 @@ public class UserConfig {
             userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7));
         };
     }
+    */
+
 }

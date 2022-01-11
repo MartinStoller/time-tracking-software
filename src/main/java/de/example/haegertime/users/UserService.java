@@ -137,7 +137,7 @@ public class UserService {
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
-        return "New Time Table registered "+ " actual hours " + actualhours;
+        return "New Time Table registered ";
     }
 }
 
