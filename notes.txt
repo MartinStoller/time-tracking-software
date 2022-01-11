@@ -18,3 +18,16 @@ May to one, one to many, many to many
 https://www.youtube.com/watch?v=f5bdUjEIbrg
 propertie file muss auf "updatee" sein hierfür.
 _______________________________________________________________________________________________________________________
+Conditional Validations
+https://stackoverflow.com/questions/54638255/spring-boot-validation-one-from-two-not-null   (both answers!)
+_______________________________________________________________________________________________________________________
+Authorization based on rolls:
+https://www.codejava.net/frameworks/spring-boot/spring-boot-security-role-based-authorization-tutorial
+https://www.youtube.com/watch?v=i21h6ThUiWc&t=5s
+_______________________________________________________________________________________________________________________
+Automated Emails:
+https://www.youtube.com/watch?v=QwQuro7ekvc
+https://www.baeldung.com/spring-email
+https://stackoverflow.com/questions/43142137/sending-email-from-spring-boot-application-using-gmail
+writing tests for email sending: https://www.youtube.com/watch?v=MOODnDflO-M
+_______________________________________________________________________________________________________________________
