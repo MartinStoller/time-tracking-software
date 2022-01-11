@@ -46,7 +46,7 @@ public class User {
     @NotBlank @NotNull
     private String last;
     @NotBlank @Size(min=5, message = "Password is too short! It requires at least 5 characters.") @Size(max = 30, message = "Password is too long!")
-    private  String password;
+    private String password;
     @Column(unique = true) @Email
     private String email;
     private Role role;

@@ -5,14 +5,8 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
 
 public class DatesAndDurationsCalculator {
-    private PeriodFormatter durationFormatter = new PeriodFormatterBuilder()
-            .printZeroAlways().minimumPrintedDigits(2)
-            .appendHours().appendSuffix(":").appendMinutes().toFormatter();
-    private DateTimeFormatter localTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
     public static String substractDurationStrings(String dur1, String dur2) {
         /**
          * Takes 2 Strings, which must be in the HH:MM Format as input and delivers the Difference of Input1-Input2.

@@ -21,7 +21,13 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public List<User> getAllUsers(){return userService.getAllUsers();}
+    /**
+       if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
+       sort by last name alphabetically
+     */
+    public List<User> getAllUsers(@RequestParam(required = false) String sortBy){
+        return userService.getAllUsers(sortBy);
+    }
 
     //todo only Admin
     @PostMapping("/create")
