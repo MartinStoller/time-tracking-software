@@ -25,9 +25,9 @@ public class UserService {
         if (userById.isPresent()) {
             throw new IllegalArgumentException();
         }
+        userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
-        userRepository.save(user);
     }
 
 
@@ -47,8 +47,10 @@ public class UserService {
     //todo change to only Admin
     public void deleteUser(long id) {
         if (userRepository.findById(id).isPresent()) {
-
+            User user = userRepository.findById(id).get();
             userRepository.deleteById(id);
+            emailService.send(user.getEmail(), "Dein Haegertime Account wurde gelöscht",
+                    emailService.getEmailText(user.getFirst(), "Löschung derines Accounts"));
         } else {
             throw new ItemNotFoundException("Dieser User ist nicht in der Datenbank");
         }
@@ -68,6 +70,8 @@ public class UserService {
         updateUser.setRole(loggedUser.getRole());   //role darf nicht selbst ändern
         updateUser.setId(loggedUser.getId());
         userRepository.save(updateUser);
+        emailService.send(loggedUser.getEmail(), "Dein Haegertime Account wurde erstellt",
+                emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
         return updateUser;
     }
 }
