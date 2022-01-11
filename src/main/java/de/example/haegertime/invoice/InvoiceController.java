@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -52,48 +55,48 @@ public class InvoiceController {
     @GetMapping("/export/excel")
     public void exportToExcel(HttpServletResponse response, @RequestParam Long customerId,
                               @RequestParam Long projectId) throws IOException {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=invoice.xlsx";
+        String headerValue = "attachment; filename=invoice_"+currentDateTime+".xlsx";
         response.setHeader(headerKey, headerValue);
 
         Customer customer = customerService.findByIdCustomer(customerId);
         Project project = projectRepository.getById(projectId);
-        //List<Object> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
-        //List<User> employees = getAllEmployees(hoursAndEmployees);
-        //List<Double> totalHours = getTotalHours(hoursAndEmployees);
-        InvoiceExcelExporter invoiceExcelExporter = new InvoiceExcelExporter(customer, project, null, null);
+        List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
+        List<User> employees = getAllEmployees(hoursAndEmployees);
+        List<Double> totalHours = getTotalHours(hoursAndEmployees);
+        InvoiceExcelExporter invoiceExcelExporter =
+                new InvoiceExcelExporter(customer, project, employees, totalHours);
         invoiceExcelExporter.export(response);
     }
-    /*
 
-    private List<Object> getEmployeesAndTotalHours(Long projectId) {
+
+    private List<List<Double>> getEmployeesAndTotalHours(Long projectId) {
         return timeTableRepository.getTotalHoursAllEmployeeOnAProject(projectId);
     }
 
-    private List<User> getAllEmployees(List<Object> list) {
+    private List<User> getAllEmployees(List<List<Double>> list) {
         List<User> users = new ArrayList<>();
-        int size = list.size();
-        Double[][] maptoDouble = (Double[][]) list.stream().toArray();
 
-        for (int i=0; i < size; i++) {
-            double userId = maptoDouble[i][1];
-            Long userLongId = (long)userId;
-            User user = userRepository.findById(userLongId).get();
+        for (int i=0; i < list.size(); i++) {
+            List<Double> item = list.get(i);
+            Long userId = item.get(1).longValue();
+            User user = userRepository.findById(userId).get();
             users.add(user);
         }
         return users;
     }
 
-    private List<Double> getTotalHours(List<Object> list) {
+    private List<Double> getTotalHours(List<List<Double>> list) {
         List<Double> totalHoursList = new ArrayList<>();
-        int size = list.size();
-        Double[][] maptoDouble = (Double[][]) list.stream().toArray();
-        for (int i=0; i < size; i++) {
-            double totalHours = maptoDouble[i][0];
-            totalHoursList.add(totalHours);
+        for (int i=0; i < list.size(); i++) {
+            List<Double> item = list.get(i);
+            Double hours = item.get(0);
+            totalHoursList.add(hours);
         }
         return totalHoursList;
     }
-    */
+
 }

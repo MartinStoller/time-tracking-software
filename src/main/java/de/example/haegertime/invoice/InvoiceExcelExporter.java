@@ -87,12 +87,12 @@ public class InvoiceExcelExporter {
         createCell(row, 3, project.getId(), style);
         createCell(row, 4, project.getTitle(), style);
 
-        int rowCount = 5;
+        int rowCount = 6;
         int totalHourIndex = 0;
         for (User employee : employees) {
             Row row2 = sheet.createRow(rowCount++);
             int columnCount = 0;
-            createCell(row2, columnCount, employee.getId(), style);
+            createCell(row2, columnCount++, employee.getId(), style);
             createCell(row2, columnCount++, employee.getFirst(), style);
             createCell(row2, columnCount++, employee.getLast(), style);
             createCell(row2, columnCount++, totalHours.get(totalHourIndex), style);
