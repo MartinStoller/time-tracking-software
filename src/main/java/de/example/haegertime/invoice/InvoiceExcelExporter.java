@@ -25,7 +25,8 @@ public class InvoiceExcelExporter {
     private List<User> employees;
     private List<Double> totalHours;
 
-    public InvoiceExcelExporter (Customer customer, Project project, List<User> employees, List<Double> totalHours) {
+    public InvoiceExcelExporter (Customer customer, Project project,
+                                 List<User> employees, List<Double> totalHours) {
         this.customer = customer;
         this.project = project;
         this.employees = employees;

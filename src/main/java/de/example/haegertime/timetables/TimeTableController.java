@@ -28,7 +28,6 @@ public class TimeTableController {
     }
 
  */
-
     // TODO: return only actual hours with dates, the result should be sorted according to dates
     @GetMapping("/actualhours/{id}")
     public List<TimeTableDay> actualHourShow(@PathVariable("id") Long id){

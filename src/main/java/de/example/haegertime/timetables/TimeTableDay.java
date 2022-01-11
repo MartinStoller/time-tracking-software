@@ -101,6 +101,7 @@ public class TimeTableDay {
 
     }
 
+
     public double calculateActualHours() {
         if (this.absenceStatus != null) { //if sick or on holiday, the expected hours are achieved
             double actualHours = expectedHours;

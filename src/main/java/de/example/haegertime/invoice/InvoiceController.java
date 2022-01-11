@@ -1,12 +1,16 @@
 package de.example.haegertime.invoice;
 
+import com.lowagie.text.DocumentException;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.customer.CustomerService;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
+import de.example.haegertime.projects.ProjectService;
 import de.example.haegertime.timetables.TimeTableRepository;
+import de.example.haegertime.timetables.TimeTableService;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
+import de.example.haegertime.users.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,19 +28,19 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
     private final CustomerService customerService;
-    private final ProjectRepository projectRepository;
-    private final TimeTableRepository timeTableRepository;
-    private final UserRepository userRepository;
+    private final ProjectService projectService;
+    private final TimeTableService timeTableService;
+    private final UserService userService;
 
     public InvoiceController(InvoiceService invoiceService,
                              CustomerService customerService,
-                             ProjectRepository projectRepository,
-                             TimeTableRepository timeTableRepository, UserRepository userRepository) {
+                             ProjectService projectService,
+                             TimeTableService timeTableService, UserService userService) {
         this.invoiceService = invoiceService;
         this.customerService = customerService;
-        this.projectRepository = projectRepository;
-        this.timeTableRepository = timeTableRepository;
-        this.userRepository = userRepository;
+        this.projectService = projectService;
+        this.timeTableService = timeTableService;
+        this.userService = userService;
     }
 
 
@@ -63,7 +67,7 @@ public class InvoiceController {
         response.setHeader(headerKey, headerValue);
 
         Customer customer = customerService.findByIdCustomer(customerId);
-        Project project = projectRepository.getById(projectId);
+        Project project = projectService.getById(projectId);
         List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
         List<User> employees = getAllEmployees(hoursAndEmployees);
         List<Double> totalHours = getTotalHours(hoursAndEmployees);
@@ -73,8 +77,34 @@ public class InvoiceController {
     }
 
 
+    @GetMapping("/export/pdf")
+    public void exportToPDF(HttpServletResponse response,@RequestParam Long customerId,
+                            @RequestParam Long projectId) throws DocumentException, IOException {
+        response.setContentType("application/pdf");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=invoice_"+currentDateTime+".pdf";
+        response.setHeader(headerKey, headerValue);
+
+        Customer customer = customerService.findByIdCustomer(customerId);
+        Project project = projectService.getById(projectId);
+        List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
+        List<User> employees = getAllEmployees(hoursAndEmployees);
+        List<Double> totalHours = getTotalHours(hoursAndEmployees);
+        InvoicePDFExporter exporter = new InvoicePDFExporter(customer, project, employees, totalHours);
+        exporter.export(response);
+    }
+
+
+
+
+
+
+
     private List<List<Double>> getEmployeesAndTotalHours(Long projectId) {
-        return timeTableRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+        return timeTableService.totalHoursAllEmployeeOnAProject(projectId);
     }
 
     private List<User> getAllEmployees(List<List<Double>> list) {
@@ -83,7 +113,7 @@ public class InvoiceController {
         for (int i=0; i < list.size(); i++) {
             List<Double> item = list.get(i);
             Long userId = item.get(1).longValue();
-            User user = userRepository.findById(userId).get();
+            User user = userService.findByIdUser(userId);
             users.add(user);
         }
         return users;
