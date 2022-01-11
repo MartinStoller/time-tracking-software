@@ -1,5 +1,6 @@
 package de.example.haegertime.timetables;
 
+import de.example.haegertime.advice.ItemNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
@@ -21,13 +22,6 @@ public class TimeTableController {
     public TimeTableDay getTimetableDay(@PathVariable("id") Long id) throws InstanceNotFoundException {
         return ttService.getTimetableDay(id);
     }
-/*
-    @PutMapping("/assignDay/{dayId}/toEmployee/{employeeId}")
-    public void assignDayToEmployee(@PathVariable Long dayId, @PathVariable Long employeeId) throws InstanceNotFoundException {
-        ttService.assignDayToEmployee(dayId, employeeId);
-    }
-
- */
 
     // TODO: return only actual hours with dates, the result should be sorted according to dates
     @GetMapping("/actualhours/{id}")
@@ -41,4 +35,13 @@ public class TimeTableController {
         return ttService.totalHoursAllEmployeeOnAProject(projectId);
     }
 
+    @PutMapping("/assignEmployee{employeeId}/toDay{dayId}")
+    public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
+        ttService.assignEmployeeToDay(dayId, employeeId);
+    }
+
+    @PutMapping("/assignProject{projectId}/toDay{dayId}")
+    public void assignProjectToDay(@PathVariable Long projectId, @PathVariable Long dayId) throws ItemNotFoundException {
+        ttService.assignProjectToDay(dayId, projectId);
+    }
 }
