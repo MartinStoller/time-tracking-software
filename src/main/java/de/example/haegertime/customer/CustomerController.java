@@ -1,14 +1,17 @@
 package de.example.haegertime.customer;
 
+import de.example.haegertime.invoice.InvoiceExcelExporter;
 import de.example.haegertime.projects.Project;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("api/customer")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -50,4 +53,20 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /*
+    @GetMapping("/export/excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=invoice.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        Customer customer = customerService.findByIdCustomer(customerId);
+        Project project = projectRepository.getById(projektId);
+
+        List<Customer> customers = customerService.findAllCustomer();
+        InvoiceExcelExporter invoiceExcelExporter = new InvoiceExcelExporter(customers);
+        invoiceExcelExporter.export(response);
+    }
+    */
 }

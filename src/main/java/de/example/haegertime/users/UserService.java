@@ -1,9 +1,18 @@
 package de.example.haegertime.users;
 
+import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
+import de.example.haegertime.timetables.TimeTableDay;
+import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import de.example.haegertime.users.User;
+
+import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +22,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
-
+    private final TimeTableRepository timeTableRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -21,10 +30,6 @@ public class UserService {
 
 
     public void createUser(User user) {
-        Optional<User> userById = userRepository.findById(user.getId());
-        if (userById.isPresent()) {
-            throw new IllegalArgumentException();
-        }
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
@@ -69,10 +74,70 @@ public class UserService {
         updateUser.setEmail(loggedUser.getEmail()); //email darf nicht selbst ändern
         updateUser.setRole(loggedUser.getRole());   //role darf nicht selbst ändern
         updateUser.setId(loggedUser.getId());
+        updateUser.setFrozen(loggedUser.isFrozen());
         userRepository.save(updateUser);
-        emailService.send(loggedUser.getEmail(), "Dein Haegertime Account wurde erstellt",
-                emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
         return updateUser;
+    }
+
+
+    public User updateUserName(Long id, String newUserName) {
+        User updateUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mit Id "+id+"" +
+                        " ist nicht in der DB")
+        );
+        String email = updateUser.getEmail();
+        String first = updateUser.getFirst();
+        updateUser.setEmail(newUserName);
+        userRepository.save(updateUser);
+        emailService.send(email, "Dein Profil wurde geupdated",
+                emailService.getEmailText(first, "Update deiner Accountdetails"));
+        return updateUser;
+    }
+
+
+    public void deactivUser(Long id) {
+        User deactivUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                        " ist nicht in der DB")
+        );
+        deactivUser.setFrozen(false);
+        userRepository.save(deactivUser);
+    }
+
+
+    public void reactivUser(Long id) {
+        User reactivUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                        " ist nicht in der DB")
+        );
+        reactivUser.setFrozen(true);
+        userRepository.save(reactivUser);
+    }
+
+    public User updateRoleUser(Long id, String role) {
+        User updateRoleUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+" ist nicht in der DB")
+        );
+        if(role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER") ) {
+            updateRoleUser.setRole(Role.valueOf(role));
+            userRepository.save(updateRoleUser);
+            return updateRoleUser;
+        } else {
+            throw new InvalidRoleException("Die eingegebene Role ist ungültig");
+        }
+    }
+
+    @Transactional
+    public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
+        double actualhours = timeTableDay.calculateActualHours();
+        timeTableDay.setActualHours(actualhours);
+        timeTableDayList.add(timeTableDay);
+        user.setTimeTableDayList(timeTableDayList);
+        timeTableRepository.save(timeTableDay);
+        userRepository.save(user);
+        return "New Time Table registered "+ " actual hours " + actualhours;
     }
 }
 

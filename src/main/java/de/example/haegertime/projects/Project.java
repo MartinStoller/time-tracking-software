@@ -37,9 +37,7 @@ public class Project {
     private LocalDate end;
 
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "project")
-    private Set<TimeTableDay> timeTableDays = new HashSet<>();
+
 
     public Project(){} //Empty Constructor needed for hibernate
 

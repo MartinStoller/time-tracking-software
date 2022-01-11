@@ -1,13 +1,13 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.authorization.MyUserDetails;
+import de.example.haegertime.timetables.TimeTableDay;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-
 import java.util.List;
 
 @RestController
@@ -76,6 +76,51 @@ public class UserController {
         String username = loggedUser.getUsername();
         User logged = userService.getUserByUserName(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
+    }
+
+
+    /**
+     * Username eines Nutzers ändern (ADMIN)
+     * @param id    Nutzer ID
+     * @param newUserName neue E-Mail-Adresse
+     * @return  aktualisierter Nutzer
+     */
+    @PutMapping("/update/username/{id}")
+    public ResponseEntity<User> updateUserName(Long id,@RequestParam("email") String newUserName) {
+        return ResponseEntity.ok(userService.updateUserName(id, newUserName));
+    }
+
+    /**
+     * Deaktivieren einen Benutzer
+     * @param id Benutzer ID
+     * @return
+     */
+    @PutMapping("/deactiv/{id}")
+    public ResponseEntity<Void> deactivUser(@PathVariable Long id) {
+        userService.deactivUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Reaktivieren einen Benutzer
+     * @param id Benutzer ID
+     * @return
+     */
+    @PutMapping("/reactiv/{id}")
+    public ResponseEntity<Void> reactivUser(@PathVariable Long id) {
+        userService.reactivUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/updaterole/{id}")
+    public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
+        return ResponseEntity.ok(userService.updateRoleUser(id, role));
+    }
+
+    @PutMapping("/registertimetable")
+    public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
+        String username = principal.getName();
+        return userService.registerNewTimeTable(timeTableDay, username);
     }
 }
 

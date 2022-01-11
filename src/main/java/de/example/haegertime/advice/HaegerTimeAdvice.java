@@ -30,4 +30,10 @@ public class HaegerTimeAdvice {
         return new ResponseEntity<>(apiException, badRequest);
     }
 
+    @ExceptionHandler(value = {InvalidRoleException.class})
+    public ResponseEntity<Object> handleInvalidRoleException(InvalidRoleException e) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        APIException apiException = new APIException(e.getMessage(), badRequest);
+        return new ResponseEntity<>(apiException, badRequest);
+    }
 }

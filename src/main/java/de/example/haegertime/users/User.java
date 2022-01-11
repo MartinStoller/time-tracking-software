@@ -1,7 +1,9 @@
 package de.example.haegertime.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -11,13 +13,16 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.sql.Time;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
 @Table(name="users")
 @Validated
+@AllArgsConstructor
 public class User {
     @Id
     @SequenceGenerator(
@@ -32,8 +37,9 @@ public class User {
     private Long id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee")
-    private Set<TimeTableDay> timetableDays = new HashSet<>();
+    @OneToMany(targetEntity = TimeTableDay.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="employee_id", referencedColumnName = "id")
+    List<TimeTableDay> timeTableDayList;
 
     @NotBlank @NotNull
     private String first;
@@ -44,7 +50,7 @@ public class User {
     @Column(unique = true) @Email
     private String email;
     private Role role;
-    private boolean frozen;
+    private boolean frozen; //frozen = true -> activ, frozen = false -> deactiv :)
 
     public User(){}
 
@@ -56,4 +62,5 @@ public class User {
         this.role = role;
         this.frozen = true;
     }
+
 }
