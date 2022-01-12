@@ -33,18 +33,34 @@ public class TimeTableService {
         return ttd;
     }
 
-    public TimeTableDay assignEmployeeToDay(Long dayId, Long employeeId) throws ItemNotFoundException {
+    public void assignEmployeeToDay(Long dayId, Long employeeId) throws ItemNotFoundException {
+        /**
+         TimeTableDays are always created with  this.employee = null. This function takes care of the assignment of a Employee(=Foreign key).
+         It´s given a dayId and EmployeeId and first finds the 2 Objects in the DB.
+         Then it updates the List of Employees which are linked to an employee.
+         Finally, the employee is assigned to the workday.
+         */
         TimeTableDay day = ttRepository.findById(dayId).orElseThrow(() -> new ItemNotFoundException("Day with id " + dayId + " not found."));
-        User user = userRepository.findById(employeeId).orElseThrow(() -> new ItemNotFoundException("Employee with id " + employeeId + " not found."));;
+        User user = userRepository.findById(employeeId).orElseThrow(() -> new ItemNotFoundException("Employee with id " + employeeId + " not found."));
+        List<TimeTableDay> newList= user.getTimeTableDayList();
+        newList.add(day);
+        user.setTimeTableDayList(newList);
         day.assignUser(user);
-        return ttRepository.save(day);
     }
 
-    public TimeTableDay assignProjectToDay(Long dayId, Long projectId) throws ItemNotFoundException {
+    public void assignProjectToDay(Long dayId, Long projectId) throws ItemNotFoundException {
+        /**
+         TimeTableDays are always created with  this.project = null. This function takes care of the assignment of a Project (=Foreign key).
+         It´s given a dayId and ProjectId and first finds the 2 Objects in the DB.
+         Then it updates the Set of Workdays which are linked to a project.
+         Finally, the Project is assigned to the workday.
+         */
         TimeTableDay day = ttRepository.findById(dayId).orElseThrow(() -> new ItemNotFoundException("Day with id " + dayId + " not found."));
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ItemNotFoundException("Project with id  " + projectId + " not found."));;
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ItemNotFoundException("Project with id  " + projectId + " not found."));
         day.assignProject(project);
-        return ttRepository.save(day);
+        Set<TimeTableDay> newTimeTableDays = project.getTimeTableDays();
+        newTimeTableDays.add(day);
+        project.setTimeTableDays(newTimeTableDays);
     }
 
     public List<TimeTableDay> actualHourShow(Long id) {
@@ -54,6 +70,11 @@ public class TimeTableService {
 
     public List<List<Double>> totalHoursAllEmployeeOnAProject(Long projectId) {
         return ttRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+    }
+
+    public void registerNewTimeTable(TimeTableDay timeTableDay) {
+        timeTableDay.setActualHours(timeTableDay.calculateActualHours());
+        ttRepository.save(timeTableDay);
     }
 
 }

@@ -1,17 +1,16 @@
 package de.example.haegertime.timetables;
 
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-
 import java.time.Duration;
 
 public class DatesAndDurationsCalculator {
+/*
     public static String substractDurationStrings(String dur1, String dur2) {
-        /**
+        */
+/**
          * Takes 2 Strings, which must be in the HH:MM Format as input and delivers the Difference of Input1-Input2.
          * Needed to calculate the actual working hours by substracting the break duration
-         */
+         *//*
+
         PeriodFormatter durationFormatter = new PeriodFormatterBuilder()
                 .printZeroAlways().minimumPrintedDigits(2)
                 .appendHours().appendSuffix(":").appendMinutes().toFormatter();
@@ -20,6 +19,7 @@ public class DatesAndDurationsCalculator {
         Period difference = period1.minus(period2).normalizedStandard();
         return durationFormatter.print(difference);
     }
+*/
 
     public static Duration getDurationBetweenLocalTimes(java.time.LocalTime lt1, java.time.LocalTime lt2) {
         /**
@@ -29,7 +29,7 @@ public class DatesAndDurationsCalculator {
         return Duration.between(lt2, lt1);
     }
 
-    public static String convertDurationToString(Duration dur1) {
+/*    public static String convertDurationToString(Duration dur1) {
         return dur1.toHoursPart() + ":" + dur1.toMinutesPart();
-    }
+    }*/
 }

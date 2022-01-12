@@ -1,6 +1,5 @@
 package de.example.haegertime.timetables;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
 import lombok.Data;
@@ -106,7 +105,7 @@ public class TimeTableDay {
             double actualHours = expectedHours;
             return actualHours;
         }
-        else if(this.absenceStatus == null && this.startTime == null){ //this covers weekends/public holidays
+        else if(this.startTime == null){ //this covers weekends/public holidays -> starttime usually null without absence status
             return 0;
         }
         else { //otherwise calculate from start-,end- and breaktime
