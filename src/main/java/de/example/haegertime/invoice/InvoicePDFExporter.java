@@ -1,9 +1,12 @@
 package de.example.haegertime.invoice;
 
-import com.lowagie.text.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.lowagie.text.Font;
-import com.lowagie.text.pdf.*;
-
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
@@ -13,10 +16,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
+@JacksonXmlRootElement
 public class InvoicePDFExporter {
+    @JacksonXmlProperty
     private Customer customer;
+    @JacksonXmlProperty
     private Project project;
+    @JacksonXmlProperty
     private List<User> employees;
+    @JacksonXmlProperty
     private List<Double> totalHours;
 
     public InvoicePDFExporter(Customer customer, Project project,
