@@ -4,6 +4,7 @@ import de.example.haegertime.advice.EmailAlreadyExistsException;
 import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
+import de.example.haegertime.timetables.AbsenceStatus;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -173,6 +175,18 @@ public class UserService {
         String userEmail = user.getEmail();
         emailService.send(userEmail, "Decline for holidays", "Hi "+user.getFirst()
                 +", your apply was cancelled" );
+    }
+
+    public List<TimeTableDay> showAllMyHolidays(String email) {
+        User user = userRepository.getUserByUserEmail(email);
+        List<TimeTableDay> ttd = user.getTimeTableDayList();
+        List<TimeTableDay> htt = new ArrayList<>();
+        for (TimeTableDay t : ttd) {
+            if (t.getAbsenceStatus() != null && t.getAbsenceStatus().toString().equals("HOLIDAY") ) {
+                htt.add(t);
+            }
+        }
+        return htt;
     }
 }
 

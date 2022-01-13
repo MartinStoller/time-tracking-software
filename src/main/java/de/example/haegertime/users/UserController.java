@@ -156,6 +156,12 @@ public class UserController {
         userService.declineForHoliday(employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/holidays")
+    public List<TimeTableDay> showAllMyHolidays(Principal principal) {
+        String email = principal.getName();
+        return userService.showAllMyHolidays(email);
+    }
 }
 
 

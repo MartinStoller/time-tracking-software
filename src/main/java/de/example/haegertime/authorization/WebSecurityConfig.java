@@ -71,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/absence/sick/employee/{id}").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/apply/holiday/{id}").hasAnyAuthority("BOOKEERPER","EMPLOYEE","ADMIN")
                 .antMatchers("/holiday/decline/employee/{id}").hasAnyAuthority("BOOKKEERPER","ADMIN")
+                .antMatchers("/holidays").hasAnyAuthority("EMPLOYEE","BOOKKEEPER","ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
