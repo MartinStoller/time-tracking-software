@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -38,7 +39,7 @@ public class Project {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project")
-    private Set<TimeTableDay> timeTableDays = new HashSet<>();
+    private List<TimeTableDay> timeTableDays;
 
 
     public Project(){} //Empty Constructor needed for hibernate

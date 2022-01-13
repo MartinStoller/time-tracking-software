@@ -29,12 +29,11 @@ public class UserController {
         return userService.getAllUsers(sortBy);
     }
 
-    //todo only Admin
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             this.userService.createUser(user);
-            return ResponseEntity.ok("User gespeichert");
+            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
                     HttpStatus.BAD_GATEWAY);

@@ -1,6 +1,8 @@
 package de.example.haegertime.timetables;
 
 import de.example.haegertime.advice.ItemNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
@@ -47,7 +49,13 @@ public class TimeTableController {
     }
 
     @PostMapping("/new")
-    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
+    public ResponseEntity<?> registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
+        return  new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping("/finalize/{dayId}")
+    public void  finalizeTimeTableDay(@PathVariable Long dayId) throws ItemNotFoundException {
+        ttService.finalizeTimeTableDay(dayId);
     }
 }

@@ -56,6 +56,7 @@ public class TimeTableDay {
     @Min(value = 0) @Max(value = 24)
     private double sickHours;
 
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     private Project project;
