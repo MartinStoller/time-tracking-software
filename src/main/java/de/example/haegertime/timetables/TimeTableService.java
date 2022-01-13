@@ -56,7 +56,7 @@ public class TimeTableService {
          It´s given a dayId and ProjectId and first finds the 2 Objects in the DB.
          Then it updates the Set of Workdays which are linked to a project.
          Finally, the Project is assigned to the workday.
-         */
+        */
         TimeTableDay day = ttRepository.findById(dayId).orElseThrow(() -> new ItemNotFoundException("Day with id " + dayId + " not found."));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ItemNotFoundException("Project with id  " + projectId + " not found."));
         day.assignProject(project);
@@ -85,5 +85,18 @@ public class TimeTableService {
                 "wurde nicht in der DB gefunden."));
         day.setFinalized(true);
         ttRepository.save(day);
+    }
+
+
+    public String overUnterHoursShow(Long employeeId) {
+        List<List<Double>> totalHours = ttRepository.getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
+        double totalActualHours = totalHours.get(0).get(0);
+        double totalExpectedHours = totalHours.get(0).get(1);
+        double sub = totalActualHours - totalExpectedHours;
+        if (sub < 0) {
+            return "Unter-Stunde: "+sub;
+        } else {
+            return "Über-Stunde "+sub;
+        }
     }
 }

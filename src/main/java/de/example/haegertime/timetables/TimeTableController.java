@@ -26,7 +26,7 @@ public class TimeTableController {
 
     @PutMapping("/assignDay/{dayId}/toEmployee/{employeeId}")
     public void assignDayToEmployee(@PathVariable Long dayId, @PathVariable Long employeeId) throws InstanceNotFoundException {
-        ttService.assignDayToEmployee(dayId, employeeId);
+        ttService.assignEmployeeToDay(dayId, employeeId);
     }
 
 

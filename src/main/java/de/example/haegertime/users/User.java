@@ -52,6 +52,9 @@ public class User {
     private Role role;
     private boolean frozen; //frozen = true -> activ, frozen = false -> deactiv :)
 
+    //Ab hier Urlaubstage (double), da man auch halbe Tage nehmen kann
+    private double urlaubstage;
+
     public User(){}
 
     public User(String first, String last, String password, String email, Role role){
@@ -61,6 +64,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.frozen = true;
+        this.urlaubstage = 30;
     }
 
 }
