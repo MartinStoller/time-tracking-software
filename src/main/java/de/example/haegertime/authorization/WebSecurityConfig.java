@@ -62,6 +62,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/registertimetable").hasAnyAuthority("EMPLOYEE")
                 .antMatchers("/api/invoice/export/excel").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/timetable/hours/employees/{id}").hasAnyAuthority("BOOKKEEPER")
+                .antMatchers("/api/timetable/assignEmployee/**").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
+                .antMatchers("/api/timetable/assignProject/**").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()

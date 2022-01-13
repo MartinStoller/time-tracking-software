@@ -38,12 +38,12 @@ public class TimeTableController {
         return ttService.totalHoursAllEmployeeOnAProject(projectId);
     }
 
-    @PutMapping("/assignEmployee{employeeId}/toDay{dayId}")
+    @PutMapping("/assignEmployee/{employeeId}/toDay/{dayId}")
     public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
         ttService.assignEmployeeToDay(dayId, employeeId);
     }
 
-    @PutMapping("/assignProject{projectId}/toDay{dayId}")
+    @PutMapping("/assignProject/{projectId}/toDay/{dayId}")
     public void assignProjectToDay(@PathVariable Long projectId, @PathVariable Long dayId) throws ItemNotFoundException {
         ttService.assignProjectToDay(dayId, projectId);
     }
