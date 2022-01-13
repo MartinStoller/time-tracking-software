@@ -123,6 +123,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateRoleUser(id, role));
     }
 
+
+    @PostMapping("/registertimetable")
+    public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
+        String username = principal.getName();
+        return userService.registerNewTimeTable(timeTableDay, username);
+    }
+
 }
 
 

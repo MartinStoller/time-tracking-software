@@ -1,7 +1,9 @@
 package de.example.haegertime.projects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.example.haegertime.customer.Customer;
 import de.example.haegertime.timetables.TimeTableDay;
+import de.example.haegertime.users.User;
 import lombok.Data;
 import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
@@ -37,8 +39,10 @@ public class Project {
     private LocalDate end;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "project")
-    private Set<TimeTableDay> timeTableDays = new HashSet<>();
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="pj_fk", referencedColumnName = "id")
+    private Customer customer;
+
 
 
     public Project(){} //Empty Constructor needed for hibernate

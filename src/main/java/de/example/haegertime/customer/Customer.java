@@ -34,4 +34,9 @@ public class Customer {
     @OneToMany(targetEntity = Project.class, cascade = CascadeType.ALL)
     @JoinColumn(name="pj_fk", referencedColumnName = "id")
     private List<Project> projectListe;
+
+    public Customer(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 }

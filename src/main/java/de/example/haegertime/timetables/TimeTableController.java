@@ -22,6 +22,12 @@ public class TimeTableController {
         return ttService.getTimetableDay(id);
     }
 
+    @PutMapping("/assignDay/{dayId}/toEmployee/{employeeId}")
+    public void assignDayToEmployee(@PathVariable Long dayId, @PathVariable Long employeeId) throws InstanceNotFoundException {
+        ttService.assignDayToEmployee(dayId, employeeId);
+    }
+
+
     // TODO: return only actual hours with dates, the result should be sorted according to dates
     @GetMapping("/actualhours/{id}")
     public List<TimeTableDay> actualHourShow(@PathVariable("id") Long id,
@@ -35,6 +41,7 @@ public class TimeTableController {
     public List<List<Double>> totalHoursEmployeeShow(@PathVariable("id") Long projectId) {
         return ttService.totalHoursAllEmployeeOnAProject(projectId);
     }
+
 
     @PutMapping("/assignEmployee{employeeId}/toDay{dayId}")
     public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
@@ -50,4 +57,11 @@ public class TimeTableController {
     public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
     }
+
+    @GetMapping("/overhours/{id}")
+    public String overHoursShow(@PathVariable("id") Long employeeId) {
+        return ttService.overUnterHoursShow(employeeId);
+    }
+
+
 }
