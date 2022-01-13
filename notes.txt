@@ -35,3 +35,9 @@ Log-in:
 i simplemented by MyUsderDetails class, which needs to extend Userdetails.class. Whatever the "ispassword()" function
 returns will be recognized as the password. Moreover it allows for easy implementation of the "frozen" boolean via the
 "isenabled()" function
+_______________________________________________________________________________________________________________________
+Patchmapping vs Putmapping:
+In Patchmapping the Object we modify is maintained and we only change the information we pass to the Object. All other
+Information stays. In Putmapping the entire Object is exchanged -> we need to pass all the information - not only the
+new. All not passed information is lost.
+https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios

@@ -1,5 +1,6 @@
 package de.example.haegertime.users;
 
+import de.example.haegertime.advice.EmailAlreadyExistsException;
 import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
@@ -37,6 +38,10 @@ public class UserService {
 
 
     public void createUser(User user) {
+        String mail = user.getEmail();
+        if (userRepository.existsByEmail(mail)){
+            throw new EmailAlreadyExistsException("Diese Email wird bereits verwendet.");
+        }
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
