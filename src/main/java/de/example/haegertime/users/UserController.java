@@ -52,7 +52,6 @@ public class UserController {
     }
 
 
-    //todo only Admin
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
