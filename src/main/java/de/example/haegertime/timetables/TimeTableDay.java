@@ -1,6 +1,5 @@
 package de.example.haegertime.timetables;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
 import lombok.Data;
@@ -33,7 +32,7 @@ public class TimeTableDay {
             generator = "timetable_sequence"
     )
     private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
-    @JsonIgnore
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="employee_id", referencedColumnName = "id")
     private User employee;
@@ -57,9 +56,9 @@ public class TimeTableDay {
     @Min(value = 0) @Max(value = 24)
     private double sickHours;
 
-    //@ManyToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "project_id", referencedColumnName = "id")
-    private Long projectId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id", referencedColumnName = "id")
+    private Project project;
 
     private boolean finalized;
 
@@ -79,7 +78,7 @@ public class TimeTableDay {
 
 
     public TimeTableDay(LocalDate date, LocalTime startTime, LocalTime endTime, double breakLength,
-                        double expectedHours, AbsenceStatus absenceStatus, Long projectId) {
+                        double expectedHours, AbsenceStatus absenceStatus) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -87,7 +86,7 @@ public class TimeTableDay {
         this.breakLength = breakLength;
         this.expectedHours = expectedHours;
         this.absenceStatus = absenceStatus;
-        this.projectId = projectId;
+
         this.finalized = false;
         this.actualHours = calculateActualHours();
 
@@ -107,7 +106,7 @@ public class TimeTableDay {
             double actualHours = expectedHours;
             return actualHours;
         }
-        else if(this.absenceStatus == null && this.startTime == null){ //this covers weekends/public holidays
+        else if(this.startTime == null){ //this covers weekends/public holidays -> starttime usually null without absence status
             return 0;
         }
         else { //otherwise calculate from start-,end- and breaktime
@@ -143,7 +142,13 @@ public class TimeTableDay {
         }
     }
 
+    public void assignUser(User employee) {
+        this.employee = employee;
+    }
 
+    public void assignProject(Project project) {
+        this.project = project;
+    }
 
 
 }

@@ -2,6 +2,8 @@ package de.example.haegertime.users;
 
 import de.example.haegertime.authorization.MyUserDetails;
 import de.example.haegertime.timetables.TimeTableDay;
+import de.example.haegertime.timetables.TimeTableService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,16 +14,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/user/")
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
+    private final TimeTableService ttService;
 
     @GetMapping("/all")
-    public List<User> getAllUsers(){return userService.getAllUsers();}
+    /**
+       if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
+       sort by last name alphabetically
+     */
+    public List<User> getAllUsers(@RequestParam(required = false) String sortBy){
+        return userService.getAllUsers(sortBy);
+    }
 
     //todo only Admin
     @PostMapping("/create")
@@ -117,11 +123,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateRoleUser(id, role));
     }
 
+
     @PostMapping("/registertimetable")
     public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
         String username = principal.getName();
         return userService.registerNewTimeTable(timeTableDay, username);
     }
+
 }
 
 

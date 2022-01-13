@@ -44,6 +44,7 @@ public class Project {
     private Customer customer;
 
 
+
     public Project(){} //Empty Constructor needed for hibernate
 
     public Project(String title, LocalDate start, LocalDate end){
