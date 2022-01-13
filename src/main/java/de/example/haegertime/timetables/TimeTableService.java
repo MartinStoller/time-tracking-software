@@ -46,4 +46,17 @@ public class TimeTableService {
         return ttRepository.getTotalHoursAllEmployeeOnAProject(projectId);
     }
 
+
+    public String overUnterHoursShow(Long employeeId) {
+        List<List<Double>> totalHours = ttRepository
+                .getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
+        double sumActualHours = totalHours.get(0).get(0);
+        double sumExpectedHours = totalHours.get(0).get(1);
+        double hours = sumActualHours - sumExpectedHours;
+        if(hours < 0) {
+            return ("Unter-Stunde: "+Math.abs(hours));
+        } else {
+            return ("Über-Stunde: "+hours);
+        }
+    }
 }
