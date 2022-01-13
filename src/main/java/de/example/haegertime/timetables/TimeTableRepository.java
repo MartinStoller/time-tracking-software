@@ -16,4 +16,8 @@ public interface TimeTableRepository extends JpaRepository<TimeTableDay, Long> {
             " GROUP BY s.employee.id")
     List<List<Double>> getTotalHoursAllEmployeeOnAProject(Long id);
 
+    @Query("SELECT SUM(s.actualHours), SUM(s.expectedHours) FROM TimeTableDay s WHERE s.employee.id = ?1")
+    List<List<Double>> getTotalActualHoursExpectedHoursByEmployeeId(Long employeeId);
+
+
 }

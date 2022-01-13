@@ -140,6 +140,19 @@ public class UserService {
     }
 
 
+    @Transactional
+    public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
+        double actualhours = timeTableDay.calculateActualHours();
+        timeTableDay.setActualHours(actualhours);
+        timeTableDayList.add(timeTableDay);
+        user.setTimeTableDayList(timeTableDayList);
+        timeTableRepository.save(timeTableDay);
+        userRepository.save(user);
+        return "New Time Table registered ";
+    }
+
 }
 
 

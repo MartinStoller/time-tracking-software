@@ -1,12 +1,9 @@
 package de.example.haegertime.invoice;
 
-import de.example.haegertime.customer.Customer;
-import de.example.haegertime.timetables.TimeTableDay;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 @Entity
 @Table(name = "Invoice")
 @Data
