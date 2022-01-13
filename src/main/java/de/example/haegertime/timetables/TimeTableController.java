@@ -48,7 +48,7 @@ public class TimeTableController {
         ttService.assignProjectToDay(dayId, projectId);
     }
 
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<?> registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
         return  new ResponseEntity<>(HttpStatus.CREATED);
