@@ -19,7 +19,7 @@ public class UserConfig {
             User usr5 = new User("Admiral", "Schneider", "fussball95", "spamfilter@gmail.com", Role.EMPLOYEE);
             User usr6 = new User("Franziska", "Frankenstein", "123Bergsteiger", "frafra@gmx.de", Role.BOOKKEEPER);
             User usr7 = new User("Waldo", "Holzkopf", "redbull!", "holzkopf@gmx.net", Role.EMPLOYEE);
-            userRepository.saveAll(List.of(usr1, usr2, usr3));
+            userRepository.saveAll(List.of(usr1, usr2, usr3, user4, user5, user6, user7));
         };
     }
 */
