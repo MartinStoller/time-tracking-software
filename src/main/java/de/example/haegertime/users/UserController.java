@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
 import java.util.List;
 
@@ -123,12 +124,38 @@ public class UserController {
     }
 
 
-    @PostMapping("/registertimetable")
+    @PostMapping("/register/timetable")
     public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
         String username = principal.getName();
         return userService.registerNewTimeTable(timeTableDay, username);
     }
 
+    @GetMapping("/holidays/rest")
+    public double showMyRestHolidays(Principal principal) {
+        String username = principal.getName();
+        return userService.showMyRestHolidays(username);
+    }
+
+
+    /**
+     * Sendet der Bookkeeper eine Anfrage zum Urlaubsbeantragen,
+     * der Bookkeeper kann entweder akzeptieren oder ablehnen
+     * @param employeeId
+     * @param dayId
+     * @param duration
+     */
+    @PostMapping("/apply/holiday/{id}")
+    public ResponseEntity<Void> applyForHoliday(@PathVariable("id") Long employeeId,@RequestParam Long dayId,
+                                @RequestParam double duration) {
+        userService.applyForHoliday(employeeId, dayId, duration);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/holiday/decline/employee/{id}")
+    public ResponseEntity<Void> declineForHoliday(@PathVariable("id") Long employeeId) {
+        userService.declineForHoliday(employeeId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
 
 

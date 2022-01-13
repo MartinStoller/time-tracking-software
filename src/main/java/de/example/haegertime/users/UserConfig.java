@@ -26,6 +26,6 @@ public class UserConfig {
             userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7));
         };
     }
-*/
 
+*/
 }

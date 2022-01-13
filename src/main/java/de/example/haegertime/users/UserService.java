@@ -153,6 +153,27 @@ public class UserService {
         return "New Time Table registered ";
     }
 
+    public double showMyRestHolidays(String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        return user.getUrlaubstage();
+    }
+
+    public void applyForHoliday(Long employeeId, Long dayId, double duration) {
+        String bookkeeperEmail = "josalongmartin@gmail.com";
+        emailService.send(bookkeeperEmail, "Apply for holidays","Employee Id "+employeeId+
+                        ", workdayId "+dayId+ ", duration: "+duration
+                );
+    }
+
+    public void declineForHoliday(Long employeeId) {
+        User user = userRepository.findById(employeeId).orElseThrow(
+                () -> new ItemNotFoundException("Der User mit Id "+employeeId+"" +
+                        " nicht in der Datenbank")
+        );
+        String userEmail = user.getEmail();
+        emailService.send(userEmail, "Decline for holidays", "Hi "+user.getFirst()
+                +", your apply was cancelled" );
+    }
 }
 
 

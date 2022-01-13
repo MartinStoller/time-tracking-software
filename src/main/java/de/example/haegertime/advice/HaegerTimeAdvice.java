@@ -39,4 +39,10 @@ public class HaegerTimeAdvice {
         return new ResponseEntity<>(apiException, badRequest);
     }
 
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<APIException> handleInvalidInputException(InvalidInputException e) {
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        APIException apiException = new APIException(e.getMessage(), badRequest);
+        return new ResponseEntity<>(apiException, badRequest);
+    }
 }
