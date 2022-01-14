@@ -4,18 +4,23 @@ import de.example.haegertime.advice.EmailAlreadyExistsException;
 import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.AbsenceStatus;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
-import net.bytebuddy.TypeCache;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
 import java.security.InvalidParameterException;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -63,7 +68,6 @@ public class UserService {
     }
 
 
-    //todo change to only Admin
     public void deleteUser(long id) {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
@@ -141,6 +145,45 @@ public class UserService {
         }
     }
 
+    public LinkedHashSet<Project> getMyProjects(String email) {
+        User user = userRepository.getUserByUserEmail(email);
+        LinkedHashSet<Project> projects = new LinkedHashSet<>();
+        List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
+        allWorkdays.forEach((day) -> projects.add(day.getProject())); //create Hashset which contains all projects
+        return projects;
+    }
+
+    public List<Double> getOvertimeBalance(String email) {
+        User user = userRepository.getUserByUserEmail(email);
+        List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
+        double actualHoursSum = 0;
+        double expectedHoursSum = 0;
+        for (TimeTableDay ttd : allWorkdays) {
+            actualHoursSum+= ttd.getActualHours();
+            expectedHoursSum+=ttd.getExpectedHours();
+        }
+
+        return Arrays.asList(expectedHoursSum, actualHoursSum, actualHoursSum - expectedHoursSum);
+    }
+
+    public List<TimeTableDay> showOwnWorkdays(String email, LocalDate start, LocalDate end) {
+        if (start == null){
+            start = LocalDate.of(1900, 1, 1);
+        }
+        if (end == null){
+            end = LocalDate.of(2099, 1, 1);
+        }
+        User user = userRepository.getUserByUserEmail(email);
+        List<TimeTableDay> workdays = user.getTimeTableDayList();
+        List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
+
+        for (TimeTableDay ttd : workdays) {
+            if(ttd.getDate().isAfter(start) && ttd.getDate().isBefore(end)) {
+                foundWorkdays.add(ttd);
+            }
+        }
+        //Potentially better way to do this: via Query/SQL
+        return foundWorkdays;
 
     @Transactional
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
