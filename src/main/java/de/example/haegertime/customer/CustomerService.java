@@ -37,7 +37,7 @@ public class CustomerService {
         if(optionalCustomer.isPresent()) {
             throw new ItemExistsException("Der Name existiert bereits in der DB");
         }
-        if(!customer.getProjectListe().isEmpty()) {
+        //if(!customer.getProjectListe().isEmpty()) {
             for (Project project : customer.getProjectListe()) {
                 String projectTitle = project.getTitle();
                 Optional<Project> projectOptional = projectRepository.findProjectByName(projectTitle);
@@ -48,9 +48,9 @@ public class CustomerService {
             }
             customerRepository.save(customer);
             return customer;
-        } else {
-            throw new ListEmptyException("Die Projekt-Liste ist leer");
-        }
+        //} else {
+        //    throw new ListEmptyException("Die Projekt-Liste ist leer");
+        //}
     }
 
     /**

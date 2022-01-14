@@ -5,6 +5,7 @@ import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
 import de.example.haegertime.projects.Project;
+import de.example.haegertime.timetables.AbsenceStatus;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
@@ -12,10 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+
+import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -179,6 +184,52 @@ public class UserService {
         }
         //Potentially better way to do this: via Query/SQL
         return foundWorkdays;
+
+    @Transactional
+    public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
+        double actualhours = timeTableDay.calculateActualHours();
+        timeTableDay.setActualHours(actualhours);
+        timeTableDayList.add(timeTableDay);
+        user.setTimeTableDayList(timeTableDayList);
+        timeTableRepository.save(timeTableDay);
+        userRepository.save(user);
+        return "New Time Table registered ";
+    }
+
+    public double showMyRestHolidays(String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        return user.getUrlaubstage();
+    }
+
+    public void applyForHoliday(Long employeeId, Long dayId, double duration) {
+        String bookkeeperEmail = "josalongmartin@gmail.com";
+        emailService.send(bookkeeperEmail, "Apply for holidays","Employee Id "+employeeId+
+                        ", workdayId "+dayId+ ", duration: "+duration
+                );
+    }
+
+    public void declineForHoliday(Long employeeId) {
+        User user = userRepository.findById(employeeId).orElseThrow(
+                () -> new ItemNotFoundException("Der User mit Id "+employeeId+"" +
+                        " nicht in der Datenbank")
+        );
+        String userEmail = user.getEmail();
+        emailService.send(userEmail, "Decline for holidays", "Hi "+user.getFirst()
+                +", your apply was cancelled" );
+    }
+
+    public List<TimeTableDay> showAllMyHolidays(String email) {
+        User user = userRepository.getUserByUserEmail(email);
+        List<TimeTableDay> ttd = user.getTimeTableDayList();
+        List<TimeTableDay> htt = new ArrayList<>();
+        for (TimeTableDay t : ttd) {
+            if (t.getAbsenceStatus() != null && t.getAbsenceStatus().toString().equals("HOLIDAY") ) {
+                htt.add(t);
+            }
+        }
+        return htt;
     }
 }
 

@@ -55,5 +55,15 @@ public class ProjectService {
         Project updatedProject = projectRepository.save(projectOptional.get());
         return updatedProject;
     }
+
+    public boolean existsProjectByIdAndCustomerId(Long customerId, Long projectId) {
+        if(projectRepository.existsProjectByIdAndCustomerID(customerId, projectId).isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
 
