@@ -36,4 +36,11 @@ public class HaegerTimeAdvice {
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);
     }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+        public ResponseEntity<APIException> handlEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+            HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+            APIException apiException = new APIException(e.getMessage(), badRequest);
+            return new ResponseEntity<>(apiException, badRequest);
+    }
 }
