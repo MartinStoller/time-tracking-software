@@ -100,7 +100,7 @@ public class CustomerService {
      * @param project das neue Projekt
      * @return Customer
      */
-    public Customer addProjectCustomer(long id, Project project) {
+    public Customer addProjectCustomer(long id, Project project){
         Customer updateCustomer = customerRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank")
         );
