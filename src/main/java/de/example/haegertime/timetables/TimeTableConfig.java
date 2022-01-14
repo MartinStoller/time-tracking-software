@@ -9,9 +9,9 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 
-@Configuration
+@Configuration //since the class only contains the commandLineRunner the annotation is not necessary, the way the class
+//is right now
 public class TimeTableConfig {
-/*
     @Bean
     CommandLineRunner clrTimeTable(TimeTableRepository repository){
         return args -> {
@@ -47,6 +47,5 @@ public class TimeTableConfig {
         repository.saveAll(List.of(ttd1, ttd2, ttd3, ttd4, ttd5, ttd6, ttd7, ttd8, ttd9, ttd10));
         };
     }
-*/
 
 }

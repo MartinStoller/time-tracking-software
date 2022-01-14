@@ -28,7 +28,7 @@ public class TimeTableService {
     private final ProjectRepository projectRepository;
     private final EmailService emailService;
 
-    public List<TimeTableDay> getEntireTimetable(){return ttRepository.findAll();}
+    public List<TimeTableDay> getTimetable(){return ttRepository.findAll();}
 
     public TimeTableDay getTimetableDay(Long id) throws InstanceNotFoundException{
         TimeTableDay ttd = ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
