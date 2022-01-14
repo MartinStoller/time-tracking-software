@@ -5,15 +5,12 @@ import de.example.haegertime.customer.CustomerService;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.timetables.TimeTableRepository;
-import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.DoubleStream;
 
 @RestController
 @RequestMapping("/api/invoice")

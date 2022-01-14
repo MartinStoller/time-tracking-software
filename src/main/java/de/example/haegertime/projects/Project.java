@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,5 +49,6 @@ public class Project {
         this.title = title;
         this.start = start;
         this.end = end;
+        this.timeTableDays = Collections.emptyList();
     }
 }
