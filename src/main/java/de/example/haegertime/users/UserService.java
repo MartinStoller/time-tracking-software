@@ -11,6 +11,7 @@ import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.InvalidParameterException;
 
@@ -167,10 +168,10 @@ public class UserService {
     }
 
     public List<TimeTableDay> showOwnWorkdays(String email, LocalDate start, LocalDate end) {
-        if (start == null){
+        if (start == null) {
             start = LocalDate.of(1900, 1, 1);
         }
-        if (end == null){
+        if (end == null) {
             end = LocalDate.of(2099, 1, 1);
         }
         User user = userRepository.getUserByUserEmail(email);
@@ -178,12 +179,13 @@ public class UserService {
         List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
 
         for (TimeTableDay ttd : workdays) {
-            if(ttd.getDate().isAfter(start) && ttd.getDate().isBefore(end)) {
+            if (ttd.getDate().isAfter(start) && ttd.getDate().isBefore(end)) {
                 foundWorkdays.add(ttd);
             }
         }
         //Potentially better way to do this: via Query/SQL
         return foundWorkdays;
+    }
 
     @Transactional
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {

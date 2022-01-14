@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.timetables.TimeTableDay;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.sonatype.inject.Nullable;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,14 +13,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
-@Entity // This tells Hibernate to make a table out of this class
-@Table(name="projects") // this allows the mapping to our specific table in the db
+@Entity
+@Table(name="projects")
 @Validated
+@NoArgsConstructor
 public class Project {
     @Id
     @SequenceGenerator(
@@ -47,8 +47,6 @@ public class Project {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="pj_fk", referencedColumnName = "id")
     private Customer customer;
-
-    public Project(){} //Empty Constructor needed for hibernate
 
     public Project(String title, LocalDate start, LocalDate end){
         this.title = title;

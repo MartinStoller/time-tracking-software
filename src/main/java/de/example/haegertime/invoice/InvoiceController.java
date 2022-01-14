@@ -61,7 +61,7 @@ public class InvoiceController {
                               @RequestParam Long projectId) throws IOException, HttpMediaTypeNotAcceptableException {
         boolean exists = projectService.existsProjectByIdAndCustomerId(customerId, projectId);
         if (exists) {
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
             String currentDateTime = dateFormatter.format(new Date());
@@ -97,7 +97,7 @@ public class InvoiceController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=invoice_"+currentDateTime+".pdf";
             response.setHeader(headerKey, headerValue);
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
             List<User> employees = getAllEmployees(hoursAndEmployees);
@@ -121,7 +121,7 @@ public class InvoiceController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=invoice_"+currentDateTime+".xml";
             response.setHeader(headerKey, headerValue);
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
             List<User> employees = getAllEmployees(hoursAndEmployees);

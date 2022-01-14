@@ -21,20 +21,19 @@ public class ProjectService {
      * Auflisten aller Projekte in der DB
      * @return Liste von Projekten
      */
-    public List<Project> getAllProjects(){
+    public List<Project> findAll(){
         return projectRepository.findAll();
     }
 
     public Project getById(long id) {
-        if(!projectRepository.existsById(id)) {
-            throw new ItemNotFoundException("Das Projekt mit der Id "+id+
-                    " existiert nicht.");
-        }
-        return projectRepository.findById(id).get();
+        return projectRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Das Projekt mit Id "+id
+                + " nicht in der DB")
+        );
     }
 
 
-    public Project updateProject(long id, Map<Object, Object> fields) {
+    public Project updateProject(long id, Project project) {
         /**
          * Aktualisieren das Projekt, es geht hier um ein PatchMapping,
          * also das Projekt wird teil aktualisiert.
@@ -42,18 +41,15 @@ public class ProjectService {
          * @param fields Die Teile, die man ändern will
          * @return das aktualisierte Projekt
          */
-        Optional<Project> projectOptional = projectRepository.findById(id);
-        if(!projectOptional.isPresent()) {
-            throw new ItemNotFoundException("Das Projekt mit der Id"+id+
-                    " existiert nicht.");
-        }
-        fields.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(Project.class, (String) key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, projectOptional.get(), value);
-        });
-        Project updatedProject = projectRepository.save(projectOptional.get());
-        return updatedProject;
+        Project updateProject = projectRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Das Projekt mit der Id "+id+
+                        " nicht in der DB")
+        );
+        updateProject.setTitle(project.getTitle());
+        updateProject.setStart(project.getStart());
+        updateProject.setEnd(project.getEnd());
+        projectRepository.save(updateProject);
+        return updateProject;
     }
 
     public boolean existsProjectByIdAndCustomerId(Long customerId, Long projectId) {
