@@ -25,7 +25,7 @@ public class UserController {
     private final UserService userService;
     private final TimeTableService ttService;
 
-    @GetMapping("/all")
+    @GetMapping
     /**
        if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
        sort by last name alphabetically
@@ -76,7 +76,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -87,7 +87,7 @@ public class UserController {
      * @param principal
      * @return
      */
-    @GetMapping("/myacc")
+    @GetMapping("/current-user")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
         return ResponseEntity.ok(userService.getUserByUserName(username));
@@ -113,7 +113,7 @@ public class UserController {
      * @param loggedUser  der eingeloggte Benutzer
      * @return
      */
-    @PutMapping("/myacc/update")
+    @PutMapping("/current-user/update")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
         User logged = userService.getUserByUserName(username);
