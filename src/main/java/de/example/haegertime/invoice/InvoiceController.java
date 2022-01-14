@@ -4,6 +4,9 @@ import com.lowagie.text.DocumentException;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.customer.CustomerService;
 import de.example.haegertime.projects.Project;
+import de.example.haegertime.projects.ProjectRepository;
+import de.example.haegertime.timetables.TimeTableRepository;
+import de.example.haegertime.users.UserRepository;
 import de.example.haegertime.projects.ProjectService;
 import de.example.haegertime.timetables.TimeTableService;
 import de.example.haegertime.users.User;
@@ -11,7 +14,6 @@ import de.example.haegertime.users.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;

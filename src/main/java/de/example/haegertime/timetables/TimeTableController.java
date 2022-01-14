@@ -48,17 +48,18 @@ public class TimeTableController {
     }
 
 
-    @PutMapping("/assignEmployee{employeeId}/toDay{dayId}")
+    @PutMapping("/assignEmployee/{employeeId}/toDay/{dayId}")
+
     public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
         ttService.assignEmployeeToDay(dayId, employeeId);
     }
 
-    @PutMapping("/assignProject{projectId}/toDay{dayId}")
+    @PutMapping("/assignProject/{projectId}/toDay/{dayId}")
     public void assignProjectToDay(@PathVariable Long projectId, @PathVariable Long dayId) throws ItemNotFoundException {
         ttService.assignProjectToDay(dayId, projectId);
     }
 
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<?> registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
         return  new ResponseEntity<>(HttpStatus.CREATED);
@@ -68,6 +69,8 @@ public class TimeTableController {
     public void  finalizeTimeTableDay(@PathVariable Long dayId) throws ItemNotFoundException {
         ttService.finalizeTimeTableDay(dayId);
     }
+
+}
 
     @GetMapping("/overhours/{id}")
     public String overHoursShow(@PathVariable("id") Long employeeId) {
@@ -98,7 +101,5 @@ public class TimeTableController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
         return ttService.showAllSickEmployees(date);
     }
-
-
-
 }
+

@@ -1,15 +1,19 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.authorization.MyUserDetails;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableService;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @RestController
@@ -51,8 +55,26 @@ public class UserController {
         return this.userService.findByKeywordUser(keyword);
     }
 
+    @GetMapping("/myProjects")
+    public LinkedHashSet<Project> getMyProjects(Principal principal){
+        return userService.getMyProjects(principal.getName());
+    }
 
-    //todo only Admin
+    @GetMapping("/personalOvertime")
+    public List<Double> getPersonalOvertimeBalance(Principal principal){
+        //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
+        String email = principal.getName();
+        return userService.getOvertimeBalance(email);
+
+    }
+
+    @GetMapping("/OvertimeByEmail/{email}")
+    public List<?> getOvertimeBalanceById(@PathVariable String email){
+        //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
+        return userService.getOvertimeBalance(email);
+    }
+
+
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
@@ -68,6 +90,20 @@ public class UserController {
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
         return ResponseEntity.ok(userService.getUserByUserName(username));
+    }
+
+    @GetMapping("/showOwnWorkdays")
+    public List<TimeTableDay> ShowOwnWorkdays(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate end,
+            Principal principal) {
+        /**
+         * Übersicht über die Arbeitstage eines Nutzers
+         * @param start: start Datum ab welchem man die Arbeitstage sehen will (defaults to 01.01.1900)
+         * @param end: end Datum bis zu welchem man die Arbeitstage sehen will (defaults to 01.01.2099)
+         * @return List of TimetableDays in given Daterange of Logged in Employee
+         */
+        return userService.showOwnWorkdays(principal.getName(), start, end);
     }
 
     /**
