@@ -54,7 +54,7 @@ public class UserService {
     }
 
 
-    public User findByIdUser(long id) {
+    public User findById(long id) {
         if (userRepository.findById(id).isPresent()) {
             return userRepository.getById(id);
         } else {
@@ -62,7 +62,7 @@ public class UserService {
         }
     }
 
-    public List<User> findByKeywordUser(String keyword) {
+    public List<User> findByKeyword(String keyword) {
         return userRepository.findBylastByFirstbyEmail(keyword);
     }
 
@@ -78,7 +78,7 @@ public class UserService {
         }
     }
 
-    public User getUserByUserName(String username) {
+    public User getUserByName(String username) {
         return userRepository.getUserByEmail(username);
     }
 

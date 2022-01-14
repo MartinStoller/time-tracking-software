@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -47,13 +46,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findByIdUser(@PathVariable long id) {
-        return ResponseEntity.ok(userService.findByIdUser(id));
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     //Ausgabe User anhand eines Keywords
     @GetMapping("/search/{keyword}")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
-        return this.userService.findByKeywordUser(keyword);
+        return this.userService.findByKeyword(keyword);
     }
 
     @GetMapping("/myProjects")
@@ -90,7 +89,7 @@ public class UserController {
     @GetMapping("/current-user")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
-        return ResponseEntity.ok(userService.getUserByUserName(username));
+        return ResponseEntity.ok(userService.getUserByName(username));
     }
 
     @GetMapping("/showOwnWorkdays")
@@ -116,7 +115,7 @@ public class UserController {
     @PutMapping("/current-user/update")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
-        User logged = userService.getUserByUserName(username);
+        User logged = userService.getUserByName(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
 
