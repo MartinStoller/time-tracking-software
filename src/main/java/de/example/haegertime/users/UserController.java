@@ -18,7 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user/")
+@RequestMapping("api/users")
 @AllArgsConstructor
 public class UserController {
 
