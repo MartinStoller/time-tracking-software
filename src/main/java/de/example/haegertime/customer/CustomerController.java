@@ -53,20 +53,4 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    /*
-    @GetMapping("/export/excel")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=invoice.xlsx";
-        response.setHeader(headerKey, headerValue);
-
-        Customer customer = customerService.findByIdCustomer(customerId);
-        Project project = projectRepository.getById(projektId);
-
-        List<Customer> customers = customerService.findAllCustomer();
-        InvoiceExcelExporter invoiceExcelExporter = new InvoiceExcelExporter(customers);
-        invoiceExcelExporter.export(response);
-    }
-    */
 }

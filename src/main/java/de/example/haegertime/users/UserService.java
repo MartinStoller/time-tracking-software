@@ -1,21 +1,22 @@
 package de.example.haegertime.users;
 
+import de.example.haegertime.advice.EmailAlreadyExistsException;
 import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
+import de.example.haegertime.timetables.AbsenceStatus;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import net.bytebuddy.TypeCache;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import de.example.haegertime.users.User;
 
 import javax.transaction.Transactional;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor //takes care of constructor
@@ -24,12 +25,25 @@ public class UserService {
     private final EmailService emailService;
     private final TimeTableRepository timeTableRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(String sortBy) {
+        if(sortBy == null){
+            return userRepository.findAll();
+        }
+        else if(sortBy.equals("abc")){
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("last")));}
+        else if(sortBy.equals("role")){
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("role")));}
+        else{
+            throw new InvalidParameterException("Requestparameter must either be abc, role or null.");
+        }
     }
 
 
     public void createUser(User user) {
+        String mail = user.getEmail();
+        if (userRepository.existsByEmail(mail)){
+            throw new EmailAlreadyExistsException("Diese Email wird bereits verwendet.");
+        }
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
@@ -127,6 +141,7 @@ public class UserService {
         }
     }
 
+
     @Transactional
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
         User user = userRepository.getUserByUserEmail(username);
@@ -137,7 +152,41 @@ public class UserService {
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
-        return "New Time Table registered "+ " actual hours " + actualhours;
+        return "New Time Table registered ";
+    }
+
+    public double showMyRestHolidays(String username) {
+        User user = userRepository.getUserByUserEmail(username);
+        return user.getUrlaubstage();
+    }
+
+    public void applyForHoliday(Long employeeId, Long dayId, double duration) {
+        String bookkeeperEmail = "josalongmartin@gmail.com";
+        emailService.send(bookkeeperEmail, "Apply for holidays","Employee Id "+employeeId+
+                        ", workdayId "+dayId+ ", duration: "+duration
+                );
+    }
+
+    public void declineForHoliday(Long employeeId) {
+        User user = userRepository.findById(employeeId).orElseThrow(
+                () -> new ItemNotFoundException("Der User mit Id "+employeeId+"" +
+                        " nicht in der Datenbank")
+        );
+        String userEmail = user.getEmail();
+        emailService.send(userEmail, "Decline for holidays", "Hi "+user.getFirst()
+                +", your apply was cancelled" );
+    }
+
+    public List<TimeTableDay> showAllMyHolidays(String email) {
+        User user = userRepository.getUserByUserEmail(email);
+        List<TimeTableDay> ttd = user.getTimeTableDayList();
+        List<TimeTableDay> htt = new ArrayList<>();
+        for (TimeTableDay t : ttd) {
+            if (t.getAbsenceStatus() != null && t.getAbsenceStatus().toString().equals("HOLIDAY") ) {
+                htt.add(t);
+            }
+        }
+        return htt;
     }
 }
 

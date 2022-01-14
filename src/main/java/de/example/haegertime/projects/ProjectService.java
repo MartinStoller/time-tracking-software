@@ -33,14 +33,15 @@ public class ProjectService {
         return projectRepository.findById(id).get();
     }
 
-    /**
-     * Aktualisieren das Projekt, es geht hier um ein PatchMapping,
-     * also das Projekt wird teil aktualisiert.
-     * @param id Project-ID Nummer
-     * @param fields Die Teile, die man ändern will
-     * @return das aktualisierte Projekt
-     */
+
     public Project updateProject(long id, Map<Object, Object> fields) {
+        /**
+         * Aktualisieren das Projekt, es geht hier um ein PatchMapping,
+         * also das Projekt wird teil aktualisiert.
+         * @param id Project-ID Nummer
+         * @param fields Die Teile, die man ändern will
+         * @return das aktualisierte Projekt
+         */
         Optional<Project> projectOptional = projectRepository.findById(id);
         if(!projectOptional.isPresent()) {
             throw new ItemNotFoundException("Das Projekt mit der Id"+id+
@@ -54,5 +55,15 @@ public class ProjectService {
         Project updatedProject = projectRepository.save(projectOptional.get());
         return updatedProject;
     }
+
+    public boolean existsProjectByIdAndCustomerId(Long customerId, Long projectId) {
+        if(projectRepository.existsProjectByIdAndCustomerID(customerId, projectId).isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
 

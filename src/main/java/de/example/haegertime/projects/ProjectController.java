@@ -1,5 +1,6 @@
 package de.example.haegertime.projects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,20 +16,22 @@ public class ProjectController {
     public ProjectController(ProjectService projectService){
         this.projectService = projectService;
     }
+
     @GetMapping
     public List<Project> getAllProjects(){
         return projectService.getAllProjects();
     }
 
-
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable long id, @RequestBody Map<Object, Object> fields) {
+    public void updateProject(@PathVariable long id, @RequestBody Map<Object, Object> fields) {
+        //The Map
         Project project = projectService.updateProject(id, fields);
-        return ResponseEntity.ok(project);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getByIdProject(@PathVariable long id) {
         return ResponseEntity.ok(projectService.getById(id));
     }
+
+
 }

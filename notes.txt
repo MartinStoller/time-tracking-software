@@ -1,0 +1,43 @@
+UML Use Case Diagram (https://www.youtube.com/watch?v=zid-MVo7M-E):
+
+Done for free with Lucidchart. Admin, bookkeeper and employee are all primary actors (-> left of the App), since they
+take primary actions. There are no secondary actors (-> to the right of the App), which react to these actions.
+Careful: The Database does not count as a secondary (or any) actor!
+_______________________________________________________________________________________________________________________
+Abstract Classes and methods
+    Abstract class: is a restricted class that cannot be used to create objects (to access it, it must be inherited from another class).
+    Abstract method: can only be used in an abstract class, and it does not have a body. The body is provided by the subclass (inherited from).
+    // CAREFUL: Dont set things to private, because then childclasses can´t access it - set to protected instead
+_______________________________________________________________________________________________________________________
+What is an Interface?
+An interface in the Java programming language is an abstract type that is used to specify a behavior that classes must
+implement. They are similar to protocols. ... A class that implements an interface must implement all of the non-default
+methods described in the interface, or be an abstract class.
+_______________________________________________________________________________________________________________________
+May to one, one to many, many to many
+https://www.youtube.com/watch?v=f5bdUjEIbrg
+propertie file muss auf "updatee" sein hierfür.
+_______________________________________________________________________________________________________________________
+Conditional Validations
+https://stackoverflow.com/questions/54638255/spring-boot-validation-one-from-two-not-null   (both answers!)
+_______________________________________________________________________________________________________________________
+Authorization based on rolls:
+https://www.codejava.net/frameworks/spring-boot/spring-boot-security-role-based-authorization-tutorial
+https://www.youtube.com/watch?v=i21h6ThUiWc&t=5s
+_______________________________________________________________________________________________________________________
+Automated Emails:
+https://www.youtube.com/watch?v=QwQuro7ekvc
+https://www.baeldung.com/spring-email
+https://stackoverflow.com/questions/43142137/sending-email-from-spring-boot-application-using-gmail
+writing tests for email sending: https://www.youtube.com/watch?v=MOODnDflO-M
+_______________________________________________________________________________________________________________________
+Log-in:
+i simplemented by MyUsderDetails class, which needs to extend Userdetails.class. Whatever the "ispassword()" function
+returns will be recognized as the password. Moreover it allows for easy implementation of the "frozen" boolean via the
+"isenabled()" function
+_______________________________________________________________________________________________________________________
+Patchmapping vs Putmapping:
+In Patchmapping the Object we modify is maintained and we only change the information we pass to the Object. All other
+Information stays. In Putmapping the entire Object is exchanged -> we need to pass all the information - not only the
+new. All not passed information is lost.
+https://stackoverflow.com/questions/28459418/use-of-put-vs-patch-methods-in-rest-api-real-life-scenarios

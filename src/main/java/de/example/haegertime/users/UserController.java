@@ -2,33 +2,39 @@ package de.example.haegertime.users;
 
 import de.example.haegertime.authorization.MyUserDetails;
 import de.example.haegertime.timetables.TimeTableDay;
+import de.example.haegertime.timetables.TimeTableService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/user/")
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
+    private final TimeTableService ttService;
 
     @GetMapping("/all")
-    public List<User> getAllUsers(){return userService.getAllUsers();}
+    /**
+       if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
+       sort by last name alphabetically
+     */
+    public List<User> getAllUsers(@RequestParam(required = false) String sortBy){
+        return userService.getAllUsers(sortBy);
+    }
 
-    //todo only Admin
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             this.userService.createUser(user);
-            return ResponseEntity.ok("User gespeichert");
+            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
                     HttpStatus.BAD_GATEWAY);
@@ -117,10 +123,44 @@ public class UserController {
         return ResponseEntity.ok(userService.updateRoleUser(id, role));
     }
 
-    @PutMapping("/registertimetable")
+
+    @PostMapping("/register/timetable")
     public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
         String username = principal.getName();
         return userService.registerNewTimeTable(timeTableDay, username);
+    }
+
+    @GetMapping("/holidays/rest")
+    public double showMyRestHolidays(Principal principal) {
+        String username = principal.getName();
+        return userService.showMyRestHolidays(username);
+    }
+
+
+    /**
+     * Sendet der Bookkeeper eine Anfrage zum Urlaubsbeantragen,
+     * der Bookkeeper kann entweder akzeptieren oder ablehnen
+     * @param employeeId
+     * @param dayId
+     * @param duration
+     */
+    @PostMapping("/apply/holiday/{id}")
+    public ResponseEntity<Void> applyForHoliday(@PathVariable("id") Long employeeId,@RequestParam Long dayId,
+                                @RequestParam double duration) {
+        userService.applyForHoliday(employeeId, dayId, duration);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/holiday/decline/employee/{id}")
+    public ResponseEntity<Void> declineForHoliday(@PathVariable("id") Long employeeId) {
+        userService.declineForHoliday(employeeId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/holidays")
+    public List<TimeTableDay> showAllMyHolidays(Principal principal) {
+        String email = principal.getName();
+        return userService.showAllMyHolidays(email);
     }
 }
 
