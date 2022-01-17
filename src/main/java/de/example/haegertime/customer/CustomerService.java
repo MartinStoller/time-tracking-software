@@ -1,14 +1,11 @@
 package de.example.haegertime.customer;
 
-import de.example.haegertime.advice.ItemExistsException;
+import de.example.haegertime.advice.ItemAlreadyExistsException;
 import de.example.haegertime.advice.ItemNotFoundException;
-import de.example.haegertime.advice.ListEmptyException;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +16,7 @@ public class CustomerService {
 
     private final ProjectRepository projectRepository;
 
-    @Autowired
+
     public CustomerService(CustomerRepository customerRepository
             , ProjectRepository projectRepository) {
         this.customerRepository = customerRepository;
@@ -32,32 +29,30 @@ public class CustomerService {
      * @return der erzeugte Kunde
      */
     public Customer createCustomer(Customer customer) {
-        // TODO die Methode darf nur von BookKeeper durchgeführt, die Mitarbeiter soll keinen Zugriff auf diese Methode
         Optional<Customer> optionalCustomer = customerRepository.findCustomerByName(customer.getName());
         if(optionalCustomer.isPresent()) {
-            throw new ItemExistsException("Der Name existiert bereits in der DB");
+            throw new ItemAlreadyExistsException("Der Name existiert bereits in der DB");
         }
-        //if(!customer.getProjectListe().isEmpty()) {
-            for (Project project : customer.getProjectListe()) {
+        if(!customer.getProjects().isEmpty()) {
+            for (Project project : customer.getProjects()) {
                 String projectTitle = project.getTitle();
-                Optional<Project> projectOptional = projectRepository.findProjectByName(projectTitle);
-                if(projectOptional.isPresent()) {
-                    throw new ItemExistsException("Das Projekt mit dem Name "+projectTitle+
+                Optional<Project> projectOptional = projectRepository.findProjectByTitle(projectTitle);
+                if (projectOptional.isPresent()) {
+                    throw new ItemAlreadyExistsException("Das Projekt mit dem Name " + projectTitle +
                             " existiert bereits in der DB");
                 }
             }
-            customerRepository.save(customer);
-            return customer;
-        //} else {
-        //    throw new ListEmptyException("Die Projekt-Liste ist leer");
-        //}
+        }
+        customerRepository.save(customer);
+        return customer;
+
     }
 
     /**
      * Auflisten aller Kunden in der Datenbank
      * @return Liste aller Kunden
      */
-    public List<Customer> findAllCustomer() {
+    public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
@@ -66,14 +61,13 @@ public class CustomerService {
      * @param customer
      * @return updated Customer
      */
-    @Transactional  //für Sicherheit, Rollback, falls etwas schiefgelaufen ist
     public Customer updateCustomer(Customer customer) {
         Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
         if(customerOptional.isPresent()) {
             Customer updateCustomer = customerOptional.get();
             updateCustomer.setName(customer.getName());
             updateCustomer.setAddress(customer.getAddress());
-            updateCustomer.setProjectListe(customer.getProjectListe());
+            updateCustomer.setProjects(customer.getProjects());
             customerRepository.save(updateCustomer);
             return updateCustomer;
         } else {
@@ -86,12 +80,10 @@ public class CustomerService {
      * @param id Customer ID
      * @return Customer
      */
-    public Customer findByIdCustomer(long id) {
-        if(customerRepository.findById(id).isPresent()) {
-            return customerRepository.getById(id);
-        } else {
-            throw new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank");
-        }
+    public Customer findById(long id) {
+        return customerRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("Diese Kunde ist nicht in der DB")
+        );
     }
 
     /**
@@ -100,19 +92,20 @@ public class CustomerService {
      * @param project das neue Projekt
      * @return Customer
      */
-    public Customer addProjectCustomer(long id, Project project){
+
+    public Customer addProjectToExistingCustomer(long id, Project project) {
         Customer updateCustomer = customerRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank")
         );
-        Optional<Project> projectOptional = projectRepository.findProjectByName(project.getTitle());
+        Optional<Project> projectOptional = projectRepository.findProjectByTitle(project.getTitle());
         if(!projectOptional.isPresent()) {
-            List<Project> projectList = updateCustomer.getProjectListe();
+            List<Project> projectList = updateCustomer.getProjects();
             projectList.add(project);
-            updateCustomer.setProjectListe(projectList);
+            updateCustomer.setProjects(projectList);
             customerRepository.save(updateCustomer);
             return updateCustomer;
         } else {
-            throw new ItemExistsException("Das Projekt mit Title"+project.getTitle()+
+            throw new ItemAlreadyExistsException("Das Projekt mit Title"+project.getTitle()+
                     " ist breits in der DB");
         }
     }
@@ -122,7 +115,7 @@ public class CustomerService {
      * werden auch gelöscht.
      * @param id Customer ID
      */
-    public void deleteCustomer(long id) {
+    public void deleteCustomerById(long id) {
         if(customerRepository.findById(id).isPresent()) {
             customerRepository.deleteById(id);
         } else {

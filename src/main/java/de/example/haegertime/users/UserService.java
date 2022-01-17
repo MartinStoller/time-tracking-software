@@ -10,6 +10,7 @@ import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.transaction.Transactional;
 import java.security.InvalidParameterException;
