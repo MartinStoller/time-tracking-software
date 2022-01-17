@@ -1,8 +1,7 @@
 package de.example.haegertime.customer;
 
-import de.example.haegertime.advice.ItemExistsException;
+import de.example.haegertime.advice.ItemAlreadyExistsException;
 import de.example.haegertime.advice.ItemNotFoundException;
-import de.example.haegertime.advice.ListEmptyException;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +34,14 @@ public class CustomerService {
         // TODO die Methode darf nur von BookKeeper durchgeführt, die Mitarbeiter soll keinen Zugriff auf diese Methode
         Optional<Customer> optionalCustomer = customerRepository.findCustomerByName(customer.getName());
         if(optionalCustomer.isPresent()) {
-            throw new ItemExistsException("Der Name existiert bereits in der DB");
+            throw new ItemAlreadyExistsException("Der Name existiert bereits in der DB");
         }
         //if(!customer.getProjectListe().isEmpty()) {
             for (Project project : customer.getProjectListe()) {
                 String projectTitle = project.getTitle();
                 Optional<Project> projectOptional = projectRepository.findProjectByName(projectTitle);
                 if(projectOptional.isPresent()) {
-                    throw new ItemExistsException("Das Projekt mit dem Name "+projectTitle+
+                    throw new ItemAlreadyExistsException("Das Projekt mit dem Name "+projectTitle+
                             " existiert bereits in der DB");
                 }
             }
@@ -112,7 +111,7 @@ public class CustomerService {
             customerRepository.save(updateCustomer);
             return updateCustomer;
         } else {
-            throw new ItemExistsException("Das Projekt mit Title"+project.getTitle()+
+            throw new ItemAlreadyExistsException("Das Projekt mit Title"+project.getTitle()+
                     " ist breits in der DB");
         }
     }

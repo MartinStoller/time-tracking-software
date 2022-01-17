@@ -40,21 +40,21 @@ public class TimeTableController {
     }
 
 
-    @PatchMapping("/assignEmployee/{employeeId}/toDay/{dayId}")
-
+    @PutMapping("/assignEmployee/{employeeId}/toDay/{dayId}")
     public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
         ttService.assignEmployeeToDay(dayId, employeeId);
     }
 
-    @PatchMapping("/assignProject/{projectId}/toDay/{dayId}")
+    @PutMapping("/assignProject/{projectId}/toDay/{dayId}")
     public void assignProjectToDay(@PathVariable Long projectId, @PathVariable Long dayId) throws ItemNotFoundException {
         ttService.assignProjectToDay(dayId, projectId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
+    public TimeTableDay registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
+        return timeTableDay;
     }
 
     @PutMapping("/finalize/{dayId}")

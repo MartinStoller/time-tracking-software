@@ -33,7 +33,7 @@ public class TimeTableDay {
     )
     private Long workdayId;  //serves as a unique identifier of the object to simplify deleting/editing single datapoints
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name="employee_id", referencedColumnName = "id")
     private User employee;
 
@@ -56,8 +56,7 @@ public class TimeTableDay {
     @Min(value = 0) @Max(value = 24)
     private double sickHours;
 
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     private Project project;
 
@@ -75,8 +74,6 @@ public class TimeTableDay {
 
     public TimeTableDay() {
     }
-
-
 
     public TimeTableDay(LocalDate date, LocalTime startTime, LocalTime endTime, double breakLength,
                         double expectedHours, AbsenceStatus absenceStatus) {
@@ -96,30 +93,27 @@ public class TimeTableDay {
             this.holidayHours = 0;
         }
         else{
-            calculateMissingHours(); // calculates sickness and holiday hours
+            calculateSickHolidayHours(); // calculates sickness and holiday hours
         }
 
     }
 
-
     public double calculateActualHours() {
         if (this.absenceStatus != null) { //if sick or on holiday, the expected hours are achieved
-            double actualHours = expectedHours;
-            return actualHours;
+            return expectedHours;
         }
         else if(this.startTime == null){ //this covers weekends/public holidays -> starttime usually null without absence status
             return 0;
         }
         else { //otherwise calculate from start-,end- and breaktime
-            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            Duration timeAtWork = Duration.between(startTime, endTime);
             //convert Duration to float hours:
             Long minutes = timeAtWork.toMinutes();
-            double actualHours = minutes / 60.0 - this.breakLength;
-            return actualHours;
+            return minutes / 60.0 - this.breakLength;
         }
     }
 
-    public void calculateMissingHours() {
+    public void calculateSickHolidayHours() {
         if (this.startTime == null && this.absenceStatus == AbsenceStatus.HOLIDAY){ // if employee never started to work
             this.holidayHours = this.expectedHours;
         }
@@ -129,27 +123,25 @@ public class TimeTableDay {
         //All remaining cases: if employee did start with work...
         else if (this.absenceStatus == AbsenceStatus.HOLIDAY) {
             this.sickHours = 0;
-            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            Duration timeAtWork = Duration.between(startTime, endTime);
             Long minutes = timeAtWork.toMinutes();
             double workedHours = minutes / 60.0 - this.breakLength;
             this.holidayHours = this.expectedHours - workedHours;
         }
         else if(this.absenceStatus == AbsenceStatus.SICK){
             this.holidayHours = 0;
-            Duration timeAtWork = DatesAndDurationsCalculator.getDurationBetweenLocalTimes(this.endTime, this.startTime);
+            Duration timeAtWork = Duration.between(startTime, endTime);
             Long minutes = timeAtWork.toMinutes();
             double workedHours = minutes / 60.0 - this.breakLength;
             this.sickHours = this.expectedHours - workedHours;
         }
     }
 
-    public void assignUser(User employee) {
+    public void assignEmployee(User employee) {
         this.employee = employee;
     }
 
     public void assignProject(Project project) {
         this.project = project;
     }
-
-
 }

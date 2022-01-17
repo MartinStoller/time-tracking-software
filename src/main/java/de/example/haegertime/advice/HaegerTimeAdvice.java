@@ -1,9 +1,7 @@
 package de.example.haegertime.advice;
 
-import com.lowagie.text.DocumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,8 +16,8 @@ public class HaegerTimeAdvice {
         return new ResponseEntity<>(apiException, notfound);
     }
 
-    @ExceptionHandler(value={ItemExistsException.class})
-    public ResponseEntity<Object> handleItemExistsException(ItemExistsException e) {
+    @ExceptionHandler(value={ItemAlreadyExistsException.class})
+    public ResponseEntity<Object> handleItemExistsException(ItemAlreadyExistsException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);
