@@ -45,14 +45,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findByIdUser(@PathVariable long id) {
+    public ResponseEntity<User> findById(@PathVariable long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     //Ausgabe User anhand eines Keywords
     @GetMapping("/search/{keyword}")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
-        return this.userService.findByKeyword(keyword);
+        return this.userService.findByLastByFirstByEmail(keyword);
     }
 
     @GetMapping("/myProjects")
@@ -89,7 +89,7 @@ public class UserController {
     @GetMapping("/current-user")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
-        return ResponseEntity.ok(userService.getUserByName(username));
+        return ResponseEntity.ok(userService.getByName(username));
     }
 
     @GetMapping("/showOwnWorkdays")
@@ -115,7 +115,7 @@ public class UserController {
     @PutMapping("/current-user/update")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
-        User logged = userService.getUserByName(username);
+        User logged = userService.getByName(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
 
@@ -155,7 +155,7 @@ public class UserController {
 
     @PutMapping("/updaterole/{id}")
     public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
-        return ResponseEntity.ok(userService.updateRoleUser(id, role));
+        return ResponseEntity.ok(userService.updateRole(id, role));
     }
 
 

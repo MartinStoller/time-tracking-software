@@ -62,7 +62,7 @@ public class UserService {
         }
     }
 
-    public List<User> findByKeyword(String keyword) {
+    public List<User> findByLastByFirstByEmail(String keyword) {
         return userRepository.findBylastByFirstbyEmail(keyword);
     }
 
@@ -72,13 +72,13 @@ public class UserService {
             User user = userRepository.findById(id).get();
             userRepository.deleteById(id);
             emailService.send(user.getEmail(), "Dein Haegertime Account wurde gelöscht",
-                    emailService.getEmailText(user.getFirst(), "Löschung derines Accounts"));
+                    emailService.getEmailText(user.getFirst(), "Löschung deines Accounts"));
         } else {
             throw new ItemNotFoundException("Dieser User ist nicht in der Datenbank");
         }
     }
 
-    public User getUserByName(String username) {
+    public User getByName(String username) {
         return userRepository.getUserByEmail(username);
     }
 
@@ -99,7 +99,7 @@ public class UserService {
 
     public User updateUserName(Long id, String newUserName) {
         User updateUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mit Id "+id+"" +
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+"" +
                         " ist nicht in der DB")
         );
         String email = updateUser.getEmail();
@@ -114,7 +114,7 @@ public class UserService {
 
     public void deactivUser(Long id) {
         User deactivUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+
                         " ist nicht in der DB")
         );
         deactivUser.setFrozen(false);
@@ -131,9 +131,9 @@ public class UserService {
         userRepository.save(reactivUser);
     }
 
-    public User updateRoleUser(Long id, String role) {
+    public User updateRole(Long id, String role) {
         User updateRoleUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+" ist nicht in der DB")
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+" ist nicht in der DB")
         );
         if(role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER") ) {
             updateRoleUser.setRole(Role.valueOf(role));
