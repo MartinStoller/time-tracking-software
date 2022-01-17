@@ -5,19 +5,18 @@ import de.example.haegertime.advice.InvalidRoleException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
 import de.example.haegertime.projects.Project;
-import de.example.haegertime.timetables.AbsenceStatus;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.transaction.Transactional;
 import java.security.InvalidParameterException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class UserService {
     }
 
 
-    public User findByIdUser(long id) {
+    public User findById(long id) {
         if (userRepository.findById(id).isPresent()) {
             return userRepository.getById(id);
         } else {
@@ -64,8 +63,8 @@ public class UserService {
         }
     }
 
-    public List<User> findByKeywordUser(String keyword) {
-        return userRepository.findByKeyword(keyword);
+    public List<User> findByLastByFirstByEmail(String keyword) {
+        return userRepository.findBylastByFirstbyEmail(keyword);
     }
 
 
@@ -74,19 +73,19 @@ public class UserService {
             User user = userRepository.findById(id).get();
             userRepository.deleteById(id);
             emailService.send(user.getEmail(), "Dein Haegertime Account wurde gelöscht",
-                    emailService.getEmailText(user.getFirst(), "Löschung derines Accounts"));
+                    emailService.getEmailText(user.getFirst(), "Löschung deines Accounts"));
         } else {
             throw new ItemNotFoundException("Dieser User ist nicht in der Datenbank");
         }
     }
 
-    public User getUserByUserName(String username) {
-        return userRepository.getUserByUserEmail(username);
+    public User getByName(String username) {
+        return userRepository.getUserByEmail(username);
     }
 
 
     public User updateUserDetails(User user, User loggedUser) {
-        User updateUser = userRepository.getUserByUserEmail(loggedUser.getEmail());
+        User updateUser = userRepository.getUserByEmail(loggedUser.getEmail());
         updateUser.setPassword(user.getPassword());
         updateUser.setFirst(user.getFirst());
         updateUser.setLast(user.getLast());
@@ -101,7 +100,7 @@ public class UserService {
 
     public User updateUserName(Long id, String newUserName) {
         User updateUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mit Id "+id+"" +
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+"" +
                         " ist nicht in der DB")
         );
         String email = updateUser.getEmail();
@@ -116,7 +115,7 @@ public class UserService {
 
     public void deactivUser(Long id) {
         User deactivUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+
                         " ist nicht in der DB")
         );
         deactivUser.setFrozen(false);
@@ -133,9 +132,9 @@ public class UserService {
         userRepository.save(reactivUser);
     }
 
-    public User updateRoleUser(Long id, String role) {
+    public User updateRole(Long id, String role) {
         User updateRoleUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+" ist nicht in der DB")
+                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+" ist nicht in der DB")
         );
         if(role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER") ) {
             updateRoleUser.setRole(Role.valueOf(role));
@@ -147,7 +146,7 @@ public class UserService {
     }
 
     public LinkedHashSet<Project> getMyProjects(String email) {
-        User user = userRepository.getUserByUserEmail(email);
+        User user = userRepository.getUserByEmail(email);
         LinkedHashSet<Project> projects = new LinkedHashSet<>();
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         allWorkdays.forEach((day) -> projects.add(day.getProject())); //create Hashset which contains all projects
@@ -155,7 +154,7 @@ public class UserService {
     }
 
     public List<Double> getOvertimeBalance(String email) {
-        User user = userRepository.getUserByUserEmail(email);
+        User user = userRepository.getUserByEmail(email);
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
@@ -174,7 +173,7 @@ public class UserService {
         if (end == null) {
             end = LocalDate.of(2099, 1, 1);
         }
-        User user = userRepository.getUserByUserEmail(email);
+        User user = userRepository.getUserByEmail(email);
         List<TimeTableDay> workdays = user.getTimeTableDayList();
         List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
 
@@ -189,7 +188,7 @@ public class UserService {
 
     @Transactional
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
-        User user = userRepository.getUserByUserEmail(username);
+        User user = userRepository.getUserByEmail(username);
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
         double actualhours = timeTableDay.calculateActualHours();
         timeTableDay.setActualHours(actualhours);
@@ -201,7 +200,7 @@ public class UserService {
     }
 
     public double showMyRestHolidays(String username) {
-        User user = userRepository.getUserByUserEmail(username);
+        User user = userRepository.getUserByEmail(username);
         return user.getUrlaubstage();
     }
 
@@ -223,7 +222,7 @@ public class UserService {
     }
 
     public List<TimeTableDay> showAllMyHolidays(String email) {
-        User user = userRepository.getUserByUserEmail(email);
+        User user = userRepository.getUserByEmail(email);
         List<TimeTableDay> ttd = user.getTimeTableDayList();
         List<TimeTableDay> htt = new ArrayList<>();
         for (TimeTableDay t : ttd) {

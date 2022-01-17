@@ -4,9 +4,6 @@ import com.lowagie.text.DocumentException;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.customer.CustomerService;
 import de.example.haegertime.projects.Project;
-import de.example.haegertime.projects.ProjectRepository;
-import de.example.haegertime.timetables.TimeTableRepository;
-import de.example.haegertime.users.UserRepository;
 import de.example.haegertime.projects.ProjectService;
 import de.example.haegertime.timetables.TimeTableService;
 import de.example.haegertime.users.User;
@@ -61,7 +58,7 @@ public class InvoiceController {
                               @RequestParam Long projectId) throws IOException, HttpMediaTypeNotAcceptableException {
         boolean exists = projectService.existsProjectByIdAndCustomerId(customerId, projectId);
         if (exists) {
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
             String currentDateTime = dateFormatter.format(new Date());
@@ -97,7 +94,7 @@ public class InvoiceController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=invoice_"+currentDateTime+".pdf";
             response.setHeader(headerKey, headerValue);
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
             List<User> employees = getAllEmployees(hoursAndEmployees);
@@ -121,7 +118,7 @@ public class InvoiceController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=invoice_"+currentDateTime+".xml";
             response.setHeader(headerKey, headerValue);
-            Customer customer = customerService.findByIdCustomer(customerId);
+            Customer customer = customerService.findById(customerId);
             Project project = projectService.getById(projectId);
             List<List<Double>> hoursAndEmployees = getEmployeesAndTotalHours(projectId);
             List<User> employees = getAllEmployees(hoursAndEmployees);
@@ -148,7 +145,7 @@ public class InvoiceController {
 
         for (List<Double> item : list) {
             long userId = item.get(1).longValue();
-            User user = userService.findByIdUser(userId);
+            User user = userService.findById(userId);
             users.add(user);
         }
         return users;

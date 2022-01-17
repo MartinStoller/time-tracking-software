@@ -1,10 +1,8 @@
 package de.example.haegertime.projects;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path="api/projects")
@@ -17,19 +15,18 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Project> getAllProjects(){
-        return projectService.getAllProjects();
+    public List<Project> findAll(){
+        return projectService.findAll();
     }
 
-    @PatchMapping("/update/{id}")
-    public void updateProject(@PathVariable long id, @RequestBody Map<Object, Object> fields) {
-        //The Map
-        Project project = projectService.updateProject(id, fields);
+    @PutMapping("/{id}")
+    public Project updateProject(@PathVariable long id, @RequestBody Project project) {
+        return projectService.updateProject(id, project);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getByIdProject(@PathVariable long id) {
-        return ResponseEntity.ok(projectService.getById(id));
+    public Project getById(@PathVariable long id) {
+        return projectService.getById(id);
     }
 
 
