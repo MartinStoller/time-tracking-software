@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,7 +95,7 @@ class ProjectServiceTest {
     }
 
     @Test
-    void updateProjectNameAlreadyExists() {
+    void updateProjectTitleAlreadyExists() {
         //given
         Project project = new Project("ABC", LocalDate.of(2022, Month.JANUARY, 3), null);
         repo.save(project);
@@ -125,5 +126,25 @@ class ProjectServiceTest {
     @Test
     void itShouldNotExistsProjectByIdAndCustomerId() {
         assertThat(underTest.existsProjectByIdAndCustomerId(2L,2L)).isFalse();
+    }
+
+    @Test
+    void itShouldDeleteProjectById() {
+        //given
+        Project project = new Project("ABC", LocalDate.of(2022, Month.JANUARY, 22),
+                LocalDate.of(2022, Month.FEBRUARY, 12));
+        repo.save(project);
+        given(repo.findById(1L)).willReturn(Optional.of(project));
+        //when
+        underTest.deleteById(1L);
+        //then
+        verify(repo, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void itShouldNotDeleteProjectById() {
+        assertThatThrownBy(()-> underTest.deleteById(1L))
+                .isInstanceOf(ItemNotFoundException.class)
+                .hasMessageContaining("Das Projekt mit Id 1"+" nicht in der DB");
     }
 }

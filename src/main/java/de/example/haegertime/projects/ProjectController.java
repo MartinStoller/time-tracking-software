@@ -1,5 +1,6 @@
 package de.example.haegertime.projects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,5 +30,9 @@ public class ProjectController {
         return projectService.getById(id);
     }
 
-
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(long id) {
+        projectService.deleteById(id);
+    }
 }

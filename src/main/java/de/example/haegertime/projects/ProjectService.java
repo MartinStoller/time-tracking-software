@@ -55,5 +55,12 @@ public class ProjectService {
     }
 
 
+    public void deleteById(long id) {
+        if(projectRepository.findById(id).isPresent()) {
+            projectRepository.deleteById(id);
+        } else {
+            throw new ItemNotFoundException("Das Projekt mit Id "+id+" nicht in der DB");
+        }
+    }
 }
 

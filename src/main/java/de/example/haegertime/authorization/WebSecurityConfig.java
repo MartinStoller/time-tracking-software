@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/customers/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/projects").hasAnyAuthority("EMPLOYEE","ADMIN","BOOKKEEPER")
                 .antMatchers("/projects/{id}").hasAnyAuthority("BOOKKEEPER","ADMIN","EMPLOYEE")
+                .antMatchers(HttpMethod.DELETE,"/projects/{id}").hasAnyAuthority("BOOKKEEPER","ADMIN")
                 .antMatchers(HttpMethod.PUT, "/projects/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER")
                 .antMatchers("/api/user/all").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
 
