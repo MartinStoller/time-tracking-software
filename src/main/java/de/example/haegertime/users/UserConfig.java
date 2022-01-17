@@ -12,7 +12,7 @@ import java.util.List;
 
 @Configuration
 public class UserConfig {
-/*
+
    @Bean
     CommandLineRunner clrUsers(UserRepository userRepository){
         return  args -> {
@@ -27,5 +27,5 @@ public class UserConfig {
         };
     }
 
-*/
+
 }
