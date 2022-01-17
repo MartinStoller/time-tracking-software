@@ -11,21 +11,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user/")
+@RequestMapping("api/users")
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final TimeTableService ttService;
 
-    @GetMapping("/all")
+    @GetMapping
     /**
        if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
        sort by last name alphabetically
@@ -46,14 +45,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findByIdUser(@PathVariable long id) {
-        return ResponseEntity.ok(userService.findByIdUser(id));
+    public ResponseEntity<User> findById(@PathVariable long id) {
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     //Ausgabe User anhand eines Keywords
     @GetMapping("/search/{keyword}")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
-        return this.userService.findByKeywordUser(keyword);
+        return this.userService.findByLastByFirstByEmail(keyword);
     }
 
     @GetMapping("/myProjects")
@@ -76,7 +75,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -87,10 +86,10 @@ public class UserController {
      * @param principal
      * @return
      */
-    @GetMapping("/myacc")
+    @GetMapping("/current-user")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
-        return ResponseEntity.ok(userService.getUserByUserName(username));
+        return ResponseEntity.ok(userService.getByName(username));
     }
 
     @GetMapping("/showOwnWorkdays")
@@ -113,10 +112,10 @@ public class UserController {
      * @param loggedUser  der eingeloggte Benutzer
      * @return
      */
-    @PutMapping("/myacc/update")
+    @PutMapping("/current-user/update")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
-        User logged = userService.getUserByUserName(username);
+        User logged = userService.getByName(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
 
@@ -156,7 +155,7 @@ public class UserController {
 
     @PutMapping("/updaterole/{id}")
     public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
-        return ResponseEntity.ok(userService.updateRoleUser(id, role));
+        return ResponseEntity.ok(userService.updateRole(id, role));
     }
 
 
