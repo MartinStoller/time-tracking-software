@@ -15,7 +15,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Project> getAllProjects(){
+    public List<Project> findAll(){
         return projectService.findAll();
     }
 
@@ -25,7 +25,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public Project getProjectById(@PathVariable long id) {
+    public Project getById(@PathVariable long id) {
         return projectService.getById(id);
     }
 

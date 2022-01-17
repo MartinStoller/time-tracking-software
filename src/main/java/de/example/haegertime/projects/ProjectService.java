@@ -2,12 +2,8 @@ package de.example.haegertime.projects;
 
 import de.example.haegertime.advice.ItemNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -34,13 +30,6 @@ public class ProjectService {
 
 
     public Project updateProject(long id, Project project) {
-        /**
-         * Aktualisieren das Projekt, es geht hier um ein PatchMapping,
-         * also das Projekt wird teil aktualisiert.
-         * @param id Project-ID Nummer
-         * @param fields Die Teile, die man ändern will
-         * @return das aktualisierte Projekt
-         */
         Project updateProject = projectRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Das Projekt mit der Id "+id+
                         " nicht in der DB")
@@ -52,12 +41,9 @@ public class ProjectService {
         return updateProject;
     }
 
+
     public boolean existsProjectByIdAndCustomerId(Long customerId, Long projectId) {
-        if(projectRepository.existsProjectByIdAndCustomerID(customerId, projectId).isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return projectRepository.existsProjectByIdAndCustomerID(customerId, projectId).isPresent();
     }
 
 

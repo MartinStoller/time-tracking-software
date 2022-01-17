@@ -31,7 +31,7 @@ public class Customer {
     @Column(name = "address", nullable = false)
     private String address;
 
-    @OneToMany(targetEntity = Project.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Project.class, cascade = CascadeType.PERSIST)
     @JoinColumn(name="pj_fk", referencedColumnName = "id")
     private List<Project> projects;
 

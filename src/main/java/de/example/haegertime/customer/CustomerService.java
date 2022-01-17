@@ -114,7 +114,7 @@ public class CustomerService {
      * werden auch gelöscht.
      * @param id Customer ID
      */
-    public void deleteCustomer(long id) {
+    public void deleteCustomerById(long id) {
         if(customerRepository.findById(id).isPresent()) {
             customerRepository.deleteById(id);
         } else {

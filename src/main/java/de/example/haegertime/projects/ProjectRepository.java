@@ -14,4 +14,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p WHERE p.customer.id = ?1 AND p.id = ?2")
     Optional<Project> existsProjectByIdAndCustomerID(Long customerId, Long projectId);
+
+
 }

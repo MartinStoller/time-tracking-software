@@ -44,7 +44,7 @@ public class Project {
     private List<TimeTableDay> timeTableDays;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="pj_fk", referencedColumnName = "id")
     private Customer customer;
 
