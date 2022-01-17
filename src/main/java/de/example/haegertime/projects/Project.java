@@ -3,6 +3,7 @@ package de.example.haegertime.projects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.timetables.TimeTableDay;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sonatype.inject.Nullable;
