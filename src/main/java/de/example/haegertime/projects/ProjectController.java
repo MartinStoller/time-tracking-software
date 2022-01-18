@@ -32,7 +32,7 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(long id) {
+    public void deleteById(@PathVariable long id) {
         projectService.deleteById(id);
     }
 }
