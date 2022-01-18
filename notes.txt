@@ -31,6 +31,10 @@ https://www.baeldung.com/spring-email
 https://stackoverflow.com/questions/43142137/sending-email-from-spring-boot-application-using-gmail
 writing tests for email sending: https://www.youtube.com/watch?v=MOODnDflO-M
 _______________________________________________________________________________________________________________________
+What is payload:
+A payload in API is the actual data pack that is sent with the GET method in HTTP. It is the crucial information that
+you submit to the server when you are making an API request. The payload can be sent or received in various formats, including JSON.
+_______________________________________________________________________________________________________________________
 Log-in:
 i simplemented by MyUsderDetails class, which needs to extend Userdetails.class. Whatever the "ispassword()" function
 returns will be recognized as the password. Moreover it allows for easy implementation of the "frozen" boolean via the
