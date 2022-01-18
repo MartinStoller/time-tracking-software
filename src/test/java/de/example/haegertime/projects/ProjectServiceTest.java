@@ -45,8 +45,8 @@ class ProjectServiceTest {
         //when
         when(repo.findAll()).thenReturn(projects);
         //then
-        List<Project> expected = underTest.findAll();
-        assertThat(expected.size()).isEqualTo(2);
+        List<Project> output = underTest.findAll();
+        assertThat(output.size()).isEqualTo(2);
         verify(repo, times(1)).findAll();
     }
 
