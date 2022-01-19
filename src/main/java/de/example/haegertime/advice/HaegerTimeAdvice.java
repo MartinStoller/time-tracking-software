@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class HaegerTimeAdvice {
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<Object> handleItemNotFoundException(ItemNotFoundException e) {
+    public ResponseEntity<APIException> handleItemNotFoundException(ItemNotFoundException e) {
         HttpStatus notfound = HttpStatus.NOT_FOUND;
         APIException apiException = new APIException(e.getMessage(), notfound);
         return new ResponseEntity<>(apiException, notfound);
