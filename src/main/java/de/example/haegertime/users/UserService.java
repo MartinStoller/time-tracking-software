@@ -8,6 +8,7 @@ import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,11 @@ import java.util.List;
 @Service
 @AllArgsConstructor //takes care of constructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TimeTableRepository timeTableRepository;
+
 
     public List<User> getAllUsers(String sortBy) {
         if(sortBy == null){
@@ -37,8 +40,10 @@ public class UserService {
             return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("last")));}
         else if(sortBy.equals("role")){
             return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("role")));}
+
         else{
             throw new InvalidParameterException("Requestparameter must either be abc, role or null.");
+
         }
     }
 
@@ -78,7 +83,7 @@ public class UserService {
         }
     }
 
-    public User getByName(String username) {
+    public User getByUsername(String username) {
         return userRepository.getUserByEmail(username);
     }
 

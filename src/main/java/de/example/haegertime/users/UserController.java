@@ -89,7 +89,7 @@ public class UserController {
     @GetMapping("/current-user")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
-        return ResponseEntity.ok(userService.getByName(username));
+        return ResponseEntity.ok(userService.getByUsername(username));
     }
 
     @GetMapping("/showOwnWorkdays")
@@ -115,7 +115,7 @@ public class UserController {
     @PutMapping("/current-user/update")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
-        User logged = userService.getByName(username);
+        User logged = userService.getByUsername(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
 
