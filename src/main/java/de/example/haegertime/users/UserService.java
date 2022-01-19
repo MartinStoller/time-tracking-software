@@ -8,19 +8,18 @@ import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.InvalidParameterException;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-
-import java.util.ArrayList;
-
 import java.util.List;
 
 @Service
@@ -33,15 +32,13 @@ public class UserService {
 
 
     public List<User> getAllUsers(String sortBy) {
-        if(sortBy == null){
+        if (sortBy == null) {
             return userRepository.findAll();
-        }
-        else if(sortBy.equals("abc")){
-            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"));}
-        else if(sortBy.equals("role")){
-            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"));}
-
-        else{
+        } else if (sortBy.equals("abc")) {
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"));
+        } else if (sortBy.equals("role")) {
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"));
+        } else {
             throw new InvalidParameterException("Requestparameter must either be abc, role or null.");
 
         }
@@ -50,7 +47,7 @@ public class UserService {
 
     public void createUser(User user) {
         String mail = user.getEmail();
-        if (userRepository.existsByEmail(mail)){
+        if (userRepository.existsByEmail(mail)) {
             throw new EmailAlreadyExistsException("Diese Email wird bereits verwendet.");
         }
         userRepository.save(user);
@@ -104,7 +101,7 @@ public class UserService {
 
     public User updateUserName(Long id, String newUserName) {
         User updateUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+"" +
+                () -> new ItemNotFoundException("Der Benutzer mit der Id " + id + "" +
                         " ist nicht in der DB")
         );
         String email = updateUser.getEmail();
@@ -116,10 +113,10 @@ public class UserService {
         return updateUser;
     }
 
-
     public void deactivUser(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User deactivUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+
+                () -> new ItemNotFoundException("Der Benutzer mit der Id " + id +
                         " ist nicht in der DB")
         );
         deactivUser.setFrozen(false);
@@ -129,7 +126,7 @@ public class UserService {
 
     public void reactivUser(Long id) {
         User reactivUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mid Id "+id+
+                () -> new ItemNotFoundException("Der Benutzer mid Id " + id +
                         " ist nicht in der DB")
         );
         reactivUser.setFrozen(true);
@@ -138,9 +135,9 @@ public class UserService {
 
     public User updateRole(Long id, String role) {
         User updateRoleUser = userRepository.findById(id).orElseThrow(
-                () -> new ItemNotFoundException("Der Benutzer mit der Id "+id+" ist nicht in der DB")
+                () -> new ItemNotFoundException("Der Benutzer mit der Id " + id + " ist nicht in der DB")
         );
-        if(role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER") ) {
+        if (role.equals("ADMIN") || role.equals("EMPLOYEE") || role.equals("BOOKKEEPER")) {
             updateRoleUser.setRole(Role.valueOf(role));
             userRepository.save(updateRoleUser);
             return updateRoleUser;
@@ -163,8 +160,8 @@ public class UserService {
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
         for (TimeTableDay ttd : allWorkdays) {
-            actualHoursSum+= ttd.getActualHours();
-            expectedHoursSum+=ttd.getExpectedHours();
+            actualHoursSum += ttd.getActualHours();
+            expectedHoursSum += ttd.getExpectedHours();
         }
 
         return Arrays.asList(expectedHoursSum, actualHoursSum, actualHoursSum - expectedHoursSum);
@@ -210,19 +207,19 @@ public class UserService {
 
     public void applyForHoliday(Long employeeId, Long dayId, double duration) {
         String bookkeeperEmail = "josalongmartin@gmail.com";
-        emailService.send(bookkeeperEmail, "Apply for holidays","Employee Id "+employeeId+
-                        ", workdayId "+dayId+ ", duration: "+duration
-                );
+        emailService.send(bookkeeperEmail, "Apply for holidays", "Employee Id " + employeeId +
+                ", workdayId " + dayId + ", duration: " + duration
+        );
     }
 
     public void declineForHoliday(Long employeeId) {
         User user = userRepository.findById(employeeId).orElseThrow(
-                () -> new ItemNotFoundException("Der User mit Id "+employeeId+"" +
+                () -> new ItemNotFoundException("Der User mit Id " + employeeId + "" +
                         " nicht in der Datenbank")
         );
         String userEmail = user.getEmail();
-        emailService.send(userEmail, "Decline for holidays", "Hi "+user.getFirst()
-                +", your apply was cancelled" );
+        emailService.send(userEmail, "Decline for holidays", "Hi " + user.getFirst()
+                + ", your apply was cancelled");
     }
 
     public List<TimeTableDay> showAllMyHolidays(String email) {
@@ -230,7 +227,7 @@ public class UserService {
         List<TimeTableDay> ttd = user.getTimeTableDayList();
         List<TimeTableDay> htt = new ArrayList<>();
         for (TimeTableDay t : ttd) {
-            if (t.getAbsenceStatus() != null && t.getAbsenceStatus().toString().equals("HOLIDAY") ) {
+            if (t.getAbsenceStatus() != null && t.getAbsenceStatus().toString().equals("HOLIDAY")) {
                 htt.add(t);
             }
         }

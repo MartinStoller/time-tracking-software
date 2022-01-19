@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -131,12 +133,9 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserName(id, newUserName));
     }
 
-    /**
-     * Deaktivieren einen Benutzer
-     * @param id Benutzer ID
-     * @return
-     */
+
     @PutMapping("/deactiv/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deactivUser(@PathVariable Long id) {
         userService.deactivUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -148,6 +147,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/reactiv/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> reactivUser(@PathVariable Long id) {
         userService.reactivUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
