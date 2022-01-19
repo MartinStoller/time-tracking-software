@@ -29,22 +29,23 @@ public class CustomerService {
      * @return der erzeugte Kunde
      */
     public Customer createCustomer(Customer customer) {
-        Optional<Customer> optionalCustomer = customerRepository.findCustomerByName(customer.getName());
-        if(optionalCustomer.isPresent()) {
+        boolean exists = customerRepository.existsCustomerByName(customer.getName());
+        if(exists) {
             throw new ItemAlreadyExistsException("Der Name existiert bereits in der DB");
-        }
-        if(!customer.getProjects().isEmpty()) {
-            for (Project project : customer.getProjects()) {
-                String projectTitle = project.getTitle();
-                Optional<Project> projectOptional = projectRepository.findProjectByTitle(projectTitle);
-                if (projectOptional.isPresent()) {
-                    throw new ItemAlreadyExistsException("Das Projekt mit dem Name " + projectTitle +
-                            " existiert bereits in der DB");
+        } else {
+            if (!customer.getProjects().isEmpty()) {
+                for (Project project : customer.getProjects()) {
+                    String projectTitle = project.getTitle();
+                    boolean existsProject = projectRepository.existsProjectByTitle(projectTitle);
+                    if (existsProject) {
+                        throw new ItemAlreadyExistsException("Das Projekt mit dem Name " + projectTitle +
+                                " existiert bereits in der DB");
+                    }
                 }
             }
+            customerRepository.save(customer);
+            return customer;
         }
-        customerRepository.save(customer);
-        return customer;
 
     }
 
@@ -62,17 +63,14 @@ public class CustomerService {
      * @return updated Customer
      */
     public Customer updateCustomer(Customer customer) {
-        Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
-        if(customerOptional.isPresent()) {
-            Customer updateCustomer = customerOptional.get();
-            updateCustomer.setName(customer.getName());
-            updateCustomer.setAddress(customer.getAddress());
-            updateCustomer.setProjects(customer.getProjects());
-            customerRepository.save(updateCustomer);
-            return updateCustomer;
-        } else {
-            throw new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank");
-        }
+        Customer updateCustomer = customerRepository.findById(customer.getId()).orElseThrow(
+                () -> new ItemNotFoundException("Diese Kunde ist nicht in der DB")
+        );
+        updateCustomer.setName(customer.getName());
+        updateCustomer.setAddress(customer.getAddress());
+        updateCustomer.setProjects(customer.getProjects());
+        customerRepository.save(updateCustomer);
+        return updateCustomer;
     }
 
     /**
@@ -97,16 +95,16 @@ public class CustomerService {
         Customer updateCustomer = customerRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank")
         );
-        Optional<Project> projectOptional = projectRepository.findProjectByTitle(project.getTitle());
-        if(!projectOptional.isPresent()) {
+        boolean existsProject = projectRepository.existsProjectByTitle(project.getTitle());
+        if(!existsProject) {
             List<Project> projectList = updateCustomer.getProjects();
             projectList.add(project);
             updateCustomer.setProjects(projectList);
             customerRepository.save(updateCustomer);
             return updateCustomer;
         } else {
-            throw new ItemAlreadyExistsException("Das Projekt mit Title"+project.getTitle()+
-                    " ist breits in der DB");
+            throw new ItemAlreadyExistsException("Das Projekt mit Title "+project.getTitle()+
+                    " ist bereits in der DB");
         }
     }
 
