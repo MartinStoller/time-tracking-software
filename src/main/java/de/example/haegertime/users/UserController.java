@@ -31,11 +31,13 @@ public class UserController {
        if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
        sort by last name alphabetically
      */
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<User> getAllUsers(@RequestParam(required = false) String sortBy){
         return userService.getAllUsers(sortBy);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             this.userService.createUser(user);
@@ -47,22 +49,26 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public ResponseEntity<User> findById(@PathVariable long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     //Ausgabe User anhand eines Keywords
     @GetMapping("/search/{keyword}")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
         return this.userService.findByLastByFirstByEmail(keyword);
     }
 
     @GetMapping("/myProjects")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public LinkedHashSet<Project> getMyProjects(Principal principal){
         return userService.getMyProjects(principal.getName());
     }
 
     @GetMapping("/personalOvertime")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<Double> getPersonalOvertimeBalance(Principal principal){
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
         String email = principal.getName();
@@ -71,6 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/OvertimeByEmail/{email}")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<?> getOvertimeBalanceById(@PathVariable String email){
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
         return userService.getOvertimeBalance(email);
@@ -78,6 +85,7 @@ public class UserController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -89,12 +97,14 @@ public class UserController {
      * @return
      */
     @GetMapping("/current-user")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public ResponseEntity<User> currentUser(Principal principal) {
         String username = principal.getName();
         return ResponseEntity.ok(userService.getByUsername(username));
     }
 
     @GetMapping("/showOwnWorkdays")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<TimeTableDay> ShowOwnWorkdays(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate start,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate end,
@@ -115,6 +125,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/current-user/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
         User logged = userService.getByUsername(username);
@@ -129,6 +140,7 @@ public class UserController {
      * @return  aktualisierter Nutzer
      */
     @PutMapping("/update/username/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUserName(Long id,@RequestParam("email") String newUserName) {
         return ResponseEntity.ok(userService.updateUserName(id, newUserName));
     }
@@ -154,6 +166,7 @@ public class UserController {
     }
 
     @PutMapping("/updaterole/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
         return ResponseEntity.ok(userService.updateRole(id, role));
     }
@@ -166,6 +179,7 @@ public class UserController {
     }
 
     @GetMapping("/holidays/rest")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public double showMyRestHolidays(Principal principal) {
         String username = principal.getName();
         return userService.showMyRestHolidays(username);
@@ -180,6 +194,7 @@ public class UserController {
      * @param duration
      */
     @PostMapping("/apply/holiday/{id}")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public ResponseEntity<Void> applyForHoliday(@PathVariable("id") Long employeeId,@RequestParam Long dayId,
                                 @RequestParam double duration) {
         userService.applyForHoliday(employeeId, dayId, duration);
@@ -187,12 +202,14 @@ public class UserController {
     }
 
     @PostMapping("/holiday/decline/employee/{id}")
+    @PreAuthorize("hasRole('BOOKKEEPER')")
     public ResponseEntity<Void> declineForHoliday(@PathVariable("id") Long employeeId) {
         userService.declineForHoliday(employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/holidays")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<TimeTableDay> showAllMyHolidays(Principal principal) {
         String email = principal.getName();
         return userService.showAllMyHolidays(email);

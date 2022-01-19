@@ -53,17 +53,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/projects").hasAnyAuthority("EMPLOYEE", "ADMIN", "BOOKKEEPER")
                 .antMatchers("/projects/{id}").hasAnyAuthority("BOOKKEEPER", "ADMIN", "EMPLOYEE")
                 .antMatchers(HttpMethod.PUT, "/projects/{id}").hasAnyAuthority("ADMIN", "BOOKKEEPER")
-                .antMatchers("/api/users/all").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
 
-                .antMatchers(HttpMethod.POST, "/api/user/").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/users/current-user").hasAnyAuthority("ADMIN", "EMPLOYEE", "BOOKKEEPER")
-                .antMatchers("/api/users/current-user/update").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
-                .antMatchers(HttpMethod.DELETE, "/api/users/{id}").hasAnyAuthority("ADMIN")
+//                .antMatchers(HttpMethod.POST, "/api/users/").hasAnyAuthority("ADMIN")
+//                .antMatchers("/api/users/current-user").hasAnyAuthority("ADMIN", "EMPLOYEE", "BOOKKEEPER")
+//                .antMatchers("/api/users/current-user/update").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
+//                .antMatchers(HttpMethod.DELETE, "/api/users/{id}").hasAnyAuthority("ADMIN")
 //                .antMatchers("/api/users/reactiv/{id}").hasAnyAuthority("ADMIN")
 //                .antMatchers("/api/users/deactiv/{id}").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/users/updaterole/{id}").hasAnyAuthority("ADMIN")
+//                .antMatchers("/api/users/updaterole/{id}").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/timetable/actualhours/{id}").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
-                .antMatchers("/api/users/register/timetable").hasAnyAuthority("EMPLOYEE")
+//                .antMatchers("/api/users/register/timetable").hasAnyAuthority("EMPLOYEE")
                 .antMatchers("/api/invoice/export/excel").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/timetable/hours/employees/{id}").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/timetable/assignEmployee/**").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
@@ -86,9 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().permitAll().and().httpBasic()
                 .and().csrf().disable();
-
-
-        //TODO die Methode erweitern nach Wunsch
 
     }
 }
