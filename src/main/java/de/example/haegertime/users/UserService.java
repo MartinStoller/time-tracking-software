@@ -37,9 +37,9 @@ public class UserService {
             return userRepository.findAll();
         }
         else if(sortBy.equals("abc")){
-            return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("last")));}
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"));}
         else if(sortBy.equals("role")){
-            return userRepository.findAll(Sort.by(Sort.Direction.ASC, ("role")));}
+            return userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"));}
 
         else{
             throw new InvalidParameterException("Requestparameter must either be abc, role or null.");

@@ -7,7 +7,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +39,22 @@ class UserServiceTest {
 
 
 
-//    @Test
-//    void ShouldFindAllSortByRole() {
-//        //given
-//        List<User> users = new ArrayList<>();
-//        User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
-//        User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
-//
-//        users.add(user1);
-//        users.add(user2);
-//        //when
-//        when(userRepository.findAll()).thenReturn(users);
-//        //then
-//        List<User> expected = underTest.getAllUsers("role");
-//        boolean hans = true;
-//        assertTrue(hans);
-//        verify(userRepository, times(1)).findAll();
-//    }
+    @Test
+    void ShouldFindAllSortByRole() {
+        //given
+        List<User> users = new ArrayList<>();
+        User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
+        User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        users.add(user1);
+        users.add(user2);
+
+        //when
+        when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"))).thenReturn(users);
+        //then
+        List<User> expected = underTest.getAllUsers("role");
+        assertThat(expected.size()).isEqualTo(2);
+        verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "role"));
+    }
 
     @Test
     void ShouldFindAllSortByLast() {
@@ -61,15 +62,15 @@ class UserServiceTest {
         List<User> users = new ArrayList<>();
         User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
         User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
-
         users.add(user1);
         users.add(user2);
+
         //when
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"))).thenReturn(users);
         //then
         List<User> expected = underTest.getAllUsers("abc");
         assertThat(expected.size()).isEqualTo(2);
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "last"));
     }
 
     @Test
