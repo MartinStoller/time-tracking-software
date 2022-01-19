@@ -10,9 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 
@@ -103,11 +102,11 @@ public class InvoiceExcelExporter {
 
     }
 
-    public void export(HttpServletResponse response) throws IOException {
+    public void export(OutputStream outputStream) throws IOException {
         writeHeaderLine();
         writeDataLines();
 
-        ServletOutputStream outputStream = response.getOutputStream();
+        //ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
 
