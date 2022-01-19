@@ -69,7 +69,7 @@ public class TimeTableService {
 
 
     public List<List<Double>> totalHoursAllEmployeeOnAProject(Long projectId) {
-        return ttRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+        return ttRepository.getTotalHoursOfProjectGroupedByEmployee(projectId);
     }
 
     public void registerNewTimeTable(TimeTableDay timeTableDay) {
