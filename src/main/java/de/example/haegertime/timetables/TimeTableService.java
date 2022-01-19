@@ -1,6 +1,5 @@
 package de.example.haegertime.timetables;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.example.haegertime.advice.InvalidInputException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
@@ -9,13 +8,10 @@ import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.management.InstanceNotFoundException;
 import javax.transaction.Transactional;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,7 +24,7 @@ public class TimeTableService {
     private final ProjectRepository projectRepository;
     private final EmailService emailService;
 
-    public List<TimeTableDay> getEntireTimetable(){return ttRepository.findAll();}
+    public List<TimeTableDay> getTimetable(){return ttRepository.findAll();}
 
     public TimeTableDay getTimetableDay(Long id) throws InstanceNotFoundException{
         TimeTableDay ttd = ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
@@ -47,7 +43,7 @@ public class TimeTableService {
         List<TimeTableDay> newList= user.getTimeTableDayList();
         newList.add(day);
         user.setTimeTableDayList(newList);
-        day.assignUser(user);
+        day.assignEmployee(user);
         return ttRepository.save(day);
     }
 

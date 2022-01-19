@@ -1,20 +1,15 @@
 package de.example.haegertime.users;
 
-import de.example.haegertime.timetables.TimeTableDay;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
 import java.util.List;
 
-@Configuration
-public class UserConfig {
-/*
-   @Bean
-    CommandLineRunner clrUsers(UserRepository userRepository){
+@Component
+public class TestDataUser {
+    @Bean
+    CommandLineRunner getTestDataUsers(UserRepository userRepository){
         return  args -> {
             User usr1 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
             User usr2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
@@ -26,6 +21,4 @@ public class UserConfig {
             userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7));
         };
     }
-*/
-
 }

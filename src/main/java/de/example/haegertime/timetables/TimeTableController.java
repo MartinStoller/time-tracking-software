@@ -4,7 +4,6 @@ import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.users.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @RestController
-@RequestMapping(path="api/timetable")
+@RequestMapping(path="api/timeTableDays")
 public class TimeTableController {
 
     private final TimeTableService ttService;
@@ -20,21 +19,14 @@ public class TimeTableController {
     public TimeTableController(TimeTableService ttService){this.ttService = ttService;}
 
     @GetMapping
-    public List<TimeTableDay> getEntireTimetable(){return ttService.getEntireTimetable();}
+    public List<TimeTableDay> getTimetable(){return ttService.getTimetable();}
 
     @GetMapping("/{id}")
     public TimeTableDay getTimetableDay(@PathVariable("id") Long id) throws InstanceNotFoundException {
         return ttService.getTimetableDay(id);
     }
 
-    @PutMapping("/assignDay/{dayId}/toEmployee/{employeeId}")
-    public void assignDayToEmployee(@PathVariable Long dayId, @PathVariable Long employeeId) throws InstanceNotFoundException {
-        ttService.assignEmployeeToDay(dayId, employeeId);
-    }
-
-
-    // TODO: return only actual hours with dates, the result should be sorted according to dates
-    @GetMapping("/actualhours/{id}")
+    @GetMapping("/actualHours/{id}")
     public List<TimeTableDay> actualHourShow(@PathVariable("id") Long id,
                                              @RequestParam(required = false) String startDate,
                                              @RequestParam(required = false) String endDate)
@@ -49,7 +41,6 @@ public class TimeTableController {
 
 
     @PutMapping("/assignEmployee/{employeeId}/toDay/{dayId}")
-
     public void assignEmployeeToDay(@PathVariable Long dayId, @PathVariable Long employeeId) throws ItemNotFoundException {
         ttService.assignEmployeeToDay(dayId, employeeId);
     }
@@ -60,9 +51,10 @@ public class TimeTableController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public TimeTableDay registerNewTimeTable(@RequestBody TimeTableDay timeTableDay) {
         ttService.registerNewTimeTable(timeTableDay);
-        return  new ResponseEntity<>(HttpStatus.CREATED);
+        return timeTableDay;
     }
 
     @PutMapping("/finalize/{dayId}")
@@ -70,32 +62,31 @@ public class TimeTableController {
         ttService.finalizeTimeTableDay(dayId);
     }
 
-
-    @GetMapping("/overhours/{id}")
+    @GetMapping("/overtime/{id}")
     public String overHoursShow(@PathVariable("id") Long employeeId) {
         return ttService.overUnterHoursShow(employeeId);
     }
 
-    @PutMapping("/absence/holiday/employee/{id}")
+    @PutMapping("/absenceStatus/holiday/{id}")
     public String changeAbsenceStatusToHoliday(@PathVariable("id") Long employeeId,
                                                @RequestParam Long dayId,@RequestParam Double duration) {
         return ttService.changeAbsenceStatusToHoliday(employeeId, dayId, duration);
     }
 
-    @PutMapping("/absence/sick/employee/{id}")
+    @PutMapping("/absenceStatus/sick/{id}")
     public String changeAbsenceStatusToSick(@PathVariable("id") Long employeeId,
                                             @RequestParam Long dayId,
                                             @RequestParam double duration) {
         return ttService.changeAbsenceStatusToSick(employeeId, dayId, duration);
     }
 
-    @GetMapping("/employees/status/holiday")
+    @GetMapping("/employeesOnHoliday")
     public List<User> showAllEmployeesInHoliday(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
         return ttService.showAllEmployeesInHoliday(date);
     }
 
-    @GetMapping("/employees/status/sick")
+    @GetMapping("/sickEmployees")
     public List<User> showAllSickEmployees(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
         return ttService.showAllSickEmployees(date);
