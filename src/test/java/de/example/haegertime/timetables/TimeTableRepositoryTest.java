@@ -2,6 +2,7 @@ package de.example.haegertime.timetables;
 
 import de.example.haegertime.customer.CustomerRepository;
 import de.example.haegertime.fillReposWithTestdata.TestdataGenerator;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.users.Role;
 import de.example.haegertime.users.User;
@@ -49,9 +50,9 @@ class TimeTableRepositoryTest {
     @Test
     void shouldGetTimeTableDayByEmployeeId() {
         //given
-
         User usr1 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
-        User usr2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
+        Project proj1 = new Project("Homepage Maintenance", LocalDate.of(1995, Month.JULY, 22), LocalDate.of(2021, Month.AUGUST, 2));
+        proj1.setId(1L);
 
         TimeTableDay ttd2 = new TimeTableDay(
                 LocalDate.of(2022, Month.JANUARY, 2),null,
@@ -65,6 +66,8 @@ class TimeTableRepositoryTest {
         ttd2.setWorkdayId(2L);
         ttd3.setEmployee(usr1);
         ttd3.setWorkdayId(3L);
+        ttd2.setProject(proj1);
+        ttd3.setProject(proj1);
 
         //when
         List<TimeTableDay> returned = testedTTDRepository.getTimeTableDayByEmployeeId(1L);
@@ -72,13 +75,18 @@ class TimeTableRepositoryTest {
         List<TimeTableDay> expected = List.of(ttd2, ttd3);
 
         //then
-        System.out.println(testedTTDRepository.findAll().size());
-        System.out.print(testedTTDRepository.findAll());
-        assertEquals(expected, returned);
+        assertEquals(expected.toString(), returned.toString());
     }
 
     @Test
-    void getTotalHoursAllEmployeeOnAProject() {
+    void shouldGetSumOfHoursOfAllEmployeeOnAProject() {
+        List<List<Double>> gggg= testedTTDRepository.getTotalHoursAllEmployeeOnAProject(2L);
+        System.out.println(testedTTDRepository.getTotalHoursAllEmployeeOnAProject(2L));
+        System.out.println(testedTTDRepository.getTotalHoursAllEmployeeOnAProject(2L));
+        System.out.println(testedTTDRepository.getTotalHoursAllEmployeeOnAProject(1L));
+
+
+
     }
 
     @Test
