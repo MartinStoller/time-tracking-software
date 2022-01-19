@@ -66,10 +66,9 @@ class ProjectControllerTest {
         //given
         Project p1 = new Project("ABC", LocalDate.of(2020, Month.APRIL,1),
                 LocalDate.of(2021, Month.JANUARY, 13));
-        Long projectId = 1L;
         String inputJson = objectMapper.writeValueAsString(p1);
         //when
-        Mockito.when(projectService.updateProject(projectId, p1)).thenReturn(p1);
+        Mockito.when(projectService.updateProject(Mockito.any(Long.TYPE), Mockito.any(Project.class))).thenReturn(p1);
         //then
         String url = "/api/projects/1";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put(url)
@@ -78,8 +77,8 @@ class ProjectControllerTest {
                 .contentType(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         MockHttpServletResponse response = result.getResponse();
-        //String output = response.getContentAsString();
-        //assertThat(output).isEqualTo(inputJson);
+        String output = response.getContentAsString();
+        assertThat(output).isEqualTo(inputJson);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
