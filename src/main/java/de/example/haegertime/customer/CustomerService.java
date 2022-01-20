@@ -4,24 +4,19 @@ import de.example.haegertime.advice.ItemAlreadyExistsException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
     private final ProjectRepository projectRepository;
 
-
-    public CustomerService(CustomerRepository customerRepository
-            , ProjectRepository projectRepository) {
-        this.customerRepository = customerRepository;
-        this.projectRepository = projectRepository;
-    }
 
     /**
      * Anlegen von neuen Kunden
@@ -59,7 +54,7 @@ public class CustomerService {
 
     /**
      * Aktualisierung der Kunden
-     * @param customer
+     * @param customer to update customer
      * @return updated Customer
      */
     public Customer updateCustomer(Customer customer) {
@@ -92,16 +87,16 @@ public class CustomerService {
      */
 
     public Customer addProjectToExistingCustomer(long id, Project project) {
-        Customer updateCustomer = customerRepository.findById(id).orElseThrow(
+        Customer existingCustomer = customerRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Diese Kunde ist nicht in der Datenbank")
         );
         boolean existsProject = projectRepository.existsProjectByTitle(project.getTitle());
         if(!existsProject) {
-            List<Project> projectList = updateCustomer.getProjects();
+            List<Project> projectList = existingCustomer.getProjects();
             projectList.add(project);
-            updateCustomer.setProjects(projectList);
-            customerRepository.save(updateCustomer);
-            return updateCustomer;
+            existingCustomer.setProjects(projectList);
+            customerRepository.save(existingCustomer);
+            return existingCustomer;
         } else {
             throw new ItemAlreadyExistsException("Das Projekt mit Title "+project.getTitle()+
                     " ist bereits in der DB");

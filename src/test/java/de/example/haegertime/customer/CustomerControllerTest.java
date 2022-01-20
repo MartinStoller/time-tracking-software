@@ -134,7 +134,7 @@ class CustomerControllerTest {
         String input = objectMapper.writeValueAsString(project);
         //when
         Mockito.when(customerService.addProjectToExistingCustomer(Mockito.any(Long.TYPE), Mockito.any())).thenReturn(customer);
-        String url = "/api/customers/"+customerId+"/addproject";
+        String url = "/api/customers/"+customerId+"/projects";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

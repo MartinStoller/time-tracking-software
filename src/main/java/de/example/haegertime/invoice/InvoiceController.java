@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/invoice")
+@RequestMapping("/api/invoices")
 @AllArgsConstructor
 public class InvoiceController {
 

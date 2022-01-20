@@ -1,6 +1,7 @@
 package de.example.haegertime.customer;
 
 import de.example.haegertime.projects.Project;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,13 +10,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/customers")
+@AllArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
 
     @GetMapping
     public ResponseEntity<List<Customer>> findAllCustomer() {
@@ -39,7 +38,7 @@ public class CustomerController {
         return customerService.updateCustomer(customer);
     }
 
-    @PostMapping("/{id}/addproject")
+    @PostMapping("/{id}/projects")
     public ResponseEntity<Customer> addProjectToExistingCustomer(@PathVariable long id,@RequestBody Project project) {
         return new ResponseEntity<>(customerService.addProjectToExistingCustomer(id, project), HttpStatus.CREATED);
     }
