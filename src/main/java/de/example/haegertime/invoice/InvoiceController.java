@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/invoice")
@@ -16,19 +15,6 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
-
-
-
-    @GetMapping
-    public List<Invoice> getAllInvoice() {
-        return invoiceService.getAllInvoice();
-    }
-
-
-    @PostMapping
-    public Invoice createInvoice(Invoice invoice) {
-        return invoiceService.createInvoice(invoice);
-    }
 
 
     @PostMapping(value = "/export/excel", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -49,7 +35,7 @@ public class InvoiceController {
 
     @PostMapping(value = "/export/xml", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public InvoiceXMLExporter exportToXML(HttpServletResponse response, Long customerId, Long projectId)
+    public InvoiceXMLExporter exportToXML(HttpServletResponse response,@RequestParam Long customerId,@RequestParam Long projectId)
             throws IOException {
         return invoiceService.exportToXML(response, customerId, projectId);
     }

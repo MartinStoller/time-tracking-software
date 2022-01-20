@@ -9,6 +9,7 @@ import de.example.haegertime.timetables.TimeTableRepository;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,14 +29,6 @@ public class InvoiceService {
     private final TimeTableRepository timeTableRepository;
     private final UserRepository userRepository;
 
-    public List<Invoice> getAllInvoice() {
-        return invoiceRepository.findAll();
-    }
-
-    public Invoice createInvoice(Invoice invoice) {
-        return invoiceRepository.save(invoice);
-    }
-
 
 
     public void exportToPdf(HttpServletResponse response, Long customerId, Long projectId) throws IOException {
@@ -46,6 +39,7 @@ public class InvoiceService {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=invoice_"+currentDateTime+".pdf";
             response.setHeader(headerKey, headerValue);
+            response.setContentType("application/pdf");
             Customer customer = customerRepository.findById(customerId).orElseThrow(
                     () -> new ItemNotFoundException("Der Kunde mit Id "+customerId+" nicht in der DB")
             );
