@@ -28,6 +28,7 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
     private EmailService emailService;
     private TimeTableRepository timeTableRepository;
     private UserService underTest;
@@ -88,30 +89,29 @@ class UserServiceTest {
         List<User> expected = underTest.getAllUsers(null);
         assertThat(expected.size()).isEqualTo(2);
         verify(userRepository, times(1)).findAll();
+
     }
 
+    @Test
+    @DisplayName("add an new User")
+    void shouldCreateUser() {
+        // given
+        User user = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
+        User user2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
 
+        // when
+        underTest.createUser(user);
 
-//    @Test
-//    @DisplayName("add an new User")
-//    void shouldCreateUser() {
-//        // given
-//        User user = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
-//
-//        User user2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
-//        // when
-//        underTest.createUser(user);
-//
-//        // then
-//        ArgumentCaptor<User> userArgumentCaptor =
-//                ArgumentCaptor.forClass(User.class);
-//
-//        verify(userRepository)
-//                .save(userArgumentCaptor.capture());
-//
-//        User capturedUser = userArgumentCaptor.getValue();
-//        assertEquals(capturedUser, user);
-//    }
+        // then
+        ArgumentCaptor<User> userArgumentCaptor =
+                ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository)
+                .save(userArgumentCaptor.capture());
+
+        User capturedUser = userArgumentCaptor.getValue();
+        assertEquals(capturedUser, user);
+    }
 
     @Test
     @DisplayName("get User by id")
@@ -129,31 +129,27 @@ class UserServiceTest {
     void ShouldFindByLastByFirstByEmail() {
     }
 
+
+
     @Test
-    void shouldDeleteUser() {
+    void ShouldDeleteUserById() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        userRepository.save(user);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.deleteUser(1L);
+        //then
+        verify(userRepository, times(1)).deleteById(1L);
     }
 
-//
-//    @Test
-//    void ShouldDeleteUserById() {
-//        //given
-//        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
-//        userRepository.save(user);
-//        given(userRepository.findById(1L)).willReturn(Optional.of(user));
-//        //when
-//        underTest.deleteUser(1L);
-//        //then
-//        verify(userRepository, times(1)).deleteById(1L);
-//    }
-
-
-
-//    @Test
-//    void ShouldNotDeleteUserById() {
-//        assertThatThrownBy(()-> underTest.deleteUser(1L))
-//                .isInstanceOf(ItemNotFoundException.class)
-//                .hasMessageContaining("Der User ist nicht in der Datenbank");
-//    }
+    @Test
+    @Disabled
+    void ShouldNotDeleteUserById() {
+        assertThatThrownBy(()-> underTest.deleteUser(10L))
+                .isInstanceOf(ItemNotFoundException.class)
+                .hasMessageContaining("Der User ist nicht in der Datenbank");
+    }
 
 
     @Test
@@ -168,21 +164,53 @@ class UserServiceTest {
     void updateUserDetails() {
     }
 
+
     @Test
-    void updateUserName() {
+    void shouldUpdateUserName() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.updateUserName(1l, "martin.stoller3@gmx.de");
+        //then
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
-    void deactivUser() {
+    void itShouldDeactivateById() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.deactivUser(1L);
+        //then
+        verify(userRepository, times(1)).save(user);
+    }
+
+
+    @Test
+    void ShouldReactivateById() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.reactivUser(1L);
+        //then
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
-    void reactivUser() {
+    void shouldUpdateRole() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.updateRole(1l, "ADMIN");
+        //then
+        verify(userRepository, times(1)).save(user);
     }
 
-    @Test
-    void updateRole() {
-    }
+
 
     @Test
     void getMyProjects() {
