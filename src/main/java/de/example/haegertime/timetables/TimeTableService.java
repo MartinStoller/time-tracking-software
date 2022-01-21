@@ -1,6 +1,5 @@
 package de.example.haegertime.timetables;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.example.haegertime.advice.InvalidInputException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.email.EmailService;
@@ -9,15 +8,14 @@ import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.management.InstanceNotFoundException;
 import javax.transaction.Transactional;
-import java.sql.Time;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +34,7 @@ public class TimeTableService {
     }
 
     public TimeTableDay assignEmployeeToDay(Long dayId, Long employeeId) throws ItemNotFoundException {
-        /**
+        /*
          TimeTableDays are always created with  this.employee = null. This function takes care of the assignment of a Employee(=Foreign key).
          It´s given a dayId and EmployeeId and first finds the 2 Objects in the DB.
          Then it updates the List of Employees which are linked to an employee.
@@ -52,7 +50,7 @@ public class TimeTableService {
     }
 
     public TimeTableDay assignProjectToDay(Long dayId, Long projectId) throws ItemNotFoundException {
-        /**
+        /*
          TimeTableDays are always created with  this.project = null. This function takes care of the assignment of a Project (=Foreign key).
          It´s given a dayId and ProjectId and first finds the 2 Objects in the DB.
          Then it updates the Set of Workdays which are linked to a project.
@@ -67,16 +65,17 @@ public class TimeTableService {
         return ttRepository.save(day);
     }
 
-    public List<TimeTableDay> actualHourShow(Long id) {
+    public List<TimeTableDay> getTimeTableDayByEmployeeId(Long id) {
         return ttRepository.getTimeTableDayByEmployeeId(id);
     }
 
 
-    public List<List<Double>> totalHoursAllEmployeeOnAProject(Long projectId) {
-        return ttRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+    public List<List<Double>> getTotalWorkingHoursOnAProjectGroupedByEmployeeId(Long projectId) {
+        return ttRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
     }
 
     public void registerNewTimeTable(TimeTableDay timeTableDay) {
+
         timeTableDay.setActualHours(timeTableDay.calculateActualHours());
         ttRepository.save(timeTableDay);
     }
@@ -89,16 +88,12 @@ public class TimeTableService {
     }
 
 
-    public String overUnterHoursShow(Long employeeId) {
-        List<List<Double>> totalHours = ttRepository.getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
-        double totalActualHours = totalHours.get(0).get(0);
-        double totalExpectedHours = totalHours.get(0).get(1);
-        double sub = totalActualHours - totalExpectedHours;
-        if (sub < 0) {
-            return "Unter-Stunde: "+sub;
-        } else {
-            return "Über-Stunde "+sub;
-        }
+    public double showOverTimeOfEmployeeById(Long employeeId) {
+        List<List<Double>> totalActualAndExpectedHours = ttRepository.getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
+        double totalActualHours = totalActualAndExpectedHours.get(0).get(0);
+        double totalExpectedHours = totalActualAndExpectedHours.get(0).get(1);
+        double overTime = totalActualHours - totalExpectedHours;
+        return overTime;
     }
 
     /**
@@ -110,48 +105,43 @@ public class TimeTableService {
      * @return
      */
     @Transactional
-    public String changeAbsenceStatusToHoliday(Long employeeId, Long dayId, double duration) {
+    public void changeAbsenceStatusToHoliday(Long employeeId, Long dayId, double duration) {
         TimeTableDay ttd = ttRepository.findById(dayId).orElseThrow(
                 () -> new ItemNotFoundException("Dieser Arbeitstag " +
                         "wurde nicht in der DB gefunden.")
         );
-        if (ttd.getEmployee().getId() == employeeId ) {
+        if (Objects.equals(ttd.getEmployee().getId(), employeeId)) {
             ttd.setAbsenceStatus(AbsenceStatus.valueOf("HOLIDAY"));
-            User user = userRepository.findById(employeeId).get();
-            if (duration <= 0) {
-                throw new InvalidInputException("Der Dauer darf nicht kleiner als 0 sein");
-            } else if(duration <= 4.0 && duration > 0) {
-                //halber Tag Urlaub
-                ttd.setHolidayHours(4.0);
-                ttd.setActualHours(4.0);
-                user.setUrlaubstage(user.getUrlaubstage() - 0.5); //update Urlaubstage
+            User user = userRepository.findById(employeeId).orElseThrow(
+                    () -> new ItemNotFoundException("Der Employee mit Id "+employeeId+
+                            " wurde nicht gefunden")
+            );
+            double actualHours = setActualHour(duration);
+            ttd.setActualHours(actualHours);
+            ttd.setHolidayHours(actualHours);
+            if (actualHours<=4){
+                user.setUrlaubstage(user.getUrlaubstage()-0.5);
             } else {
-                //ganz Tag Urlaub
-                ttd.setHolidayHours(8.0);
-                ttd.setActualHours(8.0);
-                user.setUrlaubstage(user.getUrlaubstage() - 1.0); //update Urlaubstage
+                user.setUrlaubstage(user.getUrlaubstage()-1.0);
             }
             ttRepository.save(ttd);
             userRepository.save(user);
             emailService.send(user.getEmail(), "Beantragen akzeptiert", "Dein Beantragen wurde akzeptiert");
-            return "Das AbsenceStatus wurde zu HOLIDAY gewechselt, die Urlaubstunde wurde aktualisiert";
-
         } else {
             throw new InvalidInputException("Die eingegebene employeeId passt nicht mit der ID von TimeTable");
         }
     }
 
 
-    public String changeAbsenceStatusToSick(Long employeeId, Long dayId, double duration) {
+    public void changeAbsenceStatusToSick(Long employeeId, Long dayId, double duration) {
         TimeTableDay ttd = ttRepository.findById(dayId).orElseThrow(
                 () -> new ItemNotFoundException("Dieser Arbeitstag " +
                         "wurde nicht in der DB gefunden.")
         );
-        if (ttd.getEmployee().getId() == employeeId) {
+        if (Objects.equals(ttd.getEmployee().getId(), employeeId)) {
             ttd.setAbsenceStatus(AbsenceStatus.valueOf("SICK"));
             ttd.setActualHours(ttd.getActualHours() + duration);
             ttRepository.save(ttd);
-            return "Das AbsenceStatus wurde zu SICK gewechselt, die Ist-Stunde wurde angepasst";
         } else {
             throw new InvalidInputException("Die eingegebene employeeId passt nicht mit der ID von TimeTable");
         }
@@ -177,6 +167,18 @@ public class TimeTableService {
             employees.add(user);
         }
         return employees;
+    }
+
+
+
+    private double setActualHour(double duration) {
+        if(duration <= 0) {
+            throw new InvalidInputException("Der Dauer darf nicht kleiner oder gleich 0 sein");
+        } else if (duration <= 4) {
+            return 4;
+        } else {
+            return 8;
+        }
     }
 
 

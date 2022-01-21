@@ -39,12 +39,12 @@ public class TimeTableController {
                                              @RequestParam(required = false) String startDate,
                                              @RequestParam(required = false) String endDate)
     {
-        return ttService.actualHourShow(id);
+        return ttService.getTimeTableDayByEmployeeId(id);
     }
 
     @GetMapping("/hours/employees/{id}")
     public List<List<Double>> totalHoursEmployeeShow(@PathVariable("id") Long projectId) {
-        return ttService.totalHoursAllEmployeeOnAProject(projectId);
+        return ttService.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
     }
 
 
@@ -72,21 +72,21 @@ public class TimeTableController {
 
 
     @GetMapping("/overhours/{id}")
-    public String overHoursShow(@PathVariable("id") Long employeeId) {
-        return ttService.overUnterHoursShow(employeeId);
+    public double showOverTimeOfEmployeeById(@PathVariable("id") Long employeeId) {
+        return ttService.showOverTimeOfEmployeeById(employeeId);
     }
 
     @PutMapping("/absence/holiday/employee/{id}")
-    public String changeAbsenceStatusToHoliday(@PathVariable("id") Long employeeId,
+    public void changeAbsenceStatusToHoliday(@PathVariable("id") Long employeeId,
                                                @RequestParam Long dayId,@RequestParam Double duration) {
-        return ttService.changeAbsenceStatusToHoliday(employeeId, dayId, duration);
+        ttService.changeAbsenceStatusToHoliday(employeeId, dayId, duration);
     }
 
     @PutMapping("/absence/sick/employee/{id}")
-    public String changeAbsenceStatusToSick(@PathVariable("id") Long employeeId,
+    public void changeAbsenceStatusToSick(@PathVariable("id") Long employeeId,
                                             @RequestParam Long dayId,
                                             @RequestParam double duration) {
-        return ttService.changeAbsenceStatusToSick(employeeId, dayId, duration);
+        ttService.changeAbsenceStatusToSick(employeeId, dayId, duration);
     }
 
     @GetMapping("/employees/status/holiday")
