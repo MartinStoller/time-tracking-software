@@ -39,6 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //TODO: Ornung reinbringen: Mit kommentaren und Absätzen öhnliche Methoden zusammentun. Wo es sinn macht mit * und ** UR
         http.authorizeRequests()
                 .antMatchers("/api/users").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/customers").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
@@ -66,9 +67,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/timetable/hours/employees/{id}").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/timetable/assignEmployee/**").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/api/timetable/assignProject/**").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
+
                 .antMatchers("/api/timetable//OvertimeByEmail/{email})").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/api/invoice/export/pdf").hasAnyAuthority("BOOKKEEPER", "ADMIN")
                 .antMatchers("/api/invoice/export/xml").hasAnyAuthority("BOOKKEEPER", "ADMIN")
+
                 .antMatchers("/api/timetable/overhours/{id}").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/absence/holiday/employee/{id}").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/employees/status/holiday").hasAnyAuthority("BOOKKEEPER")
@@ -77,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/apply/holiday/{id}").hasAnyAuthority("BOOKEERPER","EMPLOYEE","ADMIN")
                 .antMatchers("/holiday/decline/employee/{id}").hasAnyAuthority("BOOKKEERPER","ADMIN")
                 .antMatchers("/holidays").hasAnyAuthority("EMPLOYEE","BOOKKEEPER","ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/timetableDays").hasAnyAuthority("EMPLOYEE","BOOKKEEPER","ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()

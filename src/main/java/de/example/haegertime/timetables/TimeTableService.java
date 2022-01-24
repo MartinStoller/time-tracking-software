@@ -26,7 +26,7 @@ public class TimeTableService {
     private final ProjectRepository projectRepository;
     private final EmailService emailService;
 
-    public List<TimeTableDay> getEntireTimetable(){return ttRepository.findAll();}
+    public List<TimeTableDay> getTimetable(){return ttRepository.findAll();}
 
     public TimeTableDay getTimetableDay(Long id) throws InstanceNotFoundException{
         TimeTableDay ttd = ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
@@ -45,7 +45,7 @@ public class TimeTableService {
         List<TimeTableDay> newList= user.getTimeTableDayList();
         newList.add(day);
         user.setTimeTableDayList(newList);
-        day.assignUser(user);
+        day.assignEmployee(user);
         return ttRepository.save(day);
     }
 
@@ -72,6 +72,7 @@ public class TimeTableService {
 
     public List<List<Double>> getTotalWorkingHoursOnAProjectGroupedByEmployeeId(Long projectId) {
         return ttRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
+
     }
 
     public void registerNewTimeTable(TimeTableDay timeTableDay) {

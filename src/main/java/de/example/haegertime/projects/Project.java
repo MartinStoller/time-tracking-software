@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +54,6 @@ public class Project {
         this.title = title;
         this.start = start;
         this.end = end;
-        this.timeTableDays = Collections.emptyList();
+        this.timeTableDays = new ArrayList<>();
     }
 }

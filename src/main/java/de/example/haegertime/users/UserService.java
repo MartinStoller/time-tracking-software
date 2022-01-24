@@ -178,7 +178,7 @@ public class UserService {
                 foundWorkdays.add(ttd);
             }
         }
-        //Potentially better way to do this: via Query/SQL
+        //Alternative: via Query/SQL
         return foundWorkdays;
     }
 
