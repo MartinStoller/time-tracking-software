@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -79,12 +76,14 @@ public class UserService {
     }
 
     public User getByUsername(String username) {
-        return userRepository.getUserByEmail(username);
+        return userRepository.getUserByEmail(username).orElseThrow(
+                () -> new ItemNotFoundException("der user exisitiert nicht")
+        );
     }
 
 
     public User updateUserDetails(User user, User loggedUser) {
-        User updateUser = userRepository.getUserByEmail(loggedUser.getEmail());
+        User updateUser = userRepository.getUserByEmail(loggedUser.getEmail()).orElseThrow(()->new ItemNotFoundException(""));
         updateUser.setPassword(user.getPassword());
         updateUser.setFirstname(user.getFirstname());
         updateUser.setLastname(user.getLastname());
@@ -144,22 +143,21 @@ public class UserService {
         }
     }
 
-    //TODO Cedrik: Rückgabewert Set<Project> um interne Logik zu verstecken
-    public LinkedHashSet<Project> getMyProjects(String email) {
-        User user = userRepository.getUserByEmail(email);
-        LinkedHashSet<Project> projects = new LinkedHashSet<>();
+
+    public Set<Project> getMyProjects(String email) {
+        User user = userRepository.getUserByEmail(email).orElseThrow(()->new ItemNotFoundException(""));
+        Set<Project> projects = new LinkedHashSet<>();
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         allWorkdays.forEach((day) -> projects.add(day.getProject())); //create Hashset which contains all projects
         return projects;
     }
 
     public List<Double> getOvertimeBalance(String email) {
-        User user = userRepository.getUserByEmail(email);
+        User user = userRepository.getUserByEmail(email).orElseThrow(()->new ItemNotFoundException(""));
         //TODO Cedrik: Nullpointer check
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
-        //TODO Cedrik: an dieser Stelle finde ich die Abkürzung ok, aber nur solange die for-Schleife nicht zu groß wird
         for (TimeTableDay ttd : allWorkdays) {
             actualHoursSum += ttd.getActualHours();
             expectedHoursSum += ttd.getExpectedHours();
@@ -175,7 +173,7 @@ public class UserService {
         if (end == null) {
             end = LocalDate.of(2099, 1, 1);
         }
-        User user = userRepository.getUserByEmail(email);
+        User user = userRepository.getUserByEmail(email).orElseThrow(()->new ItemNotFoundException(""));
         //TODO Cedrik: Nullpointer check
         List<TimeTableDay> workdays = user.getTimeTableDayList();
         List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
@@ -190,8 +188,8 @@ public class UserService {
     }
 
     @Transactional
-    public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
-        User user = userRepository.getUserByEmail(username);
+    public void registerNewTimeTable(TimeTableDay timeTableDay, String username) {
+        User user = userRepository.getUserByEmail(username).orElseThrow(()->new ItemNotFoundException(""));
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
         double actualhours = timeTableDay.calculateActualHours();
         timeTableDay.setActualHours(actualhours);
@@ -199,12 +197,12 @@ public class UserService {
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
-        //TODO Cedrik: solche Strings als Rückgabewerte sind untypisch. Einfach void... wir bekommen es ja mit, wenn ein Fehler fliegt.
-        return "New Time Table registered ";
+
+
     }
 
     public double showMyRestHolidays(String username) {
-        User user = userRepository.getUserByEmail(username);
+        User user = userRepository.getUserByEmail(username).orElseThrow(()->new ItemNotFoundException(""));
         //TODO Cedrik: Nullpointer check.
         return user.getUrlaubstage();
     }
@@ -228,7 +226,7 @@ public class UserService {
     }
 
     public List<TimeTableDay> showAllMyHolidays(String email) {
-        User user = userRepository.getUserByEmail(email);
+        User user = userRepository.getUserByEmail(email).orElseThrow(()->new ItemNotFoundException(""));
         List<TimeTableDay> ttd = user.getTimeTableDayList();
         List<TimeTableDay> htt = new ArrayList<>();
         for (TimeTableDay t : ttd) {

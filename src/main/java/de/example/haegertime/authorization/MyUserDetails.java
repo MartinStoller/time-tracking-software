@@ -56,15 +56,4 @@ public class MyUserDetails implements UserDetails {
         return user.isFrozen();
     }
 
-    public void setUserPassword(String password) {
-        this.user.setPassword(password);
-    }
-
-    public void setUserFirst(String first) {
-        this.user.setFirstname(first);
-    }
-
-    public void setUserLast(String last) {
-        this.user.setLastname(last);
-    }
 }

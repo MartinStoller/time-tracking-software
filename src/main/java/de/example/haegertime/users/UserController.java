@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/users")
@@ -63,7 +64,7 @@ public class UserController {
     @GetMapping("/myProjects")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     //TODO Cedrik: als return Wert reicht hier Set<Project>.
-    public LinkedHashSet<Project> getMyProjects(Principal principal) {
+    public Set<Project> getMyProjects(Principal principal) {
         return userService.getMyProjects(principal.getName());
     }
 
@@ -78,10 +79,10 @@ public class UserController {
 
     }
 
-    //TODO Cedrik: name falsch.
+
     @GetMapping("/OvertimeByEmail/{email}")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    public List<?> getOvertimeBalanceById(@PathVariable String email) {
+    public List<?> getOvertimeBalanceByEmail(@PathVariable String email) {
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
         return userService.getOvertimeBalance(email);
     }
@@ -130,7 +131,7 @@ public class UserController {
      *
      * @param user       die neuen Account-Daten
      * @param loggedUser der eingeloggte Benutzer
-     * @return //TODO Cedrik: @return vervollständigen
+     * @return geupdatete UserDetails
      */
     @PutMapping("/current-user/update")
     @PreAuthorize("hasRole('ADMIN')")
@@ -151,8 +152,7 @@ public class UserController {
      */
     @PutMapping("/update/username/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    //TODO Cedrik: intuitiv wäre auch eine Methode changeMyUsername (oder so)
-    public ResponseEntity<User> updateUserName(Long id, @RequestParam("email") String newUserName) {
+    public ResponseEntity<User> changeUserName(Long id, @RequestParam("email") String newUserName) {
         return ResponseEntity.ok(userService.updateUserName(id, newUserName));
     }
 
@@ -186,9 +186,9 @@ public class UserController {
 
     @PostMapping("/register/timetable")
     //TODO Cedrik: Principal aus dem context holen.
-    public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
+    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
         String username = principal.getName();
-        return userService.registerNewTimeTable(timeTableDay, username);
+        userService.registerNewTimeTable(timeTableDay, username);
     }
 
     @GetMapping("/holidays/rest")
