@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -98,7 +99,6 @@ public class TimeTableDay {
         } else {
             calculateSickHolidayHours(); // calculates sickness and holiday hours
         }
-
     }
 
     public double calculateActualHours() {
@@ -213,4 +213,48 @@ public class TimeTableDay {
                 ", finalized=" + finalized +
                 '}';
     }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeTableDay)) return false;
+        TimeTableDay that = (TimeTableDay) o;
+        //get Ids properly in order to avoid nullpointerExceptions in case project/employee is null:
+        Long thisProjectId;
+        Long thatProjectId;
+        Long thatEmployeeId;
+        Long thisEmployeeId;
+
+        if (this.project == null){
+            thisProjectId = null;
+        }
+        else {
+            thisProjectId = getProject().getId();
+        }
+
+        if (that.project == null){
+            thatProjectId = null;
+        }
+        else {
+            thatProjectId = that.getProject().getId();
+        }
+
+        if (this.employee == null){
+            thisEmployeeId = null;
+        }
+        else {
+            thisEmployeeId = getEmployee().getId();
+        }
+
+        if (that.employee == null){
+            thatEmployeeId = null;
+        }
+        else {
+            thatEmployeeId = that.getEmployee().getId();
+        }
+        return Double.compare(that.getBreakLength(), getBreakLength()) == 0 && Double.compare(that.getExpectedHours(), getExpectedHours()) == 0 && Double.compare(that.getActualHours(), getActualHours()) == 0 && Double.compare(that.getHolidayHours(), getHolidayHours()) == 0 && Double.compare(that.getSickHours(), getSickHours()) == 0 && isFinalized() == that.isFinalized() && getWorkdayId().equals(that.getWorkdayId()) && Objects.equals(thisEmployeeId, thatEmployeeId) && getDate().equals(that.getDate()) && Objects.equals(getStartTime(), that.getStartTime()) && Objects.equals(getEndTime(), that.getEndTime()) && getAbsenceStatus() == that.getAbsenceStatus() && Objects.equals(thisProjectId, thatProjectId);
+    }
+
 }

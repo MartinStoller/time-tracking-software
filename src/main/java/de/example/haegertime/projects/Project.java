@@ -56,4 +56,5 @@ public class Project {
         this.end = end;
         this.timeTableDays = new ArrayList<>();
     }
+
 }
