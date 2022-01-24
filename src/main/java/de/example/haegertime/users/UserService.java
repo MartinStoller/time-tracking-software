@@ -186,8 +186,7 @@ public class UserService {
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
         User user = userRepository.getUserByEmail(username);
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
-        double actualhours = timeTableDay.calculateActualHours();
-        timeTableDay.setActualHours(actualhours);
+        timeTableDay.setActualHours(timeTableDay.getActualHours()); //TODO Long: anpassen actual hours
         timeTableDayList.add(timeTableDay);
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
