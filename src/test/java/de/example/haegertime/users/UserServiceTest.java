@@ -7,7 +7,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
@@ -161,9 +160,8 @@ class UserServiceTest {
 
 
     @Test
-    void updateUserDetails() {
+    void shouldUpdateUserDetails() {
     }
-
 
     @Test
     void shouldUpdateUserName() {
@@ -182,7 +180,7 @@ class UserServiceTest {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
-        underTest.deactivUser(1L);
+        underTest.deactivateUser(1L);
         //then
         verify(userRepository, times(1)).save(user);
     }
@@ -194,7 +192,7 @@ class UserServiceTest {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
-        underTest.reactivUser(1L);
+        underTest.reactivateUser(1L);
         //then
         verify(userRepository, times(1)).save(user);
     }

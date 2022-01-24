@@ -61,10 +61,10 @@ public class MyUserDetails implements UserDetails {
     }
 
     public void setUserFirst(String first) {
-        this.user.setFirst(first);
+        this.user.setFirstname(first);
     }
 
     public void setUserLast(String last) {
-        this.user.setLast(last);
+        this.user.setLastname(last);
     }
 }

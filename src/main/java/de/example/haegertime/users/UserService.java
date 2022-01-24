@@ -7,14 +7,12 @@ import de.example.haegertime.email.EmailService;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import de.example.haegertime.timetables.TimeTableRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
-@AllArgsConstructor //takes care of constructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -32,6 +30,8 @@ public class UserService {
 
 
     public List<User> getAllUsers(String sortBy) {
+        //TODO Cedrik: Evtl switch case einbauen. Fehlerhafte Eingabe von sortBy sollte meiner Ansicht nach nicht zu einem Fehler führen... dann halt nicht sortieren.
+        // https://docs.oracle.com/javase/tutorial/java/nutsandbolts/switch.html
         if (sortBy == null) {
             return userRepository.findAll();
         } else if (sortBy.equals("abc")) {
@@ -52,7 +52,7 @@ public class UserService {
         }
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
-                emailService.getEmailText(user.getFirst(), "Neuerstellung deines Accounts"));
+                emailService.getEmailText(user.getFirstname(), "Neuerstellung deines Accounts"));
     }
 
 
@@ -70,13 +70,11 @@ public class UserService {
 
 
     public void deleteUser(long id) {
+        User user = userRepository.findById(id).orElseThrow(()->new ItemNotFoundException("Dieser User ist nicht in der Datenbank"));
         if (userRepository.findById(id).isPresent()) {
-            User user = userRepository.findById(id).get();
             userRepository.deleteById(id);
             emailService.send(user.getEmail(), "Dein Haegertime Account wurde gelöscht",
-                    emailService.getEmailText(user.getFirst(), "Löschung deines Accounts"));
-        } else {
-            throw new ItemNotFoundException("Dieser User ist nicht in der Datenbank");
+                    emailService.getEmailText(user.getFirstname(), "Löschung deines Accounts"));
         }
     }
 
@@ -88,8 +86,8 @@ public class UserService {
     public User updateUserDetails(User user, User loggedUser) {
         User updateUser = userRepository.getUserByEmail(loggedUser.getEmail());
         updateUser.setPassword(user.getPassword());
-        updateUser.setFirst(user.getFirst());
-        updateUser.setLast(user.getLast());
+        updateUser.setFirstname(user.getFirstname());
+        updateUser.setLastname(user.getLastname());
         updateUser.setEmail(loggedUser.getEmail()); //email darf nicht selbst ändern
         updateUser.setRole(loggedUser.getRole());   //role darf nicht selbst ändern
         updateUser.setId(loggedUser.getId());
@@ -105,7 +103,7 @@ public class UserService {
                         " ist nicht in der DB")
         );
         String email = updateUser.getEmail();
-        String first = updateUser.getFirst();
+        String first = updateUser.getFirstname();
         updateUser.setEmail(newUserName);
         userRepository.save(updateUser);
         emailService.send(email, "Dein Profil wurde geupdated",
@@ -113,7 +111,7 @@ public class UserService {
         return updateUser;
     }
 
-    public void deactivUser(Long id) {
+    public void deactivateUser(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User deactivUser = userRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Der Benutzer mit der Id " + id +
@@ -124,7 +122,7 @@ public class UserService {
     }
 
 
-    public void reactivUser(Long id) {
+    public void reactivateUser(Long id) {
         User reactivUser = userRepository.findById(id).orElseThrow(
                 () -> new ItemNotFoundException("Der Benutzer mid Id " + id +
                         " ist nicht in der DB")
@@ -146,6 +144,7 @@ public class UserService {
         }
     }
 
+    //TODO Cedrik: Rückgabewert Set<Project> um interne Logik zu verstecken
     public LinkedHashSet<Project> getMyProjects(String email) {
         User user = userRepository.getUserByEmail(email);
         LinkedHashSet<Project> projects = new LinkedHashSet<>();
@@ -156,9 +155,11 @@ public class UserService {
 
     public List<Double> getOvertimeBalance(String email) {
         User user = userRepository.getUserByEmail(email);
+        //TODO Cedrik: Nullpointer check
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
+        //TODO Cedrik: an dieser Stelle finde ich die Abkürzung ok, aber nur solange die for-Schleife nicht zu groß wird
         for (TimeTableDay ttd : allWorkdays) {
             actualHoursSum += ttd.getActualHours();
             expectedHoursSum += ttd.getExpectedHours();
@@ -175,6 +176,7 @@ public class UserService {
             end = LocalDate.of(2099, 1, 1);
         }
         User user = userRepository.getUserByEmail(email);
+        //TODO Cedrik: Nullpointer check
         List<TimeTableDay> workdays = user.getTimeTableDayList();
         List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
 
@@ -197,15 +199,18 @@ public class UserService {
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
+        //TODO Cedrik: solche Strings als Rückgabewerte sind untypisch. Einfach void... wir bekommen es ja mit, wenn ein Fehler fliegt.
         return "New Time Table registered ";
     }
 
     public double showMyRestHolidays(String username) {
         User user = userRepository.getUserByEmail(username);
+        //TODO Cedrik: Nullpointer check.
         return user.getUrlaubstage();
     }
 
     public void applyForHoliday(Long employeeId, Long dayId, double duration) {
+        //TODO Cedrik: Hardcoded email Adresse - besser als Variable auslagern. Oder noch besser in die Konfiguration.
         String bookkeeperEmail = "josalongmartin@gmail.com";
         emailService.send(bookkeeperEmail, "Apply for holidays", "Employee Id " + employeeId +
                 ", workdayId " + dayId + ", duration: " + duration
@@ -218,7 +223,7 @@ public class UserService {
                         " nicht in der Datenbank")
         );
         String userEmail = user.getEmail();
-        emailService.send(userEmail, "Decline for holidays", "Hi " + user.getFirst()
+        emailService.send(userEmail, "Decline for holidays", "Hi " + user.getFirstname()
                 + ", your apply was cancelled");
     }
 
