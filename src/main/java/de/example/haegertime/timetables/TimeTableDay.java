@@ -96,11 +96,9 @@ public class TimeTableDay {
             this.sickHours = 0;
             this.holidayHours = 0;
         } else {
-            calculateSickHolidayHours(); // calculates sickness and holiday hours
+            calculateSickAndHoldiayHours(); // calculates sickness and holiday hours
         }
     }
-
-
 
     protected double calculateActualHours() {
 
@@ -116,7 +114,7 @@ public class TimeTableDay {
         }
     }
 
-    private void calculateMissingHours() {
+    private void calculateSickAndHoldiayHours() {
         if (this.startTime == null && this.absenceStatus == AbsenceStatus.HOLIDAY){ // if employee never started to work
 
             this.holidayHours = this.expectedHours;

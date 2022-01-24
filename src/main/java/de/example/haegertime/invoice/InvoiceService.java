@@ -101,7 +101,7 @@ public class InvoiceService {
 
 
     private List<List<Double>> getEmployeesAndTotalHours(Long projectId) {
-        return timeTableRepository.getTotalHoursAllEmployeeOnAProject(projectId);
+        return timeTableRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
     }
 
     private List<User> getAllEmployees(List<List<Double>> list) {
