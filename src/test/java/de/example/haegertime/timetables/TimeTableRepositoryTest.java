@@ -40,6 +40,7 @@ class TimeTableRepositoryTest {
     @BeforeEach
     void setUp(){
         TestdataGenerator testdataGenerator = new TestdataGenerator(customerRepository, projectRepository, testedTTDRepository, userRepository);
+        double ggg = 0;
         testdataGenerator.fillAllRepos();
 
     }
@@ -51,31 +52,37 @@ class TimeTableRepositoryTest {
 
     @Test
     void shouldGetTimeTableDayByEmployeeId() {
-        //given
-        User usr1 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+
+        //Expected project:
         Project proj1 = new Project("Homepage Maintenance", LocalDate.of(1995, Month.JULY, 22), LocalDate.of(2021, Month.AUGUST, 2));
         proj1.setId(1L);
+        List<Project> projects = new ArrayList<>();
+        projects.add(proj1);
+        Customer c1 = new Customer("AXA", "Hansa Alle 39, 44444 Düsseldorf");
+        c1.setProjects(projects);
+        proj1.setCustomer(c1);
 
+        //Expected TimeTableDays:
         TimeTableDay ttd2 = new TimeTableDay(
                 LocalDate.of(2022, Month.JANUARY, 2),null,
                 null, 0, 0, null);
         TimeTableDay ttd3 = new TimeTableDay(
                 LocalDate.of(2022, Month.JANUARY, 3),  LocalTime.of(8, 15),
                 LocalTime.of(17, 30), 0.75, 8, null);
-
-        Customer c1 = new Customer("AXA", "Hansa Alle 39, 44444 Düsseldorf");
-
-
-        usr1.setId(1L);
-        ttd2.setEmployee(usr1);
         ttd2.setWorkdayId(2L);
-        ttd3.setEmployee(usr1);
         ttd3.setWorkdayId(3L);
         ttd2.setProject(proj1);
         ttd3.setProject(proj1);
-        List<Project> projects = new ArrayList<>();
-        projects.add(proj1);
-        c1.setProjects(projects);
+
+        //Expected employee:
+        User usr1 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        usr1.setId(1L);
+        List<TimeTableDay> newListUser= usr1.getTimeTableDayList();
+        newListUser.add(ttd2);
+        newListUser.add(ttd3);
+        usr1.setTimeTableDayList(newListUser);
+        ttd3.setEmployee(usr1);
+        ttd2.setEmployee(usr1);
 
         //when
         List<TimeTableDay> returned = testedTTDRepository.getTimeTableDayByEmployeeId(1L);
@@ -88,7 +95,9 @@ class TimeTableRepositoryTest {
 
     @Test
     void shouldGetSumOfHoursOfAllEmployeeOnAProject() {
-        List<List<Double>> gggg= testedTTDRepository.getTotalHoursOfProjectGroupedByEmployee(2L);
+        // hoursLists is expected to be a List of Lists of 2 Elements for each employee ([0] -> sum of hours for that employee, [1] employeeId
+
+        List<List<Double>> hoursLists = testedTTDRepository.getTotalHoursOfProjectGroupedByEmployee(2L);
         System.out.println(testedTTDRepository.getTotalHoursOfProjectGroupedByEmployee(2L));
         System.out.println(testedTTDRepository.getTotalHoursOfProjectGroupedByEmployee(2L));
         System.out.println(testedTTDRepository.getTotalHoursOfProjectGroupedByEmployee(1L));
