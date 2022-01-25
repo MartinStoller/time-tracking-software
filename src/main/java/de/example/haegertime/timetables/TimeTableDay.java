@@ -50,9 +50,6 @@ public class TimeTableDay {
     @Min(value = 0)
     @Max(value = 24)
     private double expectedHours;
-    @Min(value = 0)
-    @Max(value = 24)
-    private double actualHours;
     @Nullable
     private AbsenceStatus absenceStatus;
     @Min(value = 0)
@@ -100,7 +97,7 @@ public class TimeTableDay {
         }
     }
 
-    protected double calculateActualHours() {
+    public double calculateActualHours() {
 
         if (this.absenceStatus != null) { //if sick or on holiday, the expected hours are achieved
             return expectedHours;
@@ -156,7 +153,7 @@ public class TimeTableDay {
                     ", endTime=" + endTime +
                     ", breakLength=" + breakLength +
                     ", expectedHours=" + expectedHours +
-                    ", actualHours=" + actualHours +
+                    ", actualHours=" + calculateActualHours() +
                     ", absenceStatus=" + absenceStatus +
                     ", holidayHours=" + holidayHours +
                     ", sickHours=" + sickHours +
@@ -173,7 +170,7 @@ public class TimeTableDay {
                     ", endTime=" + endTime +
                     ", breakLength=" + breakLength +
                     ", expectedHours=" + expectedHours +
-                    ", actualHours=" + actualHours +
+                    ", actualHours=" + calculateActualHours() +
                     ", absenceStatus=" + absenceStatus +
                     ", holidayHours=" + holidayHours +
                     ", sickHours=" + sickHours +
@@ -190,7 +187,7 @@ public class TimeTableDay {
                     ", endTime=" + endTime +
                     ", breakLength=" + breakLength +
                     ", expectedHours=" + expectedHours +
-                    ", actualHours=" + actualHours +
+                    ", actualHours=" + calculateActualHours() +
                     ", absenceStatus=" + absenceStatus +
                     ", holidayHours=" + holidayHours +
                     ", sickHours=" + sickHours +
@@ -206,7 +203,7 @@ public class TimeTableDay {
                 ", endTime=" + endTime +
                 ", breakLength=" + breakLength +
                 ", expectedHours=" + expectedHours +
-                ", actualHours=" + actualHours +
+                ", actualHours=" + calculateActualHours() +
                 ", absenceStatus=" + absenceStatus +
                 ", holidayHours=" + holidayHours +
                 ", sickHours=" + sickHours +
@@ -223,39 +220,17 @@ public class TimeTableDay {
         if (!(o instanceof TimeTableDay)) return false;
         TimeTableDay that = (TimeTableDay) o;
         //get Ids properly in order to avoid nullpointerExceptions in case project/employee is null:
-        Long thisProjectId;
-        Long thatProjectId;
-        Long thatEmployeeId;
-        Long thisEmployeeId;
+        Long thisProjectId = null;
+        Long thatProjectId = null;
+        Long thatEmployeeId = null;
+        Long thisEmployeeId = null;
 
-        if (this.project == null){
-            thisProjectId = null;
-        }
-        else {
-            thisProjectId = getProject().getId();
-        }
+        if (this.project != null) thisProjectId = getProject().getId();
+        if (that.project != null) thatProjectId = that.getProject().getId();
+        if (this.employee != null) thisEmployeeId = getEmployee().getId();
+        if (that.employee != null) thatEmployeeId = that.getEmployee().getId();
 
-        if (that.project == null){
-            thatProjectId = null;
-        }
-        else {
-            thatProjectId = that.getProject().getId();
-        }
-
-        if (this.employee == null){
-            thisEmployeeId = null;
-        }
-        else {
-            thisEmployeeId = getEmployee().getId();
-        }
-
-        if (that.employee == null){
-            thatEmployeeId = null;
-        }
-        else {
-            thatEmployeeId = that.getEmployee().getId();
-        }
-        return Double.compare(that.getBreakLength(), getBreakLength()) == 0 && Double.compare(that.getExpectedHours(), getExpectedHours()) == 0 && Double.compare(that.getActualHours(), getActualHours()) == 0 && Double.compare(that.getHolidayHours(), getHolidayHours()) == 0 && Double.compare(that.getSickHours(), getSickHours()) == 0 && isFinalized() == that.isFinalized() && getWorkdayId().equals(that.getWorkdayId()) && Objects.equals(thisEmployeeId, thatEmployeeId) && getDate().equals(that.getDate()) && Objects.equals(getStartTime(), that.getStartTime()) && Objects.equals(getEndTime(), that.getEndTime()) && getAbsenceStatus() == that.getAbsenceStatus() && Objects.equals(thisProjectId, thatProjectId);
+        return Double.compare(that.getBreakLength(), getBreakLength()) == 0 && Double.compare(that.getExpectedHours(), getExpectedHours()) == 0 && Double.compare(that.calculateActualHours(), calculateActualHours()) == 0 && Double.compare(that.getHolidayHours(), getHolidayHours()) == 0 && Double.compare(that.getSickHours(), getSickHours()) == 0 && isFinalized() == that.isFinalized() && getWorkdayId().equals(that.getWorkdayId()) && Objects.equals(thisEmployeeId, thatEmployeeId) && getDate().equals(that.getDate()) && Objects.equals(getStartTime(), that.getStartTime()) && Objects.equals(getEndTime(), that.getEndTime()) && getAbsenceStatus() == that.getAbsenceStatus() && Objects.equals(thisProjectId, thatProjectId);
     }
 
 }

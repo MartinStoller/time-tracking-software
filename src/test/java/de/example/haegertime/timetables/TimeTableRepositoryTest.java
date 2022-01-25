@@ -94,19 +94,6 @@ class TimeTableRepositoryTest {
     }
 
     @Test
-    void shouldGetSumOfHoursOfAllEmployeeOnAProject() {
-        // hoursLists is expected to be a List of Lists of 2 Elements for each employee ([0] -> sum of hours for that employee, [1] employeeId
-
-        List<List<Double>> hoursLists = testedTTDRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(2L);
-        System.out.println(testedTTDRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(2L));
-        System.out.println(testedTTDRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(2L));
-        System.out.println(testedTTDRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(1L));
-
-
-
-    }
-
-    @Test
     void getTotalActualHoursExpectedHoursByEmployeeId() {
     }
 

@@ -8,14 +8,13 @@ import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.math3.util.MathUtils;
 import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -29,8 +28,7 @@ public class TimeTableService {
     public List<TimeTableDay> getTimetable(){return ttRepository.findAll();}
 
     public TimeTableDay getTimetableDay(Long id) throws InstanceNotFoundException{
-        TimeTableDay ttd = ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
-        return ttd;
+        return ttRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException("Day with Id " + id + " not found"));
     }
 
     public TimeTableDay assignEmployeeToDay(Long dayId, Long employeeId) throws ItemNotFoundException {
@@ -70,14 +68,7 @@ public class TimeTableService {
     }
 
 
-    public List<List<Double>> getTotalWorkingHoursOnAProjectGroupedByEmployeeId(Long projectId) {
-        return ttRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
-
-    }
-
     public void registerNewTimeTable(TimeTableDay timeTableDay) {
-
-        timeTableDay.setActualHours(timeTableDay.calculateActualHours());
         ttRepository.save(timeTableDay);
     }
 
@@ -90,7 +81,7 @@ public class TimeTableService {
 
 
     public double showOverTimeOfEmployeeById(Long employeeId) {
-        List<List<Double>> totalActualAndExpectedHours = ttRepository.getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
+        List<List<Double>> totalActualAndExpectedHours = getTotalActualHoursExpectedHoursByEmployeeId(employeeId);
         double totalActualHours = totalActualAndExpectedHours.get(0).get(0);
         double totalExpectedHours = totalActualAndExpectedHours.get(0).get(1);
         double overTime = totalActualHours - totalExpectedHours;
@@ -118,7 +109,6 @@ public class TimeTableService {
                             " wurde nicht gefunden")
             );
             double actualHours = setActualHour(duration);
-            ttd.setActualHours(actualHours);
             ttd.setHolidayHours(actualHours);
             if (actualHours<=4){
                 user.setUrlaubstage(user.getUrlaubstage()-0.5);
@@ -141,7 +131,6 @@ public class TimeTableService {
         );
         if (Objects.equals(ttd.getEmployee().getId(), employeeId)) {
             ttd.setAbsenceStatus(AbsenceStatus.valueOf("SICK"));
-            ttd.setActualHours(ttd.getActualHours() + duration);
             ttRepository.save(ttd);
         } else {
             throw new InvalidInputException("Die eingegebene employeeId passt nicht mit der ID von TimeTable");
@@ -182,5 +171,52 @@ public class TimeTableService {
         }
     }
 
+    public List<List<Double>> getTotalWorkingHoursOnAProjectGroupedByEmployeeId(Long projectId){
+        //  returnType List<List<Double>>: each User/Employee working on the project is representing a List of 2 Elements: Actual Hours, UserId
+        // First we get a Hashmap<EmployeeId, WorkingHours>:
+        Map<Double, Double> mappedHours = new HashMap<>();
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ItemNotFoundException("Project not found"));
+        for (TimeTableDay timeTableDay : project.getTimeTableDays()) {
+            double employeeId = (double) timeTableDay.getEmployee().getId();
+
+            if (mappedHours.containsKey(employeeId)) {
+                double oldValue = mappedHours.get(employeeId);
+                mappedHours.replace(employeeId, oldValue + timeTableDay.calculateActualHours());
+            } else {
+                mappedHours.put(employeeId, timeTableDay.calculateActualHours());
+            }
+        }
+
+        //then we split that Hashmap: Each Key-Value pair becomes a List [Value, Key]:
+        List<List<Double>> output = new ArrayList<>();
+        List<Double> tmp = new ArrayList<>();
+        for (Map.Entry<Double, Double> entry : mappedHours.entrySet()) {
+            tmp.add(entry.getKey());
+            tmp.add(entry.getValue());
+            output.add(tmp);
+            tmp = new ArrayList<>();
+        }
+        return output;
+    }
+
+    public List<List<Double>> getTotalActualHoursExpectedHoursByEmployeeId(Long employeeId){
+        // Because of previouse versions of the code many functions rely on the ListListDouble returntype. I dont wanna go
+        //down that rabbithole so lets just keep it that way.
+        User employee = userRepository.findById(employeeId).orElseThrow(() -> new ItemNotFoundException("Employee not found"));
+        List<List<Double>> output = new ArrayList<>();
+        List<Double> actualHours = new ArrayList<>();
+        List<Double> expectedHours = new ArrayList<>();
+        List<TimeTableDay> timeTableDays = employee.getTimeTableDayList();
+
+        for (TimeTableDay timeTableDay : timeTableDays){
+            actualHours.add(timeTableDay.calculateActualHours());
+            expectedHours.add(timeTableDay.getExpectedHours());
+        }
+        List<Double> sums = new ArrayList<>();
+        sums.add(actualHours.stream().mapToDouble(Double::doubleValue).sum());
+        sums.add(expectedHours.stream().mapToDouble(Double::doubleValue).sum());
+        output.add(sums);
+        return output;
+    }
 
 }
