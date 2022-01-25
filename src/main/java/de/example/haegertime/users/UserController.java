@@ -63,7 +63,6 @@ public class UserController {
     // https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
     @GetMapping("/myProjects")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    //TODO Cedrik: als return Wert reicht hier Set<Project>.
     public Set<Project> getMyProjects(Principal principal) {
         return userService.getMyProjects(principal.getName());
     }

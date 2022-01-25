@@ -7,6 +7,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+//TODO Cedrik: imports aufräumen
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
@@ -29,6 +31,7 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private EmailService emailService;
+    @Mock
     private TimeTableRepository timeTableRepository;
     private UserService underTest;
 
@@ -38,9 +41,8 @@ class UserServiceTest {
     }
 
 
-
     @Test
-    void ShouldFindAllSortByRole() {
+    void shouldFindAllSortByRole() {
         //given
         List<User> users = new ArrayList<>();
         User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
@@ -48,44 +50,54 @@ class UserServiceTest {
         users.add(user1);
         users.add(user2);
 
-        //when
         when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"))).thenReturn(users);
+        //when
+
         //then
+        //TODO Cedik: name eher "result" statt "expected".... wir wissen noch nicht ob es das gleiche ist. Die Zeile gehört auch zu //when
         List<User> expected = underTest.getAllUsers("role");
         assertThat(expected.size()).isEqualTo(2);
+        //TODO Cedrik: lieber die Reihenfolge des Ergebnisses checken, weil der Test sonst neu geschrieben werden muss, sobald die Methode findAll geändert wird.
+        // ... Tests möglich unabhängig vom code machen um die Wartbarkeit zu verbessern.
         verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "role"));
     }
 
     @Test
-    void ShouldFindAllSortByLast() {
+    void shouldFindAllSortByLast() {
         //given
         List<User> users = new ArrayList<>();
         User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
         User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         users.add(user1);
         users.add(user2);
-
-        //when
         when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"))).thenReturn(users);
-        //then
+        //when
         List<User> expected = underTest.getAllUsers("abc");
         assertThat(expected.size()).isEqualTo(2);
+
+        //then
+        //TODO Cedrik: lieber die Reihenfolge des Ergebnisses checken, weil der Test sonst neu geschrieben werden muss, sobald die Methode findAll geändert wird.
+        // ... Tests möglich unabhängig vom code machen um die Wartbarkeit zu verbessern.
         verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "last"));
     }
 
     @Test
-    void ShouldFindAll() {
-        //given
+    void shouldFindAll() {
+        //TODO Cedrik: Habe hier die Reihenfolge mal angepasst.
+        //given -> Vorbereitung
         List<User> users = new ArrayList<>();
         User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
         User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
-
         users.add(user1);
         users.add(user2);
-        //when
+
         when(userRepository.findAll()).thenReturn(users);
-        //then
+
+        //when -> durchführung
         List<User> expected = underTest.getAllUsers(null);
+
+
+        //then -> Ergebnis/checks
         assertThat(expected.size()).isEqualTo(2);
         verify(userRepository, times(1)).findAll();
 
@@ -96,6 +108,7 @@ class UserServiceTest {
     void shouldCreateUser() {
         // given
         User user = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
+        //TODO Cedrik: user2 wird nicht benutzt
         User user2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
 
         // when
@@ -125,13 +138,12 @@ class UserServiceTest {
     }
 
     @Test
-    void ShouldFindByLastByFirstByEmail() {
+    void shouldFindByLastByFirstByEmail() {
     }
 
 
-
     @Test
-    void ShouldDeleteUserById() {
+    void shouldDeleteUserById() {
         //given
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         userRepository.save(user);
@@ -144,8 +156,9 @@ class UserServiceTest {
 
     @Test
     @Disabled
-    void ShouldNotDeleteUserById() {
-        assertThatThrownBy(()-> underTest.deleteUser(10L))
+    void shouldNotDeleteUserById() {
+        //TODO Cedrik: Hier sollte mAn keine Exception geworfen werden. User ist weg -> Methode ist glücklich :P
+        assertThatThrownBy(() -> underTest.deleteUser(10L))
                 .isInstanceOf(ItemNotFoundException.class)
                 .hasMessageContaining("Der User ist nicht in der Datenbank");
     }
@@ -160,8 +173,9 @@ class UserServiceTest {
 
 
     @Test
-    void shouldUpdateUserDetails() {
+    void updateUserDetails() {
     }
+
 
     @Test
     void shouldUpdateUserName() {
@@ -182,18 +196,20 @@ class UserServiceTest {
         //when
         underTest.deactivateUser(1L);
         //then
+        //TODO Cedrik: Hier vllt argument capture und schauen, ob user.getFrozen() den richtigen wert hat
         verify(userRepository, times(1)).save(user);
     }
 
 
     @Test
-    void ShouldReactivateById() {
+    void shouldReactivateById() {
         //given
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
         underTest.reactivateUser(1L);
         //then
+        //TODO Cedrik: Hier vllt argument capture und schauen, ob user.getFrozen() den richtigen wert hat
         verify(userRepository, times(1)).save(user);
     }
 
@@ -203,11 +219,11 @@ class UserServiceTest {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
+        //TODO Cedrik: L
         underTest.updateRole(1l, "ADMIN");
         //then
         verify(userRepository, times(1)).save(user);
     }
-
 
 
     @Test
