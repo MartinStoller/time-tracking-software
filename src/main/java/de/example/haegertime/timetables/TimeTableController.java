@@ -4,6 +4,7 @@ import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.users.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
@@ -69,11 +70,9 @@ public class TimeTableController {
         return ttService.showOverTimeOfEmployeeById(employeeId);
     }
 
-    @PutMapping("/absence/holiday/employee/{id}")
-    public void changeAbsenceStatusToHoliday(@PathVariable("id") Long employeeId,
-
-                                               @RequestParam Long dayId,@RequestParam Double duration) {
-        ttService.changeAbsenceStatusToHoliday(employeeId, dayId, duration);
+    @PutMapping("/absence/holiday")
+    public void changeAbsenceStatusToHoliday(@RequestParam Long dayId,@RequestParam Double duration) {
+        ttService.changeAbsenceStatusToHoliday(dayId, duration);
     }
 
 
@@ -86,13 +85,13 @@ public class TimeTableController {
     }
 
     @GetMapping("/employeesOnHoliday")
-    public List<User> showAllEmployeesInHoliday(
+    public Set<User> showAllEmployeesInHoliday(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
-        return ttService.showAllEmployeesInHoliday(date);
+        return ttService.showAllEmployeesOnHoliday(date);
     }
 
     @GetMapping("/sickEmployees")
-    public List<User> showAllSickEmployees(
+    public Set<User> showAllSickEmployees(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
         return ttService.showAllSickEmployees(date);
     }

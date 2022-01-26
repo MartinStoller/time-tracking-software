@@ -6,6 +6,7 @@ import de.example.haegertime.customer.CustomerRepository;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.timetables.TimeTableRepository;
+import de.example.haegertime.timetables.TimeTableService;
 import de.example.haegertime.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class InvoiceServiceTest {
     @Mock
     private ProjectRepository projectRepository;
     @Mock
-    private TimeTableRepository timeTableRepository;
+    private TimeTableService timeTableService;
     @Mock
     private CustomerRepository customerRepository;
 
@@ -45,7 +46,7 @@ class InvoiceServiceTest {
     @BeforeEach
     void setUp() {
         underTest = new InvoiceService(invoiceRepository, projectRepository,
-                customerRepository, timeTableRepository, userRepository);
+                customerRepository, timeTableService, userRepository);
     }
 
 

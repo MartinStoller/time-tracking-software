@@ -155,7 +155,7 @@ public class UserService {
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
         for (TimeTableDay ttd : allWorkdays) {
-            actualHoursSum+= ttd.getActualHours();
+            actualHoursSum+= ttd.calculateActualHours();
             expectedHoursSum+=ttd.getExpectedHours();
         }
 
@@ -186,7 +186,6 @@ public class UserService {
     public String registerNewTimeTable(TimeTableDay timeTableDay, String username) {
         User user = userRepository.getUserByEmail(username);
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
-        timeTableDay.setActualHours(timeTableDay.getActualHours()); //TODO Long: anpassen actual hours
         timeTableDayList.add(timeTableDay);
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);

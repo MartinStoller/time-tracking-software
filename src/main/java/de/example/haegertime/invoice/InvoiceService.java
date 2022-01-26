@@ -6,6 +6,7 @@ import de.example.haegertime.customer.CustomerRepository;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.projects.ProjectRepository;
 import de.example.haegertime.timetables.TimeTableRepository;
+import de.example.haegertime.timetables.TimeTableService;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ProjectRepository projectRepository;
     private final CustomerRepository customerRepository;
-    private final TimeTableRepository timeTableRepository;
+    private final TimeTableService timeTableService;
     private final UserRepository userRepository;
 
 
@@ -101,7 +102,7 @@ public class InvoiceService {
 
 
     private List<List<Double>> getEmployeesAndTotalHours(Long projectId) {
-        return timeTableRepository.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
+        return timeTableService.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
     }
 
     private List<User> getAllEmployees(List<List<Double>> list) {
