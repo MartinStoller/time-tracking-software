@@ -7,8 +7,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-//TODO Cedrik: imports aufräumen
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
@@ -19,7 +17,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -52,11 +49,9 @@ class UserServiceTest {
 
         when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"))).thenReturn(users);
         //when
-
+        List<User> result = underTest.getAllUsers("role");
         //then
-        //TODO Cedik: name eher "result" statt "expected".... wir wissen noch nicht ob es das gleiche ist. Die Zeile gehört auch zu //when
-        List<User> expected = underTest.getAllUsers("role");
-        assertThat(expected.size()).isEqualTo(2);
+        assertThat(result.size()).isEqualTo(2);
         //TODO Cedrik: lieber die Reihenfolge des Ergebnisses checken, weil der Test sonst neu geschrieben werden muss, sobald die Methode findAll geändert wird.
         // ... Tests möglich unabhängig vom code machen um die Wartbarkeit zu verbessern.
         verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "role"));
@@ -100,7 +95,6 @@ class UserServiceTest {
         //then -> Ergebnis/checks
         assertThat(expected.size()).isEqualTo(2);
         verify(userRepository, times(1)).findAll();
-
     }
 
     @Test
@@ -108,8 +102,6 @@ class UserServiceTest {
     void shouldCreateUser() {
         // given
         User user = new User("Anton", "Aus Tirol", "1234567", "anton.austirol@gmx.de", Role.EMPLOYEE);
-        //TODO Cedrik: user2 wird nicht benutzt
-        User user2 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
 
         // when
         underTest.createUser(user);
@@ -157,10 +149,8 @@ class UserServiceTest {
     @Test
     @Disabled
     void shouldNotDeleteUserById() {
-        //TODO Cedrik: Hier sollte mAn keine Exception geworfen werden. User ist weg -> Methode ist glücklich :P
         assertThatThrownBy(() -> underTest.deleteUser(10L))
-                .isInstanceOf(ItemNotFoundException.class)
-                .hasMessageContaining("Der User ist nicht in der Datenbank");
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
 
@@ -219,8 +209,7 @@ class UserServiceTest {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
-        //TODO Cedrik: L
-        underTest.updateRole(1l, "ADMIN");
+        underTest.updateRole(1L, "ADMIN");
         //then
         verify(userRepository, times(1)).save(user);
     }

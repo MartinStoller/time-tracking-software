@@ -8,12 +8,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,21 +59,19 @@ public class UserController {
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
         return this.userService.findByLastByFirstByEmail(keyword);
     }
-    //TODO Cedrik: Principal ist ein zu komplizierter Input. Hier brauchst du eigentlich garkeinen input, weil Spring den eingeloggten User kennt.
-    // https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
+
     @GetMapping("/myProjects")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    public Set<Project> getMyProjects(Principal principal) {
-        return userService.getMyProjects(principal.getName());
+    public Set<Project> getMyProjects(Authentication authentication) {
+        return userService.getMyProjects(authentication.getName());
     }
 
-    //TODO Cedrik: Principal ist ein zu komplizierter Input. Hier brauchst du eigentlich garkeinen input, weil Spring den eingeloggten User kennt.
-    // https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
+
     @GetMapping("/personalOvertime")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    public List<Double> getPersonalOvertimeBalance(Principal principal) {
+    public List<Double> getPersonalOvertimeBalance(Authentication authentication) {
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
-        String email = principal.getName();
+        String email = authentication.getName();
         return userService.getOvertimeBalance(email);
 
     }
@@ -94,35 +92,27 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    /**
-     * Anzeigen die Informationen über den aktuellen Benutzer
-     *
-     * @param principal
-     * @return
-     */
-    //TODO Cedrik: Principal ist ein zu komplizierter Input. Hier brauchst du eigentlich garkeinen input, weil Spring den eingeloggten User kennt.
-    // https://dzone.com/articles/how-to-get-current-logged-in-username-in-spring-se
+
     @GetMapping("/current-user")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    public ResponseEntity<User> currentUser(Principal principal) {
-        String username = principal.getName();
+    public ResponseEntity<User> currentUser(Authentication authentication) {
+        String username = authentication.getName();
         return ResponseEntity.ok(userService.getByUsername(username));
     }
 
     @GetMapping("/showOwnWorkdays")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    //TODO Cedrik: Auch hier Principal aus dem context holen.
     public List<TimeTableDay> showOwnWorkdays(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate start,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate end,
-            Principal principal) {
+            Authentication authentication) {
         /**
          * Übersicht über die Arbeitstage eines Nutzers
          * @param start: start Datum ab welchem man die Arbeitstage sehen will (defaults to 01.01.1900)
          * @param end: end Datum bis zu welchem man die Arbeitstage sehen will (defaults to 01.01.2099)
          * @return List of TimetableDays in given Daterange of Logged in Employee
          */
-        return userService.showOwnWorkdays(principal.getName(), start, end);
+        return userService.showOwnWorkdays(authentication.getName(), start, end);
     }
 
     /**
@@ -184,26 +174,24 @@ public class UserController {
 
 
     @PostMapping("/register/timetable")
-    //TODO Cedrik: Principal aus dem context holen.
-    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
-        String username = principal.getName();
+
+    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Authentication authentication) {
+        String username = authentication.getName();
         userService.registerNewTimeTable(timeTableDay, username);
     }
 
     @GetMapping("/holidays/rest")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    //TODO Cedrik: Principal aus dem context holen.
-    public double showMyRestHolidays(Principal principal) {
-        String username = principal.getName();
+    public double showMyRestHolidays(Authentication authentication) {
+        String username = authentication.getName();
         return userService.showMyRestHolidays(username);
     }
-
 
     /**
      * Sendet der Bookkeeper eine Anfrage zum Urlaubsbeantragen,
      * der Bookkeeper kann entweder akzeptieren oder ablehnen
      *
-     * @param employeeId //TODO Cedrik: vervollständigen
+     * @param employeeId    Nutzer ID
      * @param dayId //TODO Cedrik: vervollständigen
      * @param duration //TODO Cedrik: vervollständigen
      */
@@ -217,17 +205,15 @@ public class UserController {
 
     @PostMapping("/holiday/decline/employee/{id}")
     @PreAuthorize("hasRole('BOOKKEEPER')")
-    //TODO Cedrik: Name eher declineRequestedHoliday. - Werden immer alle Urlaubsanträge gleichzeitig abgeleht?
-    public ResponseEntity<Void> declineForHoliday(@PathVariable("id") Long employeeId) {
+    public ResponseEntity<Void> declineRequestedHoliday(@PathVariable("id") Long employeeId) {
         userService.declineForHoliday(employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/holidays")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    //TODO Cedrik: Principal aus dem context holen.
-    public List<TimeTableDay> showAllMyHolidays(Principal principal) {
-        String email = principal.getName();
+    public List<TimeTableDay> showAllMyHolidays(Authentication authentication) {
+        String email = authentication.getName();
         return userService.showAllMyHolidays(email);
     }
 }
