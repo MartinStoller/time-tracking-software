@@ -18,15 +18,17 @@ public class TimeTableController {
     private final TimeTableService ttService;
 
     public TimeTableController(TimeTableService ttService){this.ttService = ttService;}
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'BOOKKEEPER')")
     @GetMapping
     public List<TimeTableDay> getTimetable(){return ttService.getTimetable();}
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_BOOKKEEPER')")
     @GetMapping("/{id}")
     public TimeTableDay getTimetableDay(@PathVariable("id") Long id) throws InstanceNotFoundException {
         return ttService.getTimetableDay(id);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/actualHours/{id}")
     public List<TimeTableDay> actualHourShow(@PathVariable("id") Long id,
                                              @RequestParam(required = false) String startDate,
