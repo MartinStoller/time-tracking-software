@@ -96,8 +96,11 @@ public class TestdataGenerator {
         TimeTableDay ttd10 = new TimeTableDay(
                 LocalDate.of(2022, Month.JANUARY, 5), null,
                 null, 0, 6, AbsenceStatus.HOLIDAY);
+        TimeTableDay ttd11 = new TimeTableDay(
+                LocalDate.of(2022, Month.JANUARY, 5), null,
+                null, 0, 8, AbsenceStatus.HOLIDAY);
 
-        timeTableRepository.saveAll(List.of(ttd1, ttd2, ttd3, ttd4, ttd5, ttd6, ttd7, ttd8, ttd9, ttd10));
+        timeTableRepository.saveAll(List.of(ttd1, ttd2, ttd3, ttd4, ttd5, ttd6, ttd7, ttd8, ttd9, ttd10, ttd11));
     }
 
     public void fillUserRepo() {
@@ -151,6 +154,7 @@ public class TestdataGenerator {
         assignEmployeeToDay(8L, 7L);
         assignEmployeeToDay(9L, 7L);
         assignEmployeeToDay(10L, 7L);
+        assignEmployeeToDay(11L, 5L);
 
         assignProjectToDay(2L, 1L);
         assignProjectToDay(3L, 1L);
@@ -159,5 +163,6 @@ public class TestdataGenerator {
         assignProjectToDay(8L, 1L);
         assignProjectToDay(9L, 2L);
         assignProjectToDay(10L, 2L);
+        assignProjectToDay(11L, 2L);
     }
 }

@@ -40,7 +40,6 @@ class TimeTableRepositoryTest {
     @BeforeEach
     void setUp(){
         TestdataGenerator testdataGenerator = new TestdataGenerator(customerRepository, projectRepository, testedTTDRepository, userRepository);
-        double ggg = 0;
         testdataGenerator.fillAllRepos();
 
     }
@@ -94,14 +93,56 @@ class TimeTableRepositoryTest {
     }
 
     @Test
-    void getTotalActualHoursExpectedHoursByEmployeeId() {
+    void shouldGetAllWorkdaysWhereAbsenceStatusIsHOLIDAYAndDateIsAsGiven() {
+        //Expected project:
+        Project proj2 = new Project("WebAppXY Extension", LocalDate.of(1992, Month.JULY, 13), null);
+        proj2.setId(2L);
+        //Expected Users:
+        User usr5 = new User("Admiral", "Schneider", "fussball95", "spamfilter@gmail.com", Role.EMPLOYEE);
+        usr5.setId(5L);
+        User usr7 = new User("Waldo", "Holzkopf", "redbull!", "holzkopf@gmx.net", Role.EMPLOYEE);
+        usr7.setId(7L);
+        //Expected TimeTableDays:
+        TimeTableDay ttd10 = new TimeTableDay(
+                LocalDate.of(2022, Month.JANUARY, 5), null,
+                null, 0, 6, AbsenceStatus.HOLIDAY);
+        ttd10.setWorkdayId(10L);
+        TimeTableDay ttd11 = new TimeTableDay(
+                LocalDate.of(2022, Month.JANUARY, 5), null,
+                null, 0, 8, AbsenceStatus.HOLIDAY);
+        ttd11.setWorkdayId(11L);
+        ttd10.assignEmployee(usr7);
+        ttd11.assignEmployee(usr5);
+        ttd10.assignProject(proj2);
+        ttd11.assignProject(proj2);
+
+        List<TimeTableDay> expected = List.of(ttd10, ttd11);
+
+        List<TimeTableDay> actual = testedTTDRepository.getAllHolidaysOnDate(LocalDate.of(2022, Month.JANUARY, 5));
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void getAllEmployeesInHoliday() {
-    }
+    void shouldGetAllWorkdaysWhereAbsenceStatusIsSICKAndDateIsAsGiven() {
+        //Expected Project:
+        Project proj1 = new Project("Homepage Maintenance", LocalDate.of(1995, Month.JULY, 22), LocalDate.of(2021, Month.AUGUST, 2));
+        proj1.setId(1L);
+        //Expected Employee:
+        User usr7 = new User("Waldo", "Holzkopf", "redbull!", "holzkopf@gmx.net", Role.EMPLOYEE);
+        usr7.setId(7L);
+        //Expected TimeTableDay
+        TimeTableDay ttd8 = new TimeTableDay(
+                LocalDate.of(2022, Month.JANUARY, 3), null,
+                null, 0, 4, AbsenceStatus.SICK);
+        ttd8.setWorkdayId(8L);
+        ttd8.assignProject(proj1);
+        ttd8.assignEmployee(usr7);
 
-    @Test
-    void getAllSickEmployees() {
+        List<TimeTableDay> expected = List.of(ttd8);
+
+        List<TimeTableDay> actual = testedTTDRepository.getAllSickdaysOnDate(LocalDate.of(2022, Month.JANUARY, 3));
+
+        assertEquals(expected, actual);
     }
 }
