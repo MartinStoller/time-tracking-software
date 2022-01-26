@@ -1,5 +1,6 @@
 package de.example.haegertime.authorization;
 
+import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.users.User;
 import de.example.haegertime.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //Login daten = useremail + password
-        User user = userRepository.getUserByEmail(username);
+        User user = userRepository.getUserByEmail(username).orElseThrow(()->new ItemNotFoundException(""));
         if(user == null) {
             throw new UsernameNotFoundException("Benutzer nicht gefunden");
         }

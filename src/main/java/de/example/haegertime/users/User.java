@@ -1,18 +1,19 @@
 package de.example.haegertime.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.example.haegertime.projects.Project;
+
 import de.example.haegertime.timetables.TimeTableDay;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import java.util.Collections;
+import java.util.List;
 import java.sql.Time;
 import java.util.*;
 
@@ -40,9 +41,9 @@ public class User {
     List<TimeTableDay> timeTableDayList;
 
     @NotBlank @NotNull
-    private String first;
+    private String firstname;
     @NotBlank @NotNull
-    private String last;
+    private String lastname;
     @NotBlank @Size(min=5, message = "Password is too short! It requires at least 5 characters.") @Size(max = 30, message = "Password is too long!")
     private String password;
     @Column(unique = true) @Email
@@ -55,9 +56,9 @@ public class User {
 
     public User(){}
 
-    public User(String first, String last, String password, String email, Role role){
-        this.first = first;
-        this.last = last;
+    public User(String firstname, String lastname, String password, String email, Role role){
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.password = password;
         this.email = email;
         this.role = role;

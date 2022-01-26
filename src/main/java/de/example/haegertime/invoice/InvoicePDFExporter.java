@@ -89,8 +89,8 @@ public class InvoicePDFExporter {
         int index = 0;
         for (User user : employees) {
             table.addCell(String.valueOf(user.getId()));
-            table.addCell(user.getFirst());
-            table.addCell(user.getLast());
+            table.addCell(user.getFirstname());
+            table.addCell(user.getLastname());
             table.addCell(String.valueOf(totalHours.get(index)));
             index+=1;
         }

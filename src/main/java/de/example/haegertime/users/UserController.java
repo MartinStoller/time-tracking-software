@@ -3,38 +3,40 @@ package de.example.haegertime.users;
 import de.example.haegertime.authorization.MyUserDetails;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
-import de.example.haegertime.timetables.TimeTableService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final TimeTableService ttService;
 
     @GetMapping
     /**
-       if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
-       sort by last name alphabetically
+     if no Requestparam is given, results are not sorted. If sortParam == "role", sort by role. If sortParam == "abc",
+     sort by last name alphabetically
      */
-    public List<User> getAllUsers(@RequestParam(required = false) String sortBy){
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public List<User> getAllUsers(@RequestParam(required = false) String sortBy) {
         return userService.getAllUsers(sortBy);
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> createUser(@RequestBody User user) {
         try {
             this.userService.createUser(user);
             return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
@@ -44,157 +46,173 @@ public class UserController {
         }
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable long id) {
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public ResponseEntity<User> getById(@PathVariable long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     //Ausgabe User anhand eines Keywords
     @GetMapping("/search/{keyword}")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<User> getByKeyword(@PathVariable("keyword") String keyword) {
         return this.userService.findByLastByFirstByEmail(keyword);
     }
 
     @GetMapping("/myProjects")
-    public LinkedHashSet<Project> getMyProjects(Principal principal){
-        return userService.getMyProjects(principal.getName());
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public Set<Project> getMyProjects(Authentication authentication) {
+        return userService.getMyProjects(authentication.getName());
     }
 
+
     @GetMapping("/personalOvertime")
-    public List<Double> getPersonalOvertimeBalance(Principal principal){
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public List<Double> getPersonalOvertimeBalance(Authentication authentication) {
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
-        String email = principal.getName();
+        String email = authentication.getName();
         return userService.getOvertimeBalance(email);
 
     }
 
+
     @GetMapping("/OvertimeByEmail/{email}")
-    public List<?> getOvertimeBalanceById(@PathVariable String email){
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public List<?> getOvertimeBalanceByEmail(@PathVariable String email) {
         //returns a List of 3 Values[expected hours sum, actual hours sum, resulting Overtimebalance
         return userService.getOvertimeBalance(email);
     }
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    /**
-     * Anzeigen die Informationen über den aktuellen Benutzer
-     * @param principal
-     * @return
-     */
+
     @GetMapping("/current-user")
-    public ResponseEntity<User> currentUser(Principal principal) {
-        String username = principal.getName();
-        return ResponseEntity.ok(userService.getByName(username));
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public ResponseEntity<User> currentUser( ) {
+        Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication1.getName();
+        return ResponseEntity.ok(userService.getByUsername(email));
     }
 
     @GetMapping("/showOwnWorkdays")
-    public List<TimeTableDay> ShowOwnWorkdays(
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public List<TimeTableDay> showOwnWorkdays(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate start,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate end,
-            Principal principal) {
+            Authentication authentication) {
         /**
          * Übersicht über die Arbeitstage eines Nutzers
          * @param start: start Datum ab welchem man die Arbeitstage sehen will (defaults to 01.01.1900)
          * @param end: end Datum bis zu welchem man die Arbeitstage sehen will (defaults to 01.01.2099)
          * @return List of TimetableDays in given Daterange of Logged in Employee
          */
-        return userService.showOwnWorkdays(principal.getName(), start, end);
+        return userService.showOwnWorkdays(authentication.getName(), start, end);
     }
 
     /**
      * Account-Daten ändern, Employee darf seine E-Mail-Adresse und Rolle nicht ändern.
-     * @param user die neuen Account-Daten
-     * @param loggedUser  der eingeloggte Benutzer
-     * @return
+     *
+     * @param user       die neuen Account-Daten
+     * @param loggedUser der eingeloggte Benutzer
+     * @return geupdatete UserDetails
      */
     @PutMapping("/current-user/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
-        User logged = userService.getByName(username);
+        User logged = userService.getByUsername(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
 
-
     /**
      * Username eines Nutzers ändern (ADMIN)
-     * @param id    Nutzer ID
+     *
+     * @param id          Nutzer ID
      * @param newUserName neue E-Mail-Adresse
-     * @return  aktualisierter Nutzer
+     * @return aktualisierter Nutzer
      */
     @PutMapping("/update/username/{id}")
-    public ResponseEntity<User> updateUserName(Long id,@RequestParam("email") String newUserName) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> changeUserName(Long id, @RequestParam("email") String newUserName) {
         return ResponseEntity.ok(userService.updateUserName(id, newUserName));
     }
 
-    /**
-     * Deaktivieren einen Benutzer
-     * @param id Benutzer ID
-     * @return
-     */
+
     @PutMapping("/deactiv/{id}")
-    public ResponseEntity<Void> deactivUser(@PathVariable Long id) {
-        userService.deactivUser(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
+        userService.deactivateUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
      * Reaktivieren einen Benutzer
+     *
      * @param id Benutzer ID
      * @return
      */
-    @PutMapping("/reactiv/{id}")
+    @PutMapping("/reactivate/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> reactivUser(@PathVariable Long id) {
-        userService.reactivUser(id);
+        userService.reactivateUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/updaterole/{id}")
-    public ResponseEntity<User> updateRoleUser(@PathVariable Long id,@RequestParam("role") String role) {
+    @PutMapping("/update/role/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> updateRoleUser(@PathVariable Long id, @RequestParam("role") String role) {
         return ResponseEntity.ok(userService.updateRole(id, role));
     }
 
 
     @PostMapping("/register/timetable")
-    public String registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Principal principal) {
-        String username = principal.getName();
-        return userService.registerNewTimeTable(timeTableDay, username);
+
+    public void registerNewTimeTable(@RequestBody TimeTableDay timeTableDay, Authentication authentication) {
+        String username = authentication.getName();
+        userService.registerNewTimeTable(timeTableDay, username);
     }
 
     @GetMapping("/holidays/rest")
-    public double showMyRestHolidays(Principal principal) {
-        String username = principal.getName();
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public double showMyRestHolidays(Authentication authentication) {
+        String username = authentication.getName();
         return userService.showMyRestHolidays(username);
     }
-
 
     /**
      * Sendet der Bookkeeper eine Anfrage zum Urlaubsbeantragen,
      * der Bookkeeper kann entweder akzeptieren oder ablehnen
-     * @param employeeId
-     * @param dayId
-     * @param duration
+     *
+     * @param employeeId    Nutzer ID
+     * @param dayId //TODO Cedrik: vervollständigen
+     * @param duration //TODO Cedrik: vervollständigen
      */
     @PostMapping("/apply/holiday/{id}")
-    public ResponseEntity<Void> applyForHoliday(@PathVariable("id") Long employeeId,@RequestParam Long dayId,
-                                @RequestParam double duration) {
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public ResponseEntity<Void> applyForHoliday(@PathVariable("id") Long employeeId, @RequestParam Long dayId,
+                                                @RequestParam double duration) {
         userService.applyForHoliday(employeeId, dayId, duration);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/holiday/decline/employee/{id}")
-    public ResponseEntity<Void> declineForHoliday(@PathVariable("id") Long employeeId) {
+    @PreAuthorize("hasRole('BOOKKEEPER')")
+    public ResponseEntity<Void> declineRequestedHoliday(@PathVariable("id") Long employeeId) {
         userService.declineForHoliday(employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/holidays")
-    public List<TimeTableDay> showAllMyHolidays(Principal principal) {
-        String email = principal.getName();
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
+    public List<TimeTableDay> showAllMyHolidays(Authentication authentication) {
+        String email = authentication.getName();
         return userService.showAllMyHolidays(email);
     }
 }

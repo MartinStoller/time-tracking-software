@@ -22,7 +22,7 @@ public class MyUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Role role = user.getRole();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role.name()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
         return authorities;
     }
 
@@ -56,15 +56,4 @@ public class MyUserDetails implements UserDetails {
         return user.isFrozen();
     }
 
-    public void setUserPassword(String password) {
-        this.user.setPassword(password);
-    }
-
-    public void setUserFirst(String first) {
-        this.user.setFirst(first);
-    }
-
-    public void setUserLast(String last) {
-        this.user.setLast(last);
-    }
 }
