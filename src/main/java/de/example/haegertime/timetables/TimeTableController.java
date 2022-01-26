@@ -18,7 +18,7 @@ public class TimeTableController {
     private final TimeTableService ttService;
 
     public TimeTableController(TimeTableService ttService){this.ttService = ttService;}
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public List<TimeTableDay> getTimetable(){return ttService.getTimetable();}
 
