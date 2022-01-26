@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -95,9 +96,10 @@ public class UserController {
 
     @GetMapping("/current-user")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
-    public ResponseEntity<User> currentUser(Authentication authentication) {
-        String username = authentication.getName();
-        return ResponseEntity.ok(userService.getByUsername(username));
+    public ResponseEntity<User> currentUser( ) {
+        Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication1.getName();
+        return ResponseEntity.ok(userService.getByUsername(email));
     }
 
     @GetMapping("/showOwnWorkdays")
@@ -124,13 +126,11 @@ public class UserController {
      */
     @PutMapping("/current-user/update")
     @PreAuthorize("hasRole('ADMIN')")
-    //TODO Cedrik: Warum ist die Implementierung mit der Authentication hier anders? - Hier auch aus dem Context holen.
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
         User logged = userService.getByUsername(username);
         return ResponseEntity.ok(userService.updateUserDetails(user, logged));
     }
-
 
     /**
      * Username eines Nutzers ändern (ADMIN)
