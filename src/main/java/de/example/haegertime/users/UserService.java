@@ -38,7 +38,6 @@ public class UserService {
             return userRepository.findAll(Sort.by(Sort.Direction.ASC, "role"));
         } else {
             throw new InvalidParameterException("Requestparameter must either be abc, role or null.");
-
         }
     }
 
