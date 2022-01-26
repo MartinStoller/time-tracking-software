@@ -165,11 +165,11 @@ public class UserService {
         double expectedHoursSum = 0;
         for (TimeTableDay ttd : allWorkdays) {
 
-            actualHoursSum += ttd.getActualHours();
-            expectedHoursSum += ttd.getExpectedHours();
+            actualHoursSum += ttd.calculateActualHours();
+            expectedHoursSum += ttd.calculateActualHours();
 
             actualHoursSum+= ttd.calculateActualHours();
-            expectedHoursSum+=ttd.getExpectedHours();
+            expectedHoursSum+=ttd.calculateActualHours();
 
         }
 
