@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Setter
 public class APIException {
     private final String message;
     private final HttpStatus httpStatus;

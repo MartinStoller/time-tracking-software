@@ -1,7 +1,5 @@
 package de.example.haegertime.invoice;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.lowagie.text.Font;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
@@ -11,20 +9,19 @@ import de.example.haegertime.customer.Customer;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.users.User;
 
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
-@JacksonXmlRootElement
 public class InvoicePDFExporter {
-    @JacksonXmlProperty
+
     private Customer customer;
-    @JacksonXmlProperty
+
     private Project project;
-    @JacksonXmlProperty
+
     private List<User> employees;
-    @JacksonXmlProperty
+
     private List<Double> totalHours;
 
     public InvoicePDFExporter(Customer customer, Project project,
@@ -99,9 +96,9 @@ public class InvoicePDFExporter {
         }
     }
 
-    public void export(HttpServletResponse response) throws DocumentException, IOException {
+    public void export(OutputStream outputStream) throws DocumentException {
         Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
+        PdfWriter.getInstance(document, outputStream);
         document.open();
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         font.setSize(16);

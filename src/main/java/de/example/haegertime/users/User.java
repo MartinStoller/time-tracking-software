@@ -11,9 +11,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import java.util.Collections;
 import java.util.List;
-
+import java.sql.Time;
+import java.util.*;
 
 @Data
 @Entity
@@ -61,7 +63,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.frozen = true;
-        this.timeTableDayList = Collections.emptyList();
+        this.timeTableDayList = new ArrayList<>();
         this.urlaubstage = 30;
     }
 

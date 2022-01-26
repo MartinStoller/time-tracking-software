@@ -1,9 +1,11 @@
 package de.example.haegertime.projects;
 
+import de.example.haegertime.advice.ItemAlreadyExistsException;
 import de.example.haegertime.advice.ItemNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -34,11 +36,17 @@ public class ProjectService {
                 () -> new ItemNotFoundException("Das Projekt mit der Id "+id+
                         " nicht in der DB")
         );
-        updateProject.setTitle(project.getTitle());
-        updateProject.setStart(project.getStart());
-        updateProject.setEnd(project.getEnd());
-        projectRepository.save(updateProject);
-        return updateProject;
+        Optional<Project> projectOptional = projectRepository.findProjectByTitle(project.getTitle());
+        if(!projectOptional.isPresent()) {
+            updateProject.setTitle(project.getTitle());
+            updateProject.setStart(project.getStart());
+            updateProject.setEnd(project.getEnd());
+            projectRepository.save(updateProject);
+            return updateProject;
+        } else {
+            throw new ItemAlreadyExistsException("Ein Projekt mit Title "+project.getTitle()
+            +" ist vorhanden in der DB");
+        }
     }
 
 
@@ -47,5 +55,12 @@ public class ProjectService {
     }
 
 
+    public void deleteById(long id) {
+        if(projectRepository.findById(id).isPresent()) {
+            projectRepository.deleteById(id);
+        } else {
+            throw new ItemNotFoundException("Das Projekt mit Id "+id+" nicht in der DB");
+        }
+    }
 }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class HaegerTimeAdvice {
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<Object> handleItemNotFoundException(ItemNotFoundException e) {
+    public ResponseEntity<APIException> handleItemNotFoundException(ItemNotFoundException e) {
         HttpStatus notfound = HttpStatus.NOT_FOUND;
         APIException apiException = new APIException(e.getMessage(), notfound);
         return new ResponseEntity<>(apiException, notfound);
@@ -19,28 +19,28 @@ public class HaegerTimeAdvice {
 
 
     @ExceptionHandler(ItemAlreadyExistsException.class)
-    public ResponseEntity<Object> handleItemExistsException(ItemAlreadyExistsException e) {
+    public ResponseEntity<APIException> handleItemExistsException(ItemAlreadyExistsException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);
     }
 
     @ExceptionHandler(ListEmptyException.class)
-    public ResponseEntity<Object> handleListEmptyException(ListEmptyException e) {
+    public ResponseEntity<APIException> handleListEmptyException(ListEmptyException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);
     }
 
     @ExceptionHandler(InvalidRoleException.class)
-    public ResponseEntity<Object> handleInvalidRoleException(InvalidRoleException e) {
+    public ResponseEntity<APIException> handleInvalidRoleException(InvalidRoleException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-        public ResponseEntity<APIException> handlEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+        public ResponseEntity<APIException> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         APIException apiException = new APIException(e.getMessage(), badRequest);
         return new ResponseEntity<>(apiException, badRequest);

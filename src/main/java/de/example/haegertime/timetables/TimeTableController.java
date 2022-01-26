@@ -4,6 +4,7 @@ import de.example.haegertime.advice.ItemNotFoundException;
 import de.example.haegertime.users.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
@@ -31,12 +32,12 @@ public class TimeTableController {
                                              @RequestParam(required = false) String startDate,
                                              @RequestParam(required = false) String endDate)
     {
-        return ttService.actualHourShow(id);
+        return ttService.getTimeTableDayByEmployeeId(id);
     }
 
     @GetMapping("/hours/employees/{id}")
     public List<List<Double>> totalHoursEmployeeShow(@PathVariable("id") Long projectId) {
-        return ttService.totalHoursAllEmployeeOnAProject(projectId);
+        return ttService.getTotalWorkingHoursOnAProjectGroupedByEmployeeId(projectId);
     }
 
 
@@ -62,32 +63,35 @@ public class TimeTableController {
         ttService.finalizeTimeTableDay(dayId);
     }
 
-    @GetMapping("/overtime/{id}")
-    public String overHoursShow(@PathVariable("id") Long employeeId) {
-        return ttService.overUnterHoursShow(employeeId);
+
+
+    @GetMapping("/overhours/{id}")
+    public double showOverTimeOfEmployeeById(@PathVariable("id") Long employeeId) {
+        return ttService.showOverTimeOfEmployeeById(employeeId);
     }
 
-    @PutMapping("/absenceStatus/holiday/{id}")
-    public String changeAbsenceStatusToHoliday(@PathVariable("id") Long employeeId,
-                                               @RequestParam Long dayId,@RequestParam Double duration) {
-        return ttService.changeAbsenceStatusToHoliday(employeeId, dayId, duration);
+    @PutMapping("/absence/holiday")
+    public void changeAbsenceStatusToHoliday(@RequestParam Long dayId,@RequestParam Double duration) {
+        ttService.changeAbsenceStatusToHoliday(dayId, duration);
     }
 
-    @PutMapping("/absenceStatus/sick/{id}")
-    public String changeAbsenceStatusToSick(@PathVariable("id") Long employeeId,
+
+    @PutMapping("/absence/sick/employee/{id}")
+    public void changeAbsenceStatusToSick(@PathVariable("id") Long employeeId,
+
                                             @RequestParam Long dayId,
                                             @RequestParam double duration) {
-        return ttService.changeAbsenceStatusToSick(employeeId, dayId, duration);
+        ttService.changeAbsenceStatusToSick(employeeId, dayId, duration);
     }
 
     @GetMapping("/employeesOnHoliday")
-    public List<User> showAllEmployeesInHoliday(
+    public Set<User> showAllEmployeesInHoliday(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
-        return ttService.showAllEmployeesInHoliday(date);
+        return ttService.showAllEmployeesOnHoliday(date);
     }
 
     @GetMapping("/sickEmployees")
-    public List<User> showAllSickEmployees(
+    public Set<User> showAllSickEmployees(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
         return ttService.showAllSickEmployees(date);
     }

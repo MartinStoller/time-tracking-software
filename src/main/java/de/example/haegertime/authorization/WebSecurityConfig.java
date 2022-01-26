@@ -43,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //TODO: Ornung reinbringen: Mit kommentaren und Absätzen öhnliche Methoden zusammentun. Wo es sinn macht mit * und ** UR
         http.authorizeRequests()
+
 //                .antMatchers("/api/users").hasAnyAuthority("ADMIN","BOOKKEEPER","EMPLOYEE")
                 .antMatchers("/customers").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
                 .antMatchers(HttpMethod.POST, "/customers").hasAnyAuthority("ADMIN", "BOOKKEEPER")
@@ -71,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/invoice/export/pdf").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/invoice/export/xml").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/api/timetable/overhours/{id}").hasAnyAuthority("ADMIN", "BOOKKEEPER", "EMPLOYEE")
+
                 .antMatchers("/absence/holiday/employee/{id}").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/employees/status/holiday").hasAnyAuthority("BOOKKEEPER")
                 .antMatchers("/employees/status/sick").hasAnyAuthority("BOOKKEEPER")

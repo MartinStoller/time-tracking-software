@@ -18,6 +18,12 @@ import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -158,8 +164,13 @@ public class UserService {
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
         for (TimeTableDay ttd : allWorkdays) {
+
             actualHoursSum += ttd.getActualHours();
             expectedHoursSum += ttd.getExpectedHours();
+
+            actualHoursSum+= ttd.calculateActualHours();
+            expectedHoursSum+=ttd.getExpectedHours();
+
         }
 
         return Arrays.asList(expectedHoursSum, actualHoursSum, actualHoursSum - expectedHoursSum);
@@ -190,8 +201,6 @@ public class UserService {
     public void registerNewTimeTable(TimeTableDay timeTableDay, String username) {
         User user = userRepository.getUserByEmail(username).orElseThrow(() -> new ItemNotFoundException(""));
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
-        double actualhours = timeTableDay.calculateActualHours();
-        timeTableDay.setActualHours(actualhours);
         timeTableDayList.add(timeTableDay);
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);

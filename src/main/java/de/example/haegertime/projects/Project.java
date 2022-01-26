@@ -3,6 +3,7 @@ package de.example.haegertime.projects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.example.haegertime.customer.Customer;
 import de.example.haegertime.timetables.TimeTableDay;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sonatype.inject.Nullable;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class Project {
         this.title = title;
         this.start = start;
         this.end = end;
-        this.timeTableDays = Collections.emptyList();
+        this.timeTableDays = new ArrayList<>();
     }
+
 }
