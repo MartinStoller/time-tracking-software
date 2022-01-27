@@ -170,9 +170,7 @@ public class UserService {
 
             actualHoursSum+= ttd.calculateActualHours();
             expectedHoursSum+=ttd.calculateActualHours();
-
         }
-
         return Arrays.asList(expectedHoursSum, actualHoursSum, actualHoursSum - expectedHoursSum);
     }
 
@@ -205,8 +203,6 @@ public class UserService {
         user.setTimeTableDayList(timeTableDayList);
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
-
-
     }
 
     public double showMyRestHolidays(String username) {

@@ -1,15 +1,21 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.advice.ItemNotFoundException;
+import de.example.haegertime.customer.Customer;
 import de.example.haegertime.email.EmailService;
+import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableRepository;
+import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +58,6 @@ class UserServiceTest {
         List<User> result = underTest.getAllUsers("role");
         //then
         assertThat(result.size()).isEqualTo(2);
-        //TODO Cedrik: lieber die Reihenfolge des Ergebnisses checken, weil der Test sonst neu geschrieben werden muss, sobald die Methode findAll geändert wird.
-        // ... Tests möglich unabhängig vom code machen um die Wartbarkeit zu verbessern.
         verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "role"));
     }
 
@@ -65,20 +69,19 @@ class UserServiceTest {
         User user2 = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         users.add(user1);
         users.add(user2);
+
         when(userRepository.findAll(Sort.by(Sort.Direction.ASC, "last"))).thenReturn(users);
         //when
         List<User> expected = underTest.getAllUsers("abc");
-        assertThat(expected.size()).isEqualTo(2);
+
 
         //then
-        //TODO Cedrik: lieber die Reihenfolge des Ergebnisses checken, weil der Test sonst neu geschrieben werden muss, sobald die Methode findAll geändert wird.
-        // ... Tests möglich unabhängig vom code machen um die Wartbarkeit zu verbessern.
+        assertThat(expected.size()).isEqualTo(2);
         verify(userRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "last"));
     }
 
     @Test
     void shouldFindAll() {
-        //TODO Cedrik: Habe hier die Reihenfolge mal angepasst.
         //given -> Vorbereitung
         List<User> users = new ArrayList<>();
         User user1 = new User("Johanna", "Hagelücken", "abcdefg", "jolu@gmx.net", Role.BOOKKEEPER);
@@ -96,6 +99,7 @@ class UserServiceTest {
         assertThat(expected.size()).isEqualTo(2);
         verify(userRepository, times(1)).findAll();
     }
+
 
     @Test
     @DisplayName("add an new User")
@@ -156,7 +160,8 @@ class UserServiceTest {
 
     @Test
     @DisplayName("get User by UserName (Email)")
-    void itShouldGetUserByUserName() {
+    @Disabled
+    void shouldGetUserByUserName() {
         underTest.getByUsername("martin.stoller2@gmx.de");
         verify(userRepository).getUserByEmail("martin.stoller2@gmx.de");
     }
@@ -166,6 +171,23 @@ class UserServiceTest {
     void updateUserDetails() {
     }
 
+    @Test
+    void shouldUpdateUserDetails() {
+        User user = new User("Nick", "Petersen", "alarm1", "stoller.martin@gmx.de", Role.ADMIN);
+        User loggedUser = new User("Nick", "Petersen", "alarm1", "stoller.martin@gmx.de", Role.ADMIN);
+//        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.getUserByEmail(loggedUser.getEmail())).thenReturn(Optional.of(loggedUser));
+
+        User expected = underTest.updateUserDetails(user, loggedUser);
+        assertEquals(expected.getPassword(), user.getPassword());
+        assertEquals(expected.getFirstname(), user.getFirstname());
+        assertEquals(expected.getLastname(), user.getLastname());
+        assertEquals(expected.getEmail(), loggedUser.getEmail());
+        assertEquals(expected.getRole(), loggedUser.getRole());
+        assertEquals(expected.getId(), loggedUser.getId());
+//        assertEquals(expected.getFrozen(), loggedUser.isFrozen());
+        verify(userRepository, times(1)).save(user);
+    }
 
     @Test
     void shouldUpdateUserName() {
@@ -233,15 +255,35 @@ class UserServiceTest {
 
     @Test
     void showMyRestHolidays() {
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.getUserByEmail("martin.stoller2@gmx.de")).willReturn(Optional.of(user));
+
+
+        underTest.showMyRestHolidays( "martin.stoller2@gmx.de");
+
+        verify(userRepository, times(1)).findAll();
+
+
     }
+
 
     @Test
     void applyForHoliday() {
     }
 
+
     @Test
     void declineForHoliday() {
+        //given
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        //when
+        underTest.declineForHoliday( 1L);
+        //then
+        verify(emailService, times(1)).send("martin.stoller2@gmx.de","Decline for holidays","Hi " + user.getFirstname()
+                + ", your apply was cancelled");
     }
+
 
     @Test
     void showAllMyHolidays() {
