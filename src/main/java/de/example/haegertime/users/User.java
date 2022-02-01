@@ -66,5 +66,4 @@ public class User {
         this.timeTableDayList = new ArrayList<>();
         this.urlaubstage = 30;
     }
-
 }

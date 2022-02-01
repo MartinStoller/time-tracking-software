@@ -31,11 +31,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TimeTableRepository timeTableRepository;
+    private final String bookkeeperEmail = "josalongmartin@gmail.com";
 
 
     public List<User> getAllUsers(String sortBy) {
-        //TODO Cedrik: Evtl switch case einbauen. Fehlerhafte Eingabe von sortBy sollte meiner Ansicht nach nicht zu einem Fehler führen... dann halt nicht sortieren.
-        // https://docs.oracle.com/javase/tutorial/java/nutsandbolts/switch.html
         if (sortBy == null) {
             return userRepository.findAll();
         } else if (sortBy.equals("abc")) {
@@ -159,7 +158,6 @@ public class UserService {
 
     public List<Double> getOvertimeBalance(String email) {
         User user = userRepository.getUserByEmail(email).orElseThrow(() -> new ItemNotFoundException(""));
-        //TODO Cedrik: Nullpointer check
         List<TimeTableDay> allWorkdays = user.getTimeTableDayList(); //get a list of all workdays
         double actualHoursSum = 0;
         double expectedHoursSum = 0;
@@ -168,8 +166,8 @@ public class UserService {
             actualHoursSum += ttd.calculateActualHours();
             expectedHoursSum += ttd.calculateActualHours();
 
-            actualHoursSum+= ttd.calculateActualHours();
-            expectedHoursSum+=ttd.calculateActualHours();
+            actualHoursSum += ttd.calculateActualHours();
+            expectedHoursSum += ttd.calculateActualHours();
         }
         return Arrays.asList(expectedHoursSum, actualHoursSum, actualHoursSum - expectedHoursSum);
     }
@@ -182,7 +180,6 @@ public class UserService {
             end = LocalDate.of(2099, 1, 1);
         }
         User user = userRepository.getUserByEmail(email).orElseThrow(() -> new ItemNotFoundException(""));
-        //TODO Cedrik: Nullpointer check
         List<TimeTableDay> workdays = user.getTimeTableDayList();
         List<TimeTableDay> foundWorkdays = new java.util.ArrayList<>();
 
@@ -201,6 +198,7 @@ public class UserService {
         List<TimeTableDay> timeTableDayList = user.getTimeTableDayList();
         timeTableDayList.add(timeTableDay);
         user.setTimeTableDayList(timeTableDayList);
+
         timeTableRepository.save(timeTableDay);
         userRepository.save(user);
     }
@@ -212,8 +210,6 @@ public class UserService {
     }
 
     public void applyForHoliday(Long employeeId, Long dayId, double duration) {
-        //TODO Cedrik: Hardcoded email Adresse - besser als Variable auslagern. Oder noch besser in die Konfiguration.
-        String bookkeeperEmail = "josalongmartin@gmail.com";
         emailService.send(bookkeeperEmail, "Apply for holidays", "Employee Id " + employeeId +
                 ", workdayId " + dayId + ", duration: " + duration
         );

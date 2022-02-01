@@ -1,7 +1,6 @@
 package de.example.haegertime.users;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -53,14 +57,12 @@ class UserControllerTest {
 //        String output = response.getContentAsString();
 //        assertThat(expected).isEqualTo(output);
 //        assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatus());
-//
 //    }
-
 
 //    @Test
 //    @WithMockUser(username = "user", password = "123", roles = "ADMIN")
 //    void createUser() throws Exception {
-//        User user = new User("Antonia", "Aus Tirola", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+//        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
 //        String input = objectMapper.writeValueAsString(user);
 //        //when
 //        Mockito.when(UserService.createUser(Mockito.any())).thenReturn(user);
@@ -80,7 +82,7 @@ class UserControllerTest {
 @Test
 @WithMockUser(username = "user", password = "123", roles = "ADMIN")
 void getByIdUser() throws Exception {
-    User user = new User("Antonia", "Aus Tirola", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+    User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
     Long userId = 1L;
     //when
     Mockito.when(userService.findById(userId)).thenReturn(user);
@@ -124,12 +126,8 @@ void getByIdUser() throws Exception {
     }
 
 
-    @Test
-    void currentUser() {
-    }
-
     void getByEmailUser() throws Exception {
-        User user = new User("Antonia", "Aus Tirola", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
         String email = "martin.stoller2@gx.de";
         //when
         Mockito.when(userService.getByUsername(email)).thenReturn(user);
@@ -148,25 +146,79 @@ void getByIdUser() throws Exception {
     void showOwnWorkdays() {
     }
 
-    @Test
-    void updateUserDetails() {
-    }
+//    @Test
+//    @WithMockUser(username = "user", password = "123" , roles = "ADMIN")
+//    void updateUserDetails() throws Exception {
+//        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+//        String input = objectMapper.writeValueAsString(user);
+//        //when
+//        Mockito.when(UserService.updateUserDetails(Mockito.any())).thenReturn(user);
+//        //then
+//        String url = "/api/users/current-user/update";
+//        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(url)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(input);
+//        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+//        MockHttpServletResponse response = result.getResponse();
+//        String output = response.getContentAsString();
+//        assertThat(output).isEqualTo(input);
+//        assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatus());
+//    }
 
-    @Test
-    void changeUserName() {
-    }
+
+//    @Test
+//    @WithMockUser(username = "user", password = "123" , roles = "ADMIN")
+//    void changeUserName() throws Exception {
+//        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+//        String input = objectMapper.writeValueAsString(user);
+//        //when
+//        Mockito.when(UserService.updateUserName(Mockito.any())).thenReturn(user);
+//        //then
+//        String url = "/api/users/update/username/{id}";
+//        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(url)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(input);
+//        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+//        MockHttpServletResponse response = result.getResponse();
+//        String output = response.getContentAsString();
+//        assertThat(output).isEqualTo(input);
+//        assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatus());
+//    }
+
 
     @Test
     void deactivateUser() {
     }
 
     @Test
-    void reactivUser() {
+    void reactivateUser() {
     }
 
-    @Test
-    void updateRoleUser() {
-    }
+//    @Test
+//    void updateRoleUser() {
+//    }
+
+//    @Test
+//    @WithMockUser(username = "user", password = "123" , roles = "ADMIN")
+//    void updateRoleUser() throws Exception {
+//        User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gx.de", Role.EMPLOYEE);
+//        String input = objectMapper.writeValueAsString(user);
+//        //when
+//        Mockito.when(UserService.updateRole(Mockito.any())).thenReturn(user);
+//        //then
+//        String url = "/api/users/update/role/{id}";
+//        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(url)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(input);
+//        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+//        MockHttpServletResponse response = result.getResponse();
+//        String output = response.getContentAsString();
+//        assertThat(output).isEqualTo(input);
+//        assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatus());
+//    }
 
     @Test
     void registerNewTimeTable() {
