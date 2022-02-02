@@ -196,9 +196,6 @@ void getByIdUser() throws Exception {
     void reactivateUser() {
     }
 
-//    @Test
-//    void updateRoleUser() {
-//    }
 
 //    @Test
 //    @WithMockUser(username = "user", password = "123" , roles = "ADMIN")

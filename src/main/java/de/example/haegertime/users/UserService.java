@@ -34,6 +34,7 @@ public class UserService {
     private final String bookkeeperEmail = "josalongmartin@gmail.com";
 
 
+
     public List<User> getAllUsers(String sortBy) {
         if (sortBy == null) {
             return userRepository.findAll();
@@ -205,7 +206,6 @@ public class UserService {
 
     public double showMyRestHolidays(String username) {
         User user = userRepository.getUserByEmail(username).orElseThrow(() -> new ItemNotFoundException(""));
-        //TODO Cedrik: Nullpointer check.
         return user.getUrlaubstage();
     }
 
