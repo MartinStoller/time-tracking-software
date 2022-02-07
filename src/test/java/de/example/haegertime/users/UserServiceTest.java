@@ -1,21 +1,15 @@
 package de.example.haegertime.users;
 
 import de.example.haegertime.advice.ItemNotFoundException;
-import de.example.haegertime.customer.Customer;
 import de.example.haegertime.email.EmailService;
-import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableRepository;
-import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -164,10 +158,6 @@ class UserServiceTest {
 
 
     @Test
-    void updateUserDetails() {
-    }
-
-    @Test
     void shouldUpdateUserDetails() {
         User user = new User("Nick", "Petersen", "alarm1", "stoller.martin@gmx.de", Role.ADMIN);
         User loggedUser = new User("Nick", "Petersen", "alarm1", "stoller.martin@gmx.de", Role.ADMIN);
@@ -232,37 +222,14 @@ class UserServiceTest {
 
 
     @Test
-    void getMyProjects() {
-    }
-
-    @Test
-    void getOvertimeBalance() {
-    }
-
-    @Test
-    void showOwnWorkdays() {
-    }
-
-    @Test
-    void registerNewTimeTable() {
-    }
-
-    @Test
     @Disabled
     void showMyRestHolidays() {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.getUserByEmail("martin.stoller2@gmx.de")).willReturn(Optional.of(user));
 
-        underTest.showMyRestHolidays( "martin.stoller2@gmx.de");
+        underTest.showMyRestHolidays("martin.stoller2@gmx.de");
 
         verify(userRepository, times(1)).findAll();
-
-
-    }
-
-
-    @Test
-    void applyForHoliday() {
     }
 
 
@@ -272,14 +239,9 @@ class UserServiceTest {
         User user = new User("Anton", "Aus Tirol", "1234567", "martin.stoller2@gmx.de", Role.EMPLOYEE);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
         //when
-        underTest.declineForHoliday( 1L);
+        underTest.declineForHoliday(1L);
         //then
-        verify(emailService, times(1)).send("martin.stoller2@gmx.de","Decline for holidays","Hi " + user.getFirstname()
+        verify(emailService, times(1)).send("martin.stoller2@gmx.de", "Decline for holidays", "Hi " + user.getFirstname()
                 + ", your apply was cancelled");
-    }
-
-
-    @Test
-    void showAllMyHolidays() {
     }
 }
