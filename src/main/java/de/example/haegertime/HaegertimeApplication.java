@@ -9,5 +9,4 @@ public class HaegertimeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HaegertimeApplication.class, args);
 	}
-
 }
