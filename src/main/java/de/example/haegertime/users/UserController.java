@@ -4,6 +4,8 @@ import de.example.haegertime.authorization.MyUserDetails;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +15,24 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
+@CrossOrigin(origins = "http:localhost:4200")
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/login")
+    public Principal login(Principal principal) {
+        return principal;
+    }
+
+
 
     @GetMapping
     /**
