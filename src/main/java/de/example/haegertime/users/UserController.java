@@ -112,6 +112,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getByUsername(email));
     }
 
+    @GetMapping("/user-by-email/{email}")
+    public User getUserByEmail(@PathVariable("email") String email) {
+        return userService.getByUsername(email);
+    }
+
     @GetMapping("/showOwnWorkdays")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<TimeTableDay> showOwnWorkdays(
