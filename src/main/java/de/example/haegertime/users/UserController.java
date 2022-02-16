@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-@CrossOrigin(origins = "http:localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
@@ -27,9 +27,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public Principal login(Principal principal) {
-        return principal;
+    @GetMapping("/login")
+    public User login(Principal principal) {
+        String username = principal.getName();
+        return userService.getByUsername(username);
     }
 
 
