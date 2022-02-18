@@ -27,11 +27,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/login")
-    public User login(Principal principal) {
-        String username = principal.getName();
-        return userService.getByUsername(username);
-    }
 
 
 
@@ -45,16 +40,22 @@ public class UserController {
         return userService.getAllUsers(sortBy);
     }
 
+
+//    public ResponseEntity<String> createUser(@RequestBody User user) {
+//        try {
+//            this.userService.createUser(user);
+//            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
+//                    HttpStatus.BAD_GATEWAY);
+//        }
+
+//    }
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        try {
-            this.userService.createUser(user);
-            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
-                    HttpStatus.BAD_GATEWAY);
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@RequestBody User user) {
+        return this.userService.createUser(user);
     }
 
 
@@ -140,7 +141,7 @@ public class UserController {
      * @return geupdatete UserDetails
      */
     @PutMapping("/current-user/update")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
         User logged = userService.getByUsername(username);

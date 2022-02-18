@@ -48,7 +48,7 @@ public class UserService {
     }
 
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         String mail = user.getEmail();
         if (userRepository.existsByEmail(mail)) {
             throw new EmailAlreadyExistsException("Diese Email wird bereits verwendet.");
@@ -56,6 +56,7 @@ public class UserService {
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirstname(), "Neuerstellung deines Accounts"));
+        return user;
     }
 
 
