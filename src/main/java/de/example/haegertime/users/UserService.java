@@ -237,6 +237,20 @@ public class UserService {
         }
         return htt;
     }
+
+    public User updateUser(User toUpdateUser, Long id) {
+        User currentUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("User mit Id nicht existiert!")
+        );
+        currentUser.setFirstname(toUpdateUser.getFirstname());
+        currentUser.setLastname(toUpdateUser.getLastname());
+        currentUser.setEmail(toUpdateUser.getEmail());
+        currentUser.setPassword(toUpdateUser.getPassword());
+        currentUser.setRole(toUpdateUser.getRole());
+        currentUser.setUrlaubstage(toUpdateUser.getUrlaubstage());
+        currentUser.setFrozen(toUpdateUser.isFrozen());
+        return userRepository.save(currentUser);
+    }
 }
 
 

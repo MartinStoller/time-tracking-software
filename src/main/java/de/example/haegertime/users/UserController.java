@@ -232,6 +232,18 @@ public class UserController {
         String email = authentication.getName();
         return userService.showAllMyHolidays(email);
     }
+
+
+
+
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateUser(@RequestBody User toUpdateUser, @PathVariable Long id) {
+        return userService.updateUser(toUpdateUser, id);
+    }
+
+
 }
 
 
