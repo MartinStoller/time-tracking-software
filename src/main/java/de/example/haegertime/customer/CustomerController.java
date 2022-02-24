@@ -18,6 +18,7 @@ public class CustomerController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('BOOKKEEPER') or hasRole('EMPLOYEE')")
     public ResponseEntity<List<Customer>> findAllCustomer() {
         return ResponseEntity.ok(customerService.findAll());
     }
