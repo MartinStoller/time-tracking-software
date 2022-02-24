@@ -41,10 +41,10 @@ public class ProjectController {
         projectService.deleteById(id);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN') or hasRole('BOOKKEEPER')")
-    public Project createNewProject(@RequestBody Project project) {
-        return projectService.createNewProject(project);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('BOOKKEEPER')")
+//    public Project createNewProject(@RequestBody Project project) {
+//        return projectService.createNewProject(project);
+//    }
 }
