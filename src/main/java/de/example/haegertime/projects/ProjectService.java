@@ -37,7 +37,7 @@ public class ProjectService {
                         " nicht in der DB")
         );
         Optional<Project> projectOptional = projectRepository.findProjectByTitle(project.getTitle());
-        if(!projectOptional.isPresent()) {
+        if(!projectOptional.isPresent() || projectOptional.get().getTitle().equals(project.getTitle())) {
             updateProject.setTitle(project.getTitle());
             updateProject.setStart(project.getStart());
             updateProject.setEnd(project.getEnd());
@@ -62,5 +62,15 @@ public class ProjectService {
             throw new ItemNotFoundException("Das Projekt mit Id "+id+" nicht in der DB");
         }
     }
+
+//    public Project createNewProject(Project project) {
+//        Optional<Project> projectOptional = projectRepository.findProjectByTitle(project.getTitle());
+//        if(!projectOptional.isPresent()) {
+//            projectRepository.save(project);
+//            return project;
+//        } else {
+//            throw new ItemAlreadyExistsException("Ein Projekt mit Title "+ project.getTitle() + " ist vorhanden in der DB");
+//        }
+//    }
 }
 

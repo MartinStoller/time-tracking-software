@@ -24,8 +24,11 @@ public class TestDataCustomer {
 
             Project project1 = new Project("Homepage AXA", LocalDate.of(2020, Month.AUGUST,30),
                     LocalDate.of(2021, Month.JANUARY, 15));
+            Project project15 = new Project("Homepage AXA New Gen", LocalDate.of(2020, Month.AUGUST,30),
+                    LocalDate.of(2021, Month.JANUARY, 15));
             List<Project> projects = new ArrayList<>();
             projects.add(project1);
+            projects.add(project15);
             c1.setProjects(projects);
 
             Project project2 = new Project("Auto Versicherung", LocalDate.of(2021, Month.JANUARY,30),

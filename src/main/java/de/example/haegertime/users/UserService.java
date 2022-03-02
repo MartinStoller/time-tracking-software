@@ -48,7 +48,7 @@ public class UserService {
     }
 
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         String mail = user.getEmail();
         if (userRepository.existsByEmail(mail)) {
             throw new EmailAlreadyExistsException("Diese Email wird bereits verwendet.");
@@ -56,6 +56,7 @@ public class UserService {
         userRepository.save(user);
         emailService.send(user.getEmail(), "Dein Haegertime Account wurde erstellt",
                 emailService.getEmailText(user.getFirstname(), "Neuerstellung deines Accounts"));
+        return user;
     }
 
 
@@ -235,6 +236,20 @@ public class UserService {
             }
         }
         return htt;
+    }
+
+    public User updateUser(User toUpdateUser, Long id) {
+        User currentUser = userRepository.findById(id).orElseThrow(
+                () -> new ItemNotFoundException("User mit Id nicht existiert!")
+        );
+        currentUser.setFirstname(toUpdateUser.getFirstname());
+        currentUser.setLastname(toUpdateUser.getLastname());
+        currentUser.setEmail(toUpdateUser.getEmail());
+        currentUser.setPassword(toUpdateUser.getPassword());
+        currentUser.setRole(toUpdateUser.getRole());
+        currentUser.setUrlaubstage(toUpdateUser.getUrlaubstage());
+        currentUser.setFrozen(toUpdateUser.isFrozen());
+        return userRepository.save(currentUser);
     }
 }
 

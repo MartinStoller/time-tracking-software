@@ -4,6 +4,8 @@ import de.example.haegertime.authorization.MyUserDetails;
 import de.example.haegertime.projects.Project;
 import de.example.haegertime.timetables.TimeTableDay;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +15,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+
+
 
     @GetMapping
     /**
@@ -34,16 +40,22 @@ public class UserController {
         return userService.getAllUsers(sortBy);
     }
 
+
+//    public ResponseEntity<String> createUser(@RequestBody User user) {
+//        try {
+//            this.userService.createUser(user);
+//            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
+//                    HttpStatus.BAD_GATEWAY);
+//        }
+
+//    }
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        try {
-            this.userService.createUser(user);
-            return new ResponseEntity<>("User gespeichert", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Eingabedaten falsch: Error occured " + e.getMessage(),
-                    HttpStatus.BAD_GATEWAY);
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@RequestBody User user) {
+        return this.userService.createUser(user);
     }
 
 
@@ -101,6 +113,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getByUsername(email));
     }
 
+    @GetMapping("/user-by-email/{email}")
+    public User getUserByEmail(@PathVariable("email") String email) {
+        return userService.getByUsername(email);
+    }
+
     @GetMapping("/showOwnWorkdays")
     @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public List<TimeTableDay> showOwnWorkdays(
@@ -124,7 +141,7 @@ public class UserController {
      * @return geupdatete UserDetails
      */
     @PutMapping("/current-user/update")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('EMPLOYEE') or hasRole('BOOKKEEPER')")
     public ResponseEntity<User> updateUserDetails(@RequestBody User user, @AuthenticationPrincipal MyUserDetails loggedUser) {
         String username = loggedUser.getUsername();
         User logged = userService.getByUsername(username);
@@ -215,6 +232,18 @@ public class UserController {
         String email = authentication.getName();
         return userService.showAllMyHolidays(email);
     }
+
+
+
+
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateUser(@RequestBody User toUpdateUser, @PathVariable Long id) {
+        return userService.updateUser(toUpdateUser, id);
+    }
+
+
 }
 
 

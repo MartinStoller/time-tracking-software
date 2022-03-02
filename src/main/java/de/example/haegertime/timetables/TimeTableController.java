@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping(path="api/timeTableDays")
 public class TimeTableController {
