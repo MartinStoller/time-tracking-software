@@ -12,6 +12,8 @@ I beliefe leaving the project as it is now - working, but still a lot of space f
 The main purpose of this project was to:
 
   - improve my Spring-Boot and Java skills
+
+  - Learn to develop Software collaboratively (So far I had mostly worked on my own)
   
   - improve my Git skills and learn to code in a group (working in agile environment, communication, pull-requests/merging, branches,...)
   
