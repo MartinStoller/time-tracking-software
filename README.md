@@ -31,4 +31,4 @@ Update: 16.03.22:
  
  - I implemented Swagger for an OpenAPI based Documentation
 
- - I added some dummy Liquibase files in order to learn about DB Version Controle with Liquibase. 
+ - I added some dummy Liquibase files in order to learn about DB Migration/Version Controle with Liquibase. 
