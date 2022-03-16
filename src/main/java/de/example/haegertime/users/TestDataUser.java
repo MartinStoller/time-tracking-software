@@ -24,7 +24,6 @@ public class TestDataUser {
             User usr5 = new User("Admiral", "Schneider", "fussball95", "spamfilter@gmail.com", Role.EMPLOYEE);
             User usr6 = new User("Franziska", "Frankenstein", "123Bergsteiger", "frafra@gmx.de", Role.BOOKKEEPER);
             User usr7 = new User("Waldo", "Holzkopf", "redbull!", "holzkopf@gmx.net", Role.EMPLOYEE);
-            User usr8 = new User("Waldo", "Holzkopf", "redbull!", "holzkopfer@gmx.net", Role.EMPLOYEE);
             TimeTableDay ttd8 = new TimeTableDay(
                     LocalDate.of(2022, Month.JANUARY, 3), null,
                     null, 0, 4, AbsenceStatus.SICK);
@@ -34,8 +33,8 @@ public class TestDataUser {
             List<TimeTableDay> ttds = new ArrayList<>();
             ttds.add(ttd8);
             ttds.add(ttd9);
-            usr8.setTimeTableDayList(ttds);
-            userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7, usr8));
+
+            userRepository.saveAll(List.of(usr1, usr2, usr3, usr4, usr5, usr6, usr7));
         };
     }
 }

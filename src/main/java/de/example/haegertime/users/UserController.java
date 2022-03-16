@@ -19,16 +19,13 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-
-
 
     @GetMapping
     /**

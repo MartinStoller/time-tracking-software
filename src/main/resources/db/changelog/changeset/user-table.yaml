@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-table
+      author: Martin Stoller
+      changes:
+        - createTable:
+            tableName: users2
+            columns:
+              - column:
+                  name: id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

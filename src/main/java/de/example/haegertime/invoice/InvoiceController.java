@@ -12,6 +12,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/invoices")
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
