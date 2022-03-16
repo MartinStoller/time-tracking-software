@@ -32,3 +32,17 @@ databaseChangeLog:
             columnName: id
             newDataType: INT
             tableName: time-table2
+
+  #Add Foreign Key to connect our 2 Tables:
+  - changeSet:
+      id: add-foreign-key
+      author: Martin Stoller
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: users2
+            constraintName: fk_user_timetabledays
+            referencedColumnNames: id
+            referencedTableName: time-table2
+
+  # Overview over all possible actions: https://docs.liquibase.com/change-types/home.html
